@@ -18,6 +18,10 @@ head(datos_originales)
 
 # 2. Limpieza de datos
 ```{r}
+#Se elimina el guión del nit
+datos_originales$nit <- gsub("-","", datos_originales$nit)
 
+#Se muestra la cabecera con el cambio realizado
+head(datos_originales)
 ```
 
