@@ -1,0 +1,23 @@
+---
+title: "Expliración de datos"
+author: "Equipo TAE"
+date: "24/4/2021"
+output: html_document
+---
+
+# 1. Lectura de la base de datos
+
+```{r}
+#Se carga la base de datos
+datos_originales <- read.csv("./datos/base_trabajo_segmentacion.csv",
+                             sep = ";")
+
+#Se imprime la cabecera
+head(datos_originales)
+```
+
+# 2. Limpieza de datos
+```{r}
+
+```
+
