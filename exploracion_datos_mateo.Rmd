@@ -1,0 +1,348 @@
+---
+title: "Exploración de datos"
+author: "Equipo TAE"
+date: "24/4/2021"
+output: html_document
+---
+
+```{r, message=FALSE, warning=FALSE}
+library(dplyr)
+library(knitr)
+library(kableExtra)
+library(ggplot2)
+library(ggcorrplot)
+options(scipen = 999)
+```
+
+
+# 1. Lectura de la base de datos
+
+```{r}
+#Se carga la base de datos
+datos_originales <- read.csv("./datos/base_trabajo_segmentacion.csv",
+                             sep = ";")
+
+#Se imprime la cabecera
+
+kable(head(datos_originales), "html", align = "c") %>% 
+    kable_paper("hover", full_width = F) %>% 
+    scroll_box(width = "100%") %>% 
+    kable_styling(bootstrap_options = c("hover", "condensed"))
+```
+
+# 2. Limpieza de datos
+```{r}
+#Se elimina el guión del nit
+datos_originales$nit <- gsub("-","", datos_originales$nit)
+
+#Se muestra la cabecera con el cambio realizado
+kable(head(datos_originales), "html", align = "c") %>% 
+    kable_paper("hover", full_width = F) %>% 
+    scroll_box(width = "100%") %>% 
+    kable_styling(bootstrap_options = c("hover", "condensed"))
+```
+
+# 3. selección de datos a analizar
+```{r}
+#Se seleccionan las variables que contienen el patrón "en_vm"
+datos_en_vm <- datos_originales %>% select(contains("en_vm"))
+
+#Se muestran las columnas a analizar
+kable(names(datos_en_vm), col.names = "Variable", align = "c", "html") %>% 
+    kable_paper("hover", full_width = TRUE) %>%
+    kable_styling(bootstrap_options = c( "hover", "condensed")) %>% 
+    row_spec(0, background = "tomato", color = "white")
+```
+
+
+# 4. Análisis de variables
+Función para resumenes numéricos
+```{r}
+#Se crea la función para presentar los resumenes numéricos
+resumen <- function(columna){
+    #Se usa la función summary para encontrar los resumenes
+    summary_canal <- summary(columna)
+    
+    #Se convierte a array y se transpone el resumen numérico
+    summary_canal <- t(as.array(summary_canal))
+    
+    #Se crean los nombres en español para los resumenes
+    nombres_resumen <- c("Mínimo", "Q1", "Mediana", "Media", "Q3", "Máximo")
+    
+    #Se estiliza el resumen con la función kable
+    kable(summary_canal, col.names = nombres_resumen, align = "c",  "html") %>% 
+        #Se utiliza el tema kable_papper
+        kable_paper("hover", full_width = TRUE) %>%
+        kable_styling(bootstrap_options = c("hover", "condensed")) %>% 
+        row_spec(0, background = "tomato", color = "white")
+}
+```
+
+Función para graficar
+```{r}
+#Se crea la función para dibujar los gráficos
+crear_grafico <- function(datos, columna, bins, xetiqueta, yetiqueta,titulo){
+    
+    #Se crea un nuevo gráfico de ggplot
+    ggplot(datos, aes(x = columna)) + 
+        
+        #Se crea el histograma
+        geom_histogram(bins = bins) +
+        #Se añade la etiqueta del eje x
+        xlab(xetiqueta) +
+        #Se añade la etiqueta del eje y
+        ylab(yetiqueta) +
+        #Se añade la etiqueta del titulo
+        ggtitle(titulo) +
+        #Se centra el titulo
+        theme(plot.title = element_text(hjust = 0.5))
+}
+```
+
+
+
+### 4.1. Variable `en_vm_canal1`
+
+**Resumen numérico**
+
+```{r}
+resumen(datos_en_vm$en_vm_canal1)
+```
+
+**Gráfico**
+
+```{r, fig.height = 7, fig.width = 11}
+crear_grafico(
+    datos = datos_en_vm,
+    columna = datos_en_vm$en_vm_canal1,
+    bins = 320,
+    xetiqueta = "valor del ticket promedio de entrada por el canal 1",
+    yetiqueta = "Frecuencia",
+    titulo = "Histograma del valor del ticket promedio de entrada por el canal 1 "
+)
+```
+
+
+### 4.2. Variable `en_vm_canal2`
+
+**Resumen numérico**
+
+```{r}
+resumen(datos_en_vm$en_vm_canal2)
+```
+
+**Gráfico**
+
+```{r, fig.height = 7, fig.width = 11}
+crear_grafico(
+    datos = datos_en_vm,
+    columna = datos_en_vm$en_vm_canal2,
+    bins = 420,
+    xetiqueta = "valor del ticket promedio de entrada por el canal 2",
+    yetiqueta = "Frecuencia",
+    titulo = "Histograma del valor del ticket promedio de entrada por el canal 2"
+)
+```
+
+
+### 4.3. Variable `en_vm_canal3`
+
+**Resumen numérico**
+
+```{r}
+resumen(datos_en_vm$en_vm_canal3)
+```
+
+**Gráfico**
+
+```{r, fig.height = 7, fig.width = 11}
+crear_grafico(
+    datos = datos_en_vm,
+    columna = datos_en_vm$en_vm_canal3,
+    bins = 300,
+    xetiqueta = "valor del ticket promedio de entrada por el canal 3",
+    yetiqueta = "Frecuencia",
+    titulo = "Histograma del valor del ticket promedio de entrada por el canal 3"
+)
+```
+
+
+### 4.4. Variable `en_vm_canal4`
+
+**Resumen numérico**
+
+```{r}
+resumen(datos_en_vm$en_vm_canal4)
+```
+
+**Gráfico**
+
+```{r, fig.height = 7, fig.width = 11}
+crear_grafico(
+    datos = datos_en_vm,
+    columna = datos_en_vm$en_vm_canal4,
+    bins = 300,
+    xetiqueta = "valor del ticket promedio de entrada por el canal 4",
+    yetiqueta = "Frecuencia",
+    titulo = "Histograma del valor del ticket promedio de entrada por el canal 4"
+)
+```
+
+### 4.5. Variable `en_vm_canal5`
+
+**Resumen numérico**
+
+```{r}
+resumen(datos_en_vm$en_vm_canal5)
+```
+
+**Gráfico**
+
+```{r, fig.height = 7, fig.width = 11}
+crear_grafico(
+    datos = datos_en_vm,
+    columna = datos_en_vm$en_vm_canal5,
+    bins = 300,
+    xetiqueta = "valor del ticket promedio de entrada por el canal 5",
+    yetiqueta = "Frecuencia",
+    titulo = "Histograma del valor del ticket promedio de entrada por el canal 5"
+)
+```
+
+### 4.6. Variable `en_vm_canal6`
+
+**Resumen numérico**
+
+```{r}
+resumen(datos_en_vm$en_vm_canal6)
+```
+
+**Gráfico**
+
+```{r, fig.height = 7, fig.width = 11}
+crear_grafico(
+    datos = datos_en_vm,
+    columna = datos_en_vm$en_vm_canal6,
+    bins = 300,
+    xetiqueta = "valor del ticket promedio de entrada por el canal 6",
+    yetiqueta = "Frecuencia",
+    titulo = "Histograma del valor del ticket promedio de entrada por el canal 6"
+)
+```
+
+
+### 4.7. Variable `en_vm_canal7`
+
+**Resumen numérico**
+
+```{r}
+resumen(datos_en_vm$en_vm_canal7)
+```
+
+**Gráfico**
+
+```{r, fig.height = 7, fig.width = 11}
+crear_grafico(
+    datos = datos_en_vm,
+    columna = datos_en_vm$en_vm_canal7,
+    bins = 300,
+    xetiqueta = "valor del ticket promedio de entrada por el canal 7",
+    yetiqueta = "Frecuencia",
+    titulo = "Histograma del valor del ticket promedio de entrada por el canal 7"
+)
+```
+
+### 4.8. Variable `en_vm_canal8`
+
+**Resumen numérico**
+
+```{r}
+resumen(datos_en_vm$en_vm_canal8)
+```
+
+**Gráfico**
+
+```{r, fig.height = 7, fig.width = 11}
+crear_grafico(
+    datos = datos_en_vm,
+    columna = datos_en_vm$en_vm_canal8,
+    bins = 300,
+    xetiqueta = "valor del ticket promedio de entrada por el canal 8",
+    yetiqueta = "Frecuencia",
+    titulo = "Histograma del valor del ticket promedio de entrada por el canal 8"
+)
+```
+
+### 4.9. Variable `en_vm_canal9`
+
+**Resumen numérico**
+
+```{r}
+resumen(datos_en_vm$en_vm_canal9)
+```
+
+**Gráfico**
+
+```{r, fig.height = 7, fig.width = 11}
+crear_grafico(
+    datos = datos_en_vm,
+    columna = datos_en_vm$en_vm_canal9,
+    bins = 300,
+    xetiqueta = "valor del ticket promedio de entrada por el canal 9",
+    yetiqueta = "Frecuencia",
+    titulo = "Histograma del valor del ticket promedio de entrada por el canal 9"
+)
+```
+
+### 4.10. Variable `en_vm_canal10`
+
+**Resumen numérico**
+
+```{r}
+resumen(datos_en_vm$en_vm_canal10)
+```
+
+**Gráfico**
+
+```{r, fig.height = 7, fig.width = 11}
+crear_grafico(
+    datos = datos_en_vm,
+    columna = datos_en_vm$en_vm_canal10,
+    bins = 300,
+    xetiqueta = "valor del ticket promedio de entrada por el canal 10",
+    yetiqueta = "Frecuencia",
+    titulo = "Histograma del valor del ticket promedio de entrada por el canal 10"
+)
+```
+
+### 4.11. Variable `en_vm_otros`
+
+**Resumen numérico**
+
+```{r}
+resumen(datos_en_vm$en_vm_otros)
+```
+
+**Gráfico**
+
+```{r, fig.height = 7, fig.width = 11}
+crear_grafico(
+    datos = datos_en_vm,
+    columna = datos_en_vm$en_vm_otros,
+    bins = 300,
+    xetiqueta = "valor del ticket promedio de entrada para otros",
+    yetiqueta = "Frecuencia",
+    titulo = "Histograma del valor del ticket promedio de entrada para otros"
+)
+```
+
+# 5. correlación de las variables
+
+```{r, fig.height = 7, fig.width = 7, fig.align='center'}
+correlaciones <- cor(datos_en_vm)
+
+ggcorrplot(correlaciones, method = "circle", lab = T)+
+    ggtitle("Matriz de correlación entre las variables de tipo en_vm")+
+    theme(plot.title = element_text(hjust = 0.5, size = 20))
+```
+
