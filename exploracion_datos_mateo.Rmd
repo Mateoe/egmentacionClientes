@@ -109,7 +109,7 @@ crear_grafico <- function(datos, columna, bins, xetiqueta, yetiqueta,titulo){
 resumen(datos_en_vm$en_vm_canal1)
 ```
 
-**Gráfico**
+**Histograma**
 
 ```{r, fig.height = 7, fig.width = 11}
 crear_grafico(
@@ -118,8 +118,21 @@ crear_grafico(
     bins = 320,
     xetiqueta = "valor del ticket promedio de entrada por el canal 1",
     yetiqueta = "Frecuencia",
-    titulo = "Histograma del valor del ticket promedio de entrada por el canal 1 "
+    titulo = "Histograma del valor del ticket promedio de entrada por el canal 1"
 )
+```
+
+
+**Gráfico de densidad**
+
+```{r, fig.height = 7, fig.width = 11}
+ggplot(datos_en_vm, aes(x = en_vm_canal1, y = ..density..))+
+    geom_density(col="red", fill = "coral", size = 1)+
+    xlab("Valor del ticket promedio de entrada por el canal 1") +
+    ylab("Densidad") +
+    ggtitle("Desnidad del valor del ticket promedio de entrada por el canal 1") +
+    theme(plot.title = element_text(hjust = 0.5))
+    
 ```
 
 
@@ -131,7 +144,7 @@ crear_grafico(
 resumen(datos_en_vm$en_vm_canal2)
 ```
 
-**Gráfico**
+**Histograma**
 
 ```{r, fig.height = 7, fig.width = 11}
 crear_grafico(
@@ -145,6 +158,19 @@ crear_grafico(
 ```
 
 
+**Gráfico de densidad**
+
+```{r, fig.height = 7, fig.width = 11}
+ggplot(datos_en_vm, aes(x = en_vm_canal2, y = ..density..))+
+    geom_density(col="red", fill = "coral", size = 1)+
+    xlab("Valor del ticket promedio de entrada por el canal 2") +
+    ylab("Densidad") +
+    ggtitle("Desnidad del valor del ticket promedio de entrada por el canal 2") +
+    theme(plot.title = element_text(hjust = 0.5))
+    
+```
+
+
 ### 4.3. Variable `en_vm_canal3`
 
 **Resumen numérico**
@@ -153,7 +179,7 @@ crear_grafico(
 resumen(datos_en_vm$en_vm_canal3)
 ```
 
-**Gráfico**
+**Histograma**
 
 ```{r, fig.height = 7, fig.width = 11}
 crear_grafico(
@@ -166,6 +192,17 @@ crear_grafico(
 )
 ```
 
+**Gráfico de densidad**
+
+```{r, fig.height = 7, fig.width = 11}
+ggplot(datos_en_vm, aes(x = en_vm_canal3, y = ..density..))+
+    geom_density(col="red", fill = "coral", size = 1)+
+    xlab("Valor del ticket promedio de entrada por el canal 3") +
+    ylab("Densidad") +
+    ggtitle("Desnidad del valor del ticket promedio de entrada por el canal 3") +
+    theme(plot.title = element_text(hjust = 0.5))
+```
+
 
 ### 4.4. Variable `en_vm_canal4`
 
@@ -175,7 +212,7 @@ crear_grafico(
 resumen(datos_en_vm$en_vm_canal4)
 ```
 
-**Gráfico**
+**Histograma**
 
 ```{r, fig.height = 7, fig.width = 11}
 crear_grafico(
@@ -188,6 +225,17 @@ crear_grafico(
 )
 ```
 
+**Gráfico de densidad**
+
+```{r, fig.height = 7, fig.width = 11}
+ggplot(datos_en_vm, aes(x = en_vm_canal4, y = ..density..))+
+    geom_density(col="red", fill = "coral", size = 1)+
+    xlab("Valor del ticket promedio de entrada por el canal 4") +
+    ylab("Densidad") +
+    ggtitle("Desnidad del valor del ticket promedio de entrada por el canal 4") +
+    theme(plot.title = element_text(hjust = 0.5))
+```
+
 ### 4.5. Variable `en_vm_canal5`
 
 **Resumen numérico**
@@ -196,7 +244,7 @@ crear_grafico(
 resumen(datos_en_vm$en_vm_canal5)
 ```
 
-**Gráfico**
+**Histograma**
 
 ```{r, fig.height = 7, fig.width = 11}
 crear_grafico(
@@ -209,6 +257,18 @@ crear_grafico(
 )
 ```
 
+**Gráfico de densidad**
+
+```{r, fig.height = 7, fig.width = 11}
+ggplot(datos_en_vm, aes(x = en_vm_canal5, y = ..density..))+
+    geom_density(col="red", fill = "coral", size = 1)+
+    xlab("Valor del ticket promedio de entrada por el canal 5") +
+    ylab("Densidad") +
+    ggtitle("Desnidad del valor del ticket promedio de entrada por el canal 4") +
+    theme(plot.title = element_text(hjust = 0.5))
+
+```
+
 ### 4.6. Variable `en_vm_canal6`
 
 **Resumen numérico**
@@ -217,7 +277,7 @@ crear_grafico(
 resumen(datos_en_vm$en_vm_canal6)
 ```
 
-**Gráfico**
+**Histograma**
 
 ```{r, fig.height = 7, fig.width = 11}
 crear_grafico(
@@ -230,6 +290,16 @@ crear_grafico(
 )
 ```
 
+**Gráfico de densidad**
+
+```{r, fig.height = 7, fig.width = 11}
+ggplot(datos_en_vm, aes(x = en_vm_canal6, y = ..density..))+
+    geom_density(col="red", fill = "coral", size = 1)+
+    xlab("Valor del ticket promedio de entrada por el canal 6") +
+    ylab("Densidad") +
+    ggtitle("Desnidad del valor del ticket promedio de entrada por el canal 6") +
+    theme(plot.title = element_text(hjust = 0.5))
+```
 
 ### 4.7. Variable `en_vm_canal7`
 
@@ -239,7 +309,7 @@ crear_grafico(
 resumen(datos_en_vm$en_vm_canal7)
 ```
 
-**Gráfico**
+**Histograma**
 
 ```{r, fig.height = 7, fig.width = 11}
 crear_grafico(
@@ -252,6 +322,18 @@ crear_grafico(
 )
 ```
 
+
+**Gráfico de densidad**
+
+```{r, fig.height = 7, fig.width = 11}
+ggplot(datos_en_vm, aes(x = en_vm_canal7, y = ..density..))+
+    geom_density(col="red", fill = "coral", size = 1)+
+    xlab("Valor del ticket promedio de entrada por el canal 7") +
+    ylab("Densidad") +
+    ggtitle("Desnidad del valor del ticket promedio de entrada por el canal 7") +
+    theme(plot.title = element_text(hjust = 0.5))
+```
+
 ### 4.8. Variable `en_vm_canal8`
 
 **Resumen numérico**
@@ -260,7 +342,7 @@ crear_grafico(
 resumen(datos_en_vm$en_vm_canal8)
 ```
 
-**Gráfico**
+**Histograma**
 
 ```{r, fig.height = 7, fig.width = 11}
 crear_grafico(
@@ -273,6 +355,17 @@ crear_grafico(
 )
 ```
 
+**Gráfico de densidad**
+
+```{r, fig.height = 7, fig.width = 11}
+ggplot(datos_en_vm, aes(x = en_vm_canal8, y = ..density..))+
+    geom_density(col="red", fill = "coral", size = 1)+
+    xlab("Valor del ticket promedio de entrada por el canal 8") +
+    ylab("Densidad") +
+    ggtitle("Desnidad del valor del ticket promedio de entrada por el canal 8") +
+    theme(plot.title = element_text(hjust = 0.5))
+```
+
 ### 4.9. Variable `en_vm_canal9`
 
 **Resumen numérico**
@@ -281,7 +374,7 @@ crear_grafico(
 resumen(datos_en_vm$en_vm_canal9)
 ```
 
-**Gráfico**
+**Histograma**
 
 ```{r, fig.height = 7, fig.width = 11}
 crear_grafico(
@@ -294,6 +387,17 @@ crear_grafico(
 )
 ```
 
+**Gráfico de densidad**
+
+```{r, fig.height = 7, fig.width = 11}
+ggplot(datos_en_vm, aes(x = en_vm_canal9, y = ..density..))+
+    geom_density(col="red", fill = "coral", size = 1)+
+    xlab("Valor del ticket promedio de entrada por el canal 9") +
+    ylab("Densidad") +
+    ggtitle("Desnidad del valor del ticket promedio de entrada por el canal 9") +
+    theme(plot.title = element_text(hjust = 0.5))
+```
+
 ### 4.10. Variable `en_vm_canal10`
 
 **Resumen numérico**
@@ -302,7 +406,7 @@ crear_grafico(
 resumen(datos_en_vm$en_vm_canal10)
 ```
 
-**Gráfico**
+**Histograma**
 
 ```{r, fig.height = 7, fig.width = 11}
 crear_grafico(
@@ -315,6 +419,17 @@ crear_grafico(
 )
 ```
 
+**Gráfico de densidad**
+
+```{r, fig.height = 7, fig.width = 11}
+ggplot(datos_en_vm, aes(x = en_vm_canal10, y = ..density..))+
+    geom_density(col="red", fill = "coral", size = 1)+
+    xlab("Valor del ticket promedio de entrada por el canal 10") +
+    ylab("Densidad") +
+    ggtitle("Desnidad del valor del ticket promedio de entrada por el canal 10") +
+    theme(plot.title = element_text(hjust = 0.5))
+```
+
 ### 4.11. Variable `en_vm_otros`
 
 **Resumen numérico**
@@ -323,7 +438,7 @@ crear_grafico(
 resumen(datos_en_vm$en_vm_otros)
 ```
 
-**Gráfico**
+**Histograma**
 
 ```{r, fig.height = 7, fig.width = 11}
 crear_grafico(
@@ -336,12 +451,26 @@ crear_grafico(
 )
 ```
 
+**Gráfico de densidad**
+
+```{r, fig.height = 7, fig.width = 11}
+ggplot(datos_en_vm, aes(x = en_vm_otros, y = ..density..))+
+    geom_density(col="red", fill = "coral", size = 1)+
+    xlab("Valor del ticket promedio de entrada para otros") +
+    ylab("Densidad") +
+    ggtitle("Desnidad del valor del ticket promedio de entrada para otros") +
+    theme(plot.title = element_text(hjust = 0.5))
+```
+
 # 5. correlación de las variables
 
 ```{r, fig.height = 7, fig.width = 7, fig.align='center'}
+
+#Se encuentra la matriz de correlación
 correlaciones <- cor(datos_en_vm)
 
-ggcorrplot(correlaciones, method = "circle", lab = T)+
+#Se crea la gráfica de correlación para las variables
+ggcorrplot(correlaciones, method = "circle",lab = TRUE)+
     ggtitle("Matriz de correlación entre las variables de tipo en_vm")+
     theme(plot.title = element_text(hjust = 0.5, size = 20))
 ```
