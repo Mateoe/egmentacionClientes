@@ -1,8 +1,9 @@
 ---
 title: "Exploración de datos"
-author: "Equipo TAE"
+author: "Mateo Espinal Londoño"
 date: "24/4/2021"
-output: html_document
+output:
+    rmdformats::readthedown
 ---
 
 ```{r, message=FALSE, warning=FALSE}
@@ -475,3 +476,196 @@ ggcorrplot(correlaciones, method = "circle",lab = TRUE)+
     theme(plot.title = element_text(hjust = 0.5, size = 20))
 ```
 
+
+# 6. Análisis de variables sin datos atipicos
+
+```{r}
+#Función para remover ceros y datos atipicos
+rm_atipicos <- function(conjunto_datos, variable, rm.cero = FALSE){
+    
+    
+    columna <- conjunto_datos[, variable]
+    
+    if (rm.cero == TRUE) {
+        columna <- columna[columna != 0]
+    }
+    
+    outliers <- boxplot(columna, plot = FALSE)$out
+    
+    sin_outliers <- columna[!columna %in% outliers]
+    
+    return(list(datos = sin_outliers, outliers = outliers))
+}
+```
+
+
+```{r}
+#Función para crear histogramas
+crear_histograma <- function(dataframe, secuencia){
+    
+    #Se crea un nuevo gráfico de ggplot
+    ggplot(dataframe, aes(x = datos)) + 
+        
+        #Se crea el histograma
+        geom_histogram(bins = 100) +
+        
+        #Se añade la etiqueta del eje x
+        xlab(
+            paste("Valor del ticket promedio de entrada por el canal",
+                  secuencia
+                
+            )
+        ) +
+        
+        #Se añade la etiqueta del eje y
+        ylab("Frecuencia") +
+        
+        #Se añade la etiqueta del titulo
+        ggtitle(
+            paste("Histograma del valor del ticket promedio de entrada por el canal",
+                  secuencia
+                
+            )
+        ) +
+        #Se centra el titulo
+        theme(plot.title = element_text(hjust = 0.5))
+}
+
+```
+
+**Conteo de valores en cero para cada variable**:
+```{r}
+cantidad_ceros <- apply(datos_en_vm, 2, function(x){sum(x==0)})
+kable(cantidad_ceros, col.names = c("Ceros")) %>% 
+    kable_paper("hover", full_width = TRUE) %>%
+    kable_styling(bootstrap_options = c("hover", "condensed")) %>% 
+    row_spec(0, background = "tomato", color = "white")
+```
+
+**Tabla general de resumenes para cada variable**:
+```{r}
+cantidad_ceros <- t(apply(datos_en_vm, 2, function(x){summary(x)}))
+nombres_resumen <- c("Mínimo", "Q1", "Mediana", "Media", "Q3", "Máximo")
+kable(cantidad_ceros, col.names = nombres_resumen) %>% 
+    kable_paper("hover", full_width = TRUE) %>%
+    kable_styling(bootstrap_options = c("hover", "condensed")) %>% 
+    row_spec(0, background = "tomato", color = "white")
+```
+
+### 6.1. Variable `en_vm_canal1`
+
+```{r, fig.height = 7, fig.width = 11}
+sin_atipicos <- as.data.frame(rm_atipicos(datos_en_vm, variable = "en_vm_canal1")[1])
+
+crear_histograma(sin_atipicos,secuencia = "1")
+```
+
+### 6.2. Variable `en_vm_canal2`
+
+```{r, fig.height = 7, fig.width = 11}
+sin_atipicos <- as.data.frame(rm_atipicos(datos_en_vm, variable = "en_vm_canal2")[1])
+
+crear_histograma(sin_atipicos,secuencia = "2")
+```
+
+### 6.3. Variable `en_vm_canal3`
+
+```{r, fig.height = 7, fig.width = 11}
+sin_atipicos <- as.data.frame(rm_atipicos(datos_en_vm, variable = "en_vm_canal3")[1])
+
+crear_histograma(sin_atipicos,secuencia = "3")
+```
+
+### 6.4. Variable `en_vm_canal4`
+
+```{r, fig.height = 7, fig.width = 11}
+sin_atipicos <- as.data.frame(rm_atipicos(datos_en_vm, variable = "en_vm_canal4")[1])
+
+crear_histograma(sin_atipicos,secuencia = "4")
+```
+
+
+```{r, fig.height = 7, fig.width = 11}
+sin_atipicos <- as.data.frame(rm_atipicos(datos_en_vm, variable = "en_vm_canal4", T)[1])
+
+crear_histograma(sin_atipicos,secuencia = "4")
+```
+
+### 6.5. Variable `en_vm_canal5`
+
+```{r, fig.height = 7, fig.width = 11}
+sin_atipicos <- as.data.frame(rm_atipicos(datos_en_vm, variable = "en_vm_canal5")[1])
+
+crear_histograma(sin_atipicos,secuencia = "5")
+```
+
+
+### 6.6. Variable `en_vm_canal6`
+
+```{r, fig.height = 7, fig.width = 11}
+sin_atipicos <- as.data.frame(rm_atipicos(datos_en_vm, variable = "en_vm_canal6")[1])
+
+crear_histograma(sin_atipicos,secuencia = "6")
+```
+
+### 6.7. Variable `en_vm_canal7`
+
+```{r, fig.height = 7, fig.width = 11}
+sin_atipicos <- as.data.frame(rm_atipicos(datos_en_vm, variable = "en_vm_canal7")[1])
+
+crear_histograma(sin_atipicos,secuencia = "7")
+```
+
+```{r, fig.height = 7, fig.width = 11}
+sin_atipicos <- as.data.frame(rm_atipicos(datos_en_vm, variable = "en_vm_canal7", T)[1])
+
+crear_histograma(sin_atipicos,secuencia = "7")
+```
+
+
+### 6.8. Variable `en_vm_canal8`
+
+```{r, fig.height = 7, fig.width = 11}
+sin_atipicos <- as.data.frame(rm_atipicos(datos_en_vm, variable = "en_vm_canal8")[1])
+
+crear_histograma(sin_atipicos,secuencia = "8")
+```
+
+
+### 6.9. Variable `en_vm_canal9`
+
+```{r, fig.height = 7, fig.width = 11}
+sin_atipicos <- as.data.frame(rm_atipicos(datos_en_vm, variable = "en_vm_canal9")[1])
+
+crear_histograma(sin_atipicos,secuencia = "9")
+```
+
+### 6.10. Variable `en_vm_canal9`
+
+```{r, fig.height = 7, fig.width = 11}
+sin_atipicos <- as.data.frame(rm_atipicos(datos_en_vm, variable = "en_vm_canal10")[1])
+
+crear_histograma(sin_atipicos,secuencia = "10")
+```
+
+
+```{r, fig.height = 7, fig.width = 11}
+sin_atipicos <- as.data.frame(rm_atipicos(datos_en_vm, variable = "en_vm_canal10", T)[1])
+
+crear_histograma(sin_atipicos,secuencia = "10")
+```
+
+
+### 6.11. Variable `en_vm_otros`
+
+```{r, fig.height = 7, fig.width = 11}
+sin_atipicos <- as.data.frame(rm_atipicos(datos_en_vm, variable = "en_vm_otros")[1])
+
+crear_histograma(sin_atipicos,secuencia = "otros")
+```
+
+```{r, fig.height = 7, fig.width = 11}
+sin_atipicos <- as.data.frame(rm_atipicos(datos_en_vm, variable = "en_vm_otros", T)[1])
+
+crear_histograma(sin_atipicos,secuencia = "otros")
+```
