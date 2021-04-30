@@ -1,0 +1,637 @@
+---
+title: | 
+  <center> Análisis descriptivo de variables </center>
+  <center> Actividad: Segmentación de clientes </center>
+author: | 
+  <center> Alejandro Bedoya </center>
+date: "Abril, 2021"
+output:
+  prettydoc::html_pretty:
+    theme: cayman
+    highlight: github
+---
+
+```{r include=FALSE}
+theme_elegante <- function(base_size = 10,
+                           base_family = "Raleway"
+)
+{
+        color.background = "#FFFFFF" # Chart Background
+        color.grid.major = "#D9D9D9" # Chart Gridlines
+        color.axis.text = "#666666" # 
+        color.axis.title = "#666666" # 
+        color.title = "#666666"
+        color.subtitle = "#666666"
+        strip.background.color = '#9999CC'
+        
+        ret <-
+                theme_bw(base_size=base_size) +
+                
+                # Set the entire chart region to a light gray color
+                theme(panel.background=element_rect(fill=color.background, color=color.background)) +
+                theme(plot.background=element_rect(fill=color.background, color=color.background)) +
+                theme(panel.border=element_rect(color=color.background)) +
+                
+                # Format the grid
+                theme(panel.grid.major=element_line(color=color.grid.major,size=.55, linetype="dotted")) +
+                theme(panel.grid.minor=element_line(color=color.grid.major,size=.55, linetype="dotted")) +
+                theme(axis.ticks=element_blank()) +
+                
+                # Format the legend, but hide by default
+                theme(legend.position="none") +
+                theme(legend.background = element_rect(fill=color.background)) +
+                theme(legend.text = element_text(size=base_size-3,color=color.axis.title, family = base_family)) +
+                
+                theme(strip.text.x = element_text(size=base_size,color=color.background, family = base_family)) +
+                theme(strip.text.y = element_text(size=base_size,color=color.background, family = base_family)) +
+                #theme(strip.background = element_rect(fill=strip.background.color, linetype="blank")) +
+                theme(strip.background = element_rect(fill = "grey70", colour = NA)) +
+                # theme(panel.border= element_rect(fill = NA, colour = "grey70", size = rel(1)))+
+                # Set title and axis labels, and format these and tick marks
+                theme(plot.title=element_text(color=color.title, 
+                                              size=20, 
+                                              vjust=1.25, 
+                                              family=base_family, 
+                                              hjust = 0.5
+                )) +
+                
+                theme(plot.subtitle=element_text(color=color.subtitle, size=base_size+2, family = base_family,  hjust = 0.5))  +
+                
+                theme(axis.text.x=element_text(size=base_size,color=color.axis.text, family = base_family)) +
+                theme(axis.text.y=element_text(size=base_size,color=color.axis.text, family = base_family)) +
+                theme(text=element_text(size=base_size, color=color.axis.text, family = base_family)) +
+                
+                theme(axis.title.x=element_text(size=base_size+2,color=color.axis.title, vjust=0, family = base_family)) +
+                theme(axis.title.y=element_text(size=base_size+2,color=color.axis.title, vjust=1.25, family = base_family)) +
+                theme(plot.caption=element_text(size=base_size-2,color=color.axis.title, vjust=1.25, family = base_family)) +
+                
+                # Legend  
+                theme(legend.text=element_text(size=base_size,color=color.axis.text, family = base_family)) +
+                theme(legend.title=element_text(size=base_size,color=color.axis.text, family = base_family)) +
+                theme(legend.key=element_rect(colour = color.background, fill = color.background)) +
+                theme(legend.position="bottom", 
+                      legend.box = "horizontal", 
+                      legend.title = element_blank(),
+                      legend.key.width = unit(.75, "cm"),
+                      legend.key.height = unit(.75, "cm"),
+                      legend.spacing.x = unit(.25, 'cm'),
+                      legend.spacing.y = unit(.25, 'cm'),
+                      legend.margin = margin(t=0, r=0, b=0, l=0, unit="cm")) +
+                
+                # Plot margins
+                theme(plot.margin = unit(c(.5, .5, .5, .5), "cm"))
+        
+        ret
+}
+```
+
+```{r message=FALSE, warning=FALSE}
+library(ggplot2)
+library(olsrr)
+library(corrplot)
+```
+
+
+# 1. Lectura de la base de datos
+
+```{r}
+#Se carga la base de datos
+datos_originales <- read.csv("./datos/base_trabajo_segmentacion.csv",
+                             sep = ";")
+```
+
+# 2. Limpieza de datos
+```{r}
+#Se elimina el guión del nit
+datos_originales$nit <- gsub("-","", datos_originales$nit)
+```
+
+
+# Variables correspondientes:
+
+Transacciones mensuales promedio en los diversos canales
+
+* en_tx_canal1
+* en_tx_canal2
+* en_tx_canal3
+* en_tx_canal4
+* en_tx_canal5
+* en_tx_canal6
+* en_tx_canal7
+* en_tx_canal8
+* en_tx_canal9
+* en_tx_canal10
+* en_tx_otros
+
+
+En general son variables numéricas.
+
+## Correlación entre variables
+
+```{r}
+M <- cor(datos_originales[,13:23])
+corrplot(M, type="upper", order="hclust")
+```
+
+
+
+## Histogramas 
+
+```{r}
+par(mfrow=c(1,3))
+hist(datos_originales$en_tx_canal1, main="en_tx_canal1")
+hist(datos_originales$en_tx_canal2, main="en_tx_canal2")
+hist(datos_originales$en_tx_canal3, main="en_tx_canal3")
+```
+```{r}
+par(mfrow=c(1,3))
+hist(datos_originales$en_tx_canal4, main="en_tx_canal4")
+hist(datos_originales$en_tx_canal5, main="en_tx_canal5")
+hist(datos_originales$en_tx_canal6, main="en_tx_canal6")
+```
+
+```{r}
+par(mfrow=c(1,3))
+hist(datos_originales$en_tx_canal7, main="en_tx_canal7")
+hist(datos_originales$en_tx_canal8, main="en_tx_canal8")
+hist(datos_originales$en_tx_canal9, main="en_tx_canal9")
+```
+
+```{r}
+par(mfrow=c(1,2))
+hist(datos_originales$en_tx_canal10, main="en_tx_canal10")
+hist(datos_originales$en_tx_otros, main = "en_tx_otros")
+```
+
+# Análisis individual 
+
+## en_tx_canal1
+
+
+
+```{r message=FALSE, warning=FALSE}
+P1 <- ggplot(datos_originales, aes(x=1, y=en_tx_canal1))+
+  geom_boxplot(color='blue',fill='blue',alpha=0.2,notch = F,notchwidth = 0.8,
+               outlier.colour = 'red',outlier.fill = 'red',outlier.size = 3)+
+  labs(title = 'en_tx_canal1',subtitle = ' ',caption = ' ',
+       x = ' ', y='en_tx_canal1',color=NULL)+
+  theme_elegante()+
+  stat_summary(fun=mean,geom='point',shape=21,size=2,color='black',fill='black')
+P1
+```
+
+Potenciales outliers  en_tx_canal1
+```{r}
+out_canal1 <- boxplot.stats(datos_originales$en_tx_canal1)$out
+out_indices_canal1 <- which(datos_originales$en_tx_canal1 %in% c(out_canal1))
+
+length(out_indices_canal1)
+summary(datos_originales$en_tx_canal1)
+summary(datos_originales$en_tx_canal1[-out_indices_canal1])
+```
+
+**Graficos sin outliers para canal1**
+
+```{r}
+hist(datos_originales$en_tx_canal1[-out_indices_canal1], 
+     main = "en_tx_canal1 sin outliers", 
+     col = "purple",
+    xlab = "Transacciones mensuales promedio")
+```
+
+```{r message=FALSE, warning=FALSE}
+P1 <- ggplot(datos_originales[-out_indices_canal1,], aes(x=1, y=en_tx_canal1))+
+  geom_boxplot(color='blue',fill='blue',alpha=0.2,notch = F,notchwidth = 0.8,
+               outlier.colour = 'purple',outlier.fill = 'red',outlier.size = 3)+
+  labs(title = 'en_tx_canal1 sin outliers',subtitle = ' ',caption = ' ',
+       x = ' ', y='en_tx_canal1',color=NULL)+
+  theme_elegante()+
+  stat_summary(fun=mean,geom='point',shape=21,size=2,color='black',fill='black')
+P1
+```
+
+# en_tx_canal2
+
+
+```{r message=FALSE, warning=FALSE}
+P1 <- ggplot(datos_originales, aes(x=1, y=en_tx_canal2))+
+  geom_boxplot(color='blue',fill='blue',alpha=0.2,notch = F,notchwidth = 0.8,
+               outlier.colour = 'red',outlier.fill = 'red',outlier.size = 3)+
+  labs(title = 'en_tx_canal2',subtitle = ' ',caption = ' ',
+       x = ' ', y='en_tx_canal2',color=NULL)+
+  theme_elegante()+
+  stat_summary(fun=mean,geom='point',shape=21,size=2,color='black',fill='black')
+P1
+```
+
+
+
+Potenciales outliers  en_tx_canal2
+```{r}
+out_canal2 <- boxplot.stats(datos_originales$en_tx_canal2)$out
+out_indices_canal2 <- which(datos_originales$en_tx_canal2 %in% c(out_canal2))
+
+length(out_indices_canal2)
+summary(datos_originales$en_tx_canal2)
+summary(datos_originales$en_tx_canal2[-out_indices_canal2])
+```
+
+**Graficos sin outliers para canal2**
+
+```{r}
+hist(datos_originales$en_tx_canal2[-out_indices_canal2], main = "en_tx_canal2 sin outliers", col = "purple", xlab = "Transacciones mensuales promedio")
+```
+
+```{r message=FALSE, warning=FALSE}
+P1 <- ggplot(datos_originales[-out_indices_canal2,], aes(x=1, y=en_tx_canal2))+
+  geom_boxplot(color='blue',fill='blue',alpha=0.2,notch = F,notchwidth = 0.8,
+               outlier.colour = 'purple',outlier.fill = 'red',outlier.size = 3)+
+  labs(title = 'en_tx_canal2 sin outliers',subtitle = ' ',caption = ' ',
+       x = ' ', y='en_tx_canal2',color=NULL)+
+  theme_elegante()+
+  stat_summary(fun=mean,geom='point',shape=21,size=2,color='black',fill='black')
+P1
+```
+
+
+# en_tx_canal3
+
+
+```{r message=FALSE, warning=FALSE}
+P1 <- ggplot(datos_originales, aes(x=1, y=en_tx_canal3))+
+  geom_boxplot(color='blue',fill='blue',alpha=0.2,notch = F,notchwidth = 0.8,
+               outlier.colour = 'red',outlier.fill = 'red',outlier.size = 3)+
+  labs(title = 'en_tx_canal3',subtitle = ' ',caption = ' ',
+       x = ' ', y='en_tx_canal3',color=NULL)+
+  theme_elegante()+
+  stat_summary(fun=mean,geom='point',shape=21,size=2,color='black',fill='black')
+P1
+```
+
+
+Potenciales outliers  en_tx_canal3
+```{r}
+out_canal3 <- boxplot.stats(datos_originales$en_tx_canal3)$out
+out_indices_canal3 <- which(datos_originales$en_tx_canal3 %in% c(out_canal3))
+
+length(out_indices_canal3)
+summary(datos_originales$en_tx_canal3)
+summary(datos_originales$en_tx_canal3[-out_indices_canal3])
+```
+
+**Graficos sin outliers para canal3**
+
+```{r}
+hist(datos_originales$en_tx_canal3[-out_indices_canal3], main = "en_tx_canal3 sin outliers", col = "purple", xlab = "Transacciones mensuales promedio")
+```
+
+```{r message=FALSE, warning=FALSE}
+P1 <- ggplot(datos_originales[-out_indices_canal3,], aes(x=1, y=en_tx_canal3))+
+  geom_boxplot(color='blue',fill='blue',alpha=0.2,notch = F,notchwidth = 0.8,
+               outlier.colour = 'purple',outlier.fill = 'red',outlier.size = 3)+
+  labs(title = 'en_tx_canal3 sin outliers',subtitle = ' ',caption = ' ',
+       x = ' ', y='en_tx_canal3',color=NULL)+
+  theme_elegante()+
+  stat_summary(fun=mean,geom='point',shape=21,size=2,color='black',fill='black')
+P1
+```
+
+
+# en_tx_canal4
+
+
+```{r message=FALSE, warning=FALSE}
+P1 <- ggplot(datos_originales, aes(x=1, y=en_tx_canal4))+
+  geom_boxplot(color='blue',fill='blue',alpha=0.2,notch = F,notchwidth = 0.8,
+               outlier.colour = 'red',outlier.fill = 'red',outlier.size = 4)+
+  labs(title = 'en_tx_canal4',subtitle = ' ',caption = ' ',
+       x = ' ', y='en_tx_canal4',color=NULL)+
+  theme_elegante()+
+  stat_summary(fun=mean,geom='point',shape=21,size=2,color='black',fill='black')
+P1
+```
+
+
+Potenciales outliers  en_tx_canal4
+```{r}
+out_canal4 <- boxplot.stats(datos_originales$en_tx_canal4)$out
+out_indices_canal4 <- which(datos_originales$en_tx_canal4 %in% c(out_canal4))
+
+length(out_indices_canal4)
+summary(datos_originales$en_tx_canal4)
+summary(datos_originales$en_tx_canal4[-out_indices_canal4])
+```
+
+**Graficos sin outliers para canal4**
+
+```{r}
+hist(datos_originales$en_tx_canal4[-out_indices_canal4], main = "en_tx_canal4 sin outliers", col = "purple", xlab = "Transacciones mensuales promedio")
+```
+
+```{r message=FALSE, warning=FALSE}
+P1 <- ggplot(datos_originales[-out_indices_canal4,], aes(x=1, y=en_tx_canal4))+
+  geom_boxplot(color='blue',fill='blue',alpha=0.2,notch = F,notchwidth = 0.8,
+               outlier.colour = 'purple',outlier.fill = 'red',outlier.size = 3)+
+  labs(title = 'en_tx_canal4 sin outliers',subtitle = ' ',caption = ' ',
+       x = ' ', y='en_tx_canal4',color=NULL)+
+  theme_elegante()+
+  stat_summary(fun=mean,geom='point',shape=21,size=2,color='black',fill='black')
+P1
+```
+
+
+# en_tx_canal5
+
+
+```{r message=FALSE, warning=FALSE}
+P1 <- ggplot(datos_originales, aes(x=1, y=en_tx_canal5))+
+  geom_boxplot(color='blue',fill='blue',alpha=0.2,notch = F,notchwidth = 0.8,
+               outlier.colour = 'red',outlier.fill = 'red',outlier.size = 5)+
+  labs(title = 'en_tx_canal5',subtitle = ' ',caption = ' ',
+       x = ' ', y='en_tx_canal5',color=NULL)+
+  theme_elegante()+
+  stat_summary(fun=mean,geom='point',shape=21,size=2,color='black',fill='black')
+P1
+```
+
+
+Potenciales outliers  en_tx_canal5
+```{r}
+out_canal5 <- boxplot.stats(datos_originales$en_tx_canal5)$out
+out_indices_canal5 <- which(datos_originales$en_tx_canal5 %in% c(out_canal5))
+
+
+length(out_indices_canal5)
+summary(datos_originales$en_tx_canal5)
+summary(datos_originales$en_tx_canal5[-out_indices_canal5])
+```
+
+**Graficos sin outliers para canal5**
+
+```{r}
+hist(datos_originales$en_tx_canal5[-out_indices_canal5], main = "en_tx_canal5 sin outliers", col = "purple", xlab = "Transacciones mensuales promedio")
+```
+
+```{r message=FALSE, warning=FALSE}
+P1 <- ggplot(datos_originales[-out_indices_canal5,], aes(x=1, y=en_tx_canal5))+
+  geom_boxplot(color='blue',fill='blue',alpha=0.2,notch = F,notchwidth = 0.8,
+               outlier.colour = 'purple',outlier.fill = 'red',outlier.size = 3)+
+  labs(title = 'en_tx_canal5 sin outliers',subtitle = ' ',caption = ' ',
+       x = ' ', y='en_tx_canal5',color=NULL)+
+  theme_elegante()+
+  stat_summary(fun=mean,geom='point',shape=21,size=2,color='black',fill='black')
+P1
+```
+
+# en_tx_canal6
+
+```{r message=FALSE, warning=FALSE}
+P1 <- ggplot(datos_originales, aes(x=1, y=en_tx_canal6))+
+  geom_boxplot(color='blue',fill='blue',alpha=0.2,notch = F,notchwidth = 0.8,
+               outlier.colour = 'red',outlier.fill = 'red',outlier.size = 6)+
+  labs(title = 'en_tx_canal6',subtitle = ' ',caption = ' ',
+       x = ' ', y='en_tx_canal6',color=NULL)+
+  theme_elegante()+
+  stat_summary(fun=mean,geom='point',shape=21,size=2,color='black',fill='black')
+P1
+```
+
+
+Potenciales outliers  en_tx_canal6
+```{r}
+out_canal6 <- boxplot.stats(datos_originales$en_tx_canal6)$out
+out_indices_canal6 <- which(datos_originales$en_tx_canal6 %in% c(out_canal6))
+
+length(out_indices_canal6)
+summary(datos_originales$en_tx_canal6)
+summary(datos_originales$en_tx_canal6[-out_indices_canal6])
+```
+
+**Graficos sin outliers para canal6**
+
+```{r}
+hist(datos_originales$en_tx_canal6[-out_indices_canal6], main = "en_tx_canal6 sin outliers", col = "purple", xlab = "Transacciones mensuales promedio")
+```
+
+```{r message=FALSE, warning=FALSE}
+P1 <- ggplot(datos_originales[-out_indices_canal6,], aes(x=1, y=en_tx_canal6))+
+  geom_boxplot(color='blue',fill='blue',alpha=0.2,notch = F,notchwidth = 0.8,
+               outlier.colour = 'purple',outlier.fill = 'red',outlier.size = 3)+
+  labs(title = 'en_tx_canal6 sin outliers',subtitle = ' ',caption = ' ',
+       x = ' ', y='en_tx_canal6',color=NULL)+
+  theme_elegante()+
+  stat_summary(fun=mean,geom='point',shape=21,size=2,color='black',fill='black')
+P1
+```
+
+
+# en_tx_canal7
+
+```{r message=FALSE, warning=FALSE}
+P1 <- ggplot(datos_originales, aes(x=1, y=en_tx_canal7))+
+  geom_boxplot(color='blue',fill='blue',alpha=0.2,notch = F,notchwidth = 0.8,
+               outlier.colour = 'red',outlier.fill = 'red',outlier.size = 7)+
+  labs(title = 'en_tx_canal7',subtitle = ' ',caption = ' ',
+       x = ' ', y='en_tx_canal7',color=NULL)+
+  theme_elegante()+
+  stat_summary(fun=mean,geom='point',shape=21,size=2,color='black',fill='black')
+P1
+```
+
+
+Potenciales outliers  en_tx_canal7
+```{r}
+out_canal7 <- boxplot.stats(datos_originales$en_tx_canal7)$out
+out_indices_canal7 <- which(datos_originales$en_tx_canal7 %in% c(out_canal7))
+
+
+length(out_indices_canal7)
+summary(datos_originales$en_tx_canal7)
+summary(datos_originales$en_tx_canal7[-out_indices_canal7])
+```
+
+**Graficos sin outliers para canal7**
+
+```{r}
+hist(datos_originales$en_tx_canal7[-out_indices_canal7], main = "en_tx_canal7 sin outliers", col = "purple", xlab = "Transacciones mensuales promedio")
+```
+
+```{r message=FALSE, warning=FALSE}
+P1 <- ggplot(datos_originales[-out_indices_canal7,], aes(x=1, y=en_tx_canal7))+
+  geom_boxplot(color='blue',fill='blue',alpha=0.2,notch = F,notchwidth = 0.8,
+               outlier.colour = 'purple',outlier.fill = 'red',outlier.size = 3)+
+  labs(title = 'en_tx_canal7 sin outliers',subtitle = ' ',caption = ' ',
+       x = ' ', y='en_tx_canal7',color=NULL)+
+  theme_elegante()+
+  stat_summary(fun=mean,geom='point',shape=21,size=2,color='black',fill='black')
+P1
+```
+
+
+# en_tx_canal8
+
+```{r message=FALSE, warning=FALSE}
+P1 <- ggplot(datos_originales, aes(x=1, y=en_tx_canal8))+
+  geom_boxplot(color='blue',fill='blue',alpha=0.2,notch = F,notchwidth = 0.8,
+               outlier.colour = 'red',outlier.fill = 'red',outlier.size = 8)+
+  labs(title = 'en_tx_canal8',subtitle = ' ',caption = ' ',
+       x = ' ', y='en_tx_canal8',color=NULL)+
+  theme_elegante()+
+  stat_summary(fun=mean,geom='point',shape=21,size=2,color='black',fill='black')
+P1
+```
+
+
+Potenciales outliers  en_tx_canal8
+```{r}
+out_canal8 <- boxplot.stats(datos_originales$en_tx_canal8)$out
+out_indices_canal8 <- which(datos_originales$en_tx_canal8 %in% c(out_canal8))
+
+
+length(out_indices_canal8)
+summary(datos_originales$en_tx_canal8)
+summary(datos_originales$en_tx_canal8[-out_indices_canal8])
+```
+
+**Graficos sin outliers para canal8**
+
+```{r}
+hist(datos_originales$en_tx_canal8[-out_indices_canal8], main = "en_tx_canal8 sin outliers", col = "purple", xlab = "Transacciones mensuales promedio")
+```
+
+```{r message=FALSE, warning=FALSE}
+P1 <- ggplot(datos_originales[-out_indices_canal8,], aes(x=1, y=en_tx_canal8))+
+  geom_boxplot(color='blue',fill='blue',alpha=0.2,notch = F,notchwidth = 0.8,
+               outlier.colour = 'purple',outlier.fill = 'red',outlier.size = 3)+
+  labs(title = 'en_tx_canal8 sin outliers',subtitle = ' ',caption = ' ',
+       x = ' ', y='en_tx_canal8',color=NULL)+
+  theme_elegante()+
+  stat_summary(fun=mean,geom='point',shape=21,size=2,color='black',fill='black')
+P1
+```
+
+
+# en_tx_canal9
+
+
+```{r message=FALSE, warning=FALSE}
+P1 <- ggplot(datos_originales, aes(x=1, y=en_tx_canal9))+
+  geom_boxplot(color='blue',fill='blue',alpha=0.2,notch = F,notchwidth = 0.8,
+               outlier.colour = 'red',outlier.fill = 'red',outlier.size = 9)+
+  labs(title = 'en_tx_canal9',subtitle = ' ',caption = ' ',
+       x = ' ', y='en_tx_canal9',color=NULL)+
+  theme_elegante()+
+  stat_summary(fun=mean,geom='point',shape=21,size=2,color='black',fill='black')
+P1
+```
+
+
+Potenciales outliers  en_tx_canal9
+```{r}
+out_canal9 <- boxplot.stats(datos_originales$en_tx_canal9)$out
+out_indices_canal9 <- which(datos_originales$en_tx_canal9 %in% c(out_canal9))
+
+length(out_indices_canal9)
+summary(datos_originales$en_tx_canal9[-out_indices_canal9])
+```
+
+**Graficos sin outliers para canal9**
+
+```{r}
+hist(datos_originales$en_tx_canal9[-out_indices_canal9], main = "en_tx_canal9 sin outliers", col = "purple", xlab = "Transacciones mensuales promedio")
+```
+
+```{r message=FALSE, warning=FALSE}
+P1 <- ggplot(datos_originales[-out_indices_canal9,], aes(x=1, y=en_tx_canal9))+
+  geom_boxplot(color='blue',fill='blue',alpha=0.2,notch = F,notchwidth = 0.8,
+               outlier.colour = 'purple',outlier.fill = 'red',outlier.size = 3)+
+  labs(title = 'en_tx_canal9 sin outliers',subtitle = ' ',caption = ' ',
+       x = ' ', y='en_tx_canal9',color=NULL)+
+  theme_elegante()+
+  stat_summary(fun=mean,geom='point',shape=21,size=2,color='black',fill='black')
+P1
+```
+
+
+# en_tx_canal10
+
+
+```{r message=FALSE, warning=FALSE}
+P1 <- ggplot(datos_originales, aes(x=1, y=en_tx_canal10))+
+  geom_boxplot(color='blue',fill='blue',alpha=0.2,notch = F,notchwidth = 0.8,
+               outlier.colour = 'red',outlier.fill = 'red',outlier.size = 10)+
+  labs(title = 'en_tx_canal10',subtitle = ' ',caption = ' ',
+       x = ' ', y='en_tx_canal10',color=NULL)+
+  theme_elegante()+
+  stat_summary(fun=mean,geom='point',shape=21,size=2,color='black',fill='black')
+P1
+```
+
+
+Potenciales outliers  en_tx_canal10
+```{r}
+out_canal10 <- boxplot.stats(datos_originales$en_tx_canal10)$out
+out_indices_canal10 <- which(datos_originales$en_tx_canal10 %in% c(out_canal10))
+
+length(out_indices_canal10)
+summary(datos_originales$en_tx_canal10[-out_indices_canal10])
+```
+
+**Graficos sin outliers para canal10**
+
+```{r}
+hist(datos_originales$en_tx_canal10[-out_indices_canal10], main = "en_tx_canal10 sin outliers", col = "purple", xlab = "Transacciones mensuales promedio")
+```
+
+```{r message=FALSE, warning=FALSE}
+P1 <- ggplot(datos_originales[-out_indices_canal10,], aes(x=1, y=en_tx_canal10))+
+  geom_boxplot(color='blue',fill='blue',alpha=0.2,notch = F,notchwidth = 0.8,
+               outlier.colour = 'purple',outlier.fill = 'red',outlier.size = 3)+
+  labs(title = 'en_tx_canal10 sin outliers',subtitle = ' ',caption = ' ',
+       x = ' ', y='en_tx_canal10',color=NULL)+
+  theme_elegante()+
+  stat_summary(fun=mean,geom='point',shape=21,size=2,color='black',fill='black')
+P1
+```
+
+
+# en_tx_otros
+
+
+```{r message=FALSE, warning=FALSE}
+P1 <- ggplot(datos_originales, aes(x=1, y=en_tx_otros))+
+  geom_boxplot(color='blue',fill='blue',alpha=0.2,notch = F,notchwidth = 0.8,
+               outlier.colour = 'red',outlier.fill = 'red',outlier.size = 3)+
+  labs(title = 'en_tx_otros',subtitle = ' ',caption = ' ',
+       x = ' ', y='en_tx_otros',color=NULL)+
+  theme_elegante()+
+  stat_summary(fun=mean,geom='point',shape=21,size=2,color='black',fill='black')
+P1
+```
+
+Potenciales outliers  en_tx_otros
+```{r}
+out_otros <- boxplot.stats(datos_originales$en_tx_otros)$out
+out_indices_otros <- which(datos_originales$en_tx_otros %in% c(out_otros))
+
+length(out_indices_otros)
+summary(datos_originales$en_tx_otros[-out_indices_otros])
+```
+
+**Graficos sin outliers para otros**
+
+```{r}
+hist(datos_originales$en_tx_otros[-out_indices_otros], main = "en_tx_otros sin outliers", col = "purple", xlab = "Transacciones mensuales promedio")
+```
+
+```{r message=FALSE, warning=FALSE}
+P1 <- ggplot(datos_originales[-out_indices_otros,], aes(x=1, y=en_tx_otros))+
+  geom_boxplot(color='blue',fill='blue',alpha=0.2,notch = F,notchwidth = 0.8,
+               outlier.colour = 'purple',outlier.fill = 'red',outlier.size = 3)+
+  labs(title = 'en_tx_otros sin outliers',subtitle = ' ',caption = ' ',
+       x = ' ', y='en_tx_otros',color=NULL)+
+  theme_elegante()+
+  stat_summary(fun=mean,geom='point',shape=21,size=2,color='black',fill='black')
+P1
+```
+
