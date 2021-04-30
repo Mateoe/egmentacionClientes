@@ -1,0 +1,136 @@
+---
+title: "Exploración de datos"
+author: "Equipo TAE"
+date: "24/4/2021"
+output: html_document
+---
+
+```{r message=FALSE, warning=FALSE}
+library(tidyverse)
+library(kableExtra)
+library(papeR)
+```
+
+# 1. Lectura de la base de datos
+
+```{r}
+#Se carga la base de datos
+datos_originales <- read.csv("./datos/base_trabajo_segmentacion.csv",
+                             sep = ";")
+
+#Se imprime la cabecera
+#head(datos_originales)
+```
+
+# 2. Limpieza de datos
+```{r}
+#Se elimina el guión del nit
+datos_originales$nit <- gsub("-","", datos_originales$nit)
+
+#Se muestra la cabecera con el cambio realizado
+#head(datos_originales)
+```
+
+en: entrada
+vm: valor medio anual
+tx: transacciones mensuales promedio
+sal: salida
+Ejemplos:
+en_vm_canalX: valor del ticket promedio de entrada por el canal X
+sal_vm_canalX: valor del ticket promedio de salida por el canal X
+en_tx_canalX: cantidad de transacciones mensuales en promedio por el canal X
+
+```{r}
+names(datos_originales)
+```
+# Descripcion de las variables:
+
+```{r echo=FALSE}
+datos_originales %>% select(sal_vm_canal5,sal_vm_canal2,sal_vm_canal8,sal_vm_otros,sal_tx_canal5,sal_tx_canal2,sal_tx_canal8,sal_tx_otros)-> mias
+```
+
++---------------+------+--------------+--------------+-----+----------+--------------+--------------+--------------+
+| Variables     | N    | Mean         | SD           | Min | Q1       | Median       | Q3           | Max          |
++---------------+------+--------------+--------------+-----+----------+--------------+--------------+--------------+
+| sal_vm_canal5 | 2233 | 2.115933e+09 | 2.276978e+10 | 0   | 0        | 185714.29    | 3.005500e+08 | 8.069650e+11 |
++---------------+------+--------------+--------------+-----+----------+--------------+--------------+--------------+
+| sal_vm_canal2 | 2233 | 5.191257e+09 | 3.196322e+10 | 0   | 11397008 | 660844034.30 | 2.473199e+09 | 8.561830e+11 |
++---------------+------+--------------+--------------+-----+----------+--------------+--------------+--------------+
+| sal_vm_canal8 | 2233 | 1.255733e+07 | 5.087747e+08 | 0   | 0        | 0.00         | 0.000000e+00 | 2.393143e+10 |
++---------------+------+--------------+--------------+-----+----------+--------------+--------------+--------------+
+| sal_vm_otros  | 2233 | 9.050831e+05 | 1.648173e+07 | 0   | 0        | 0.00         | 0.000000e+00 | 6.220807e+08 |
++---------------+------+--------------+--------------+-----+----------+--------------+--------------+--------------+
+| sal_tx_canal5 | 2233 | 5.700000e+00 | 1.979000e+01 | 0   | 0        | 1.00         | 4.170000e+00 | 5.165000e+02 |
++---------------+------+--------------+--------------+-----+----------+--------------+--------------+--------------+
+| sal_tx_canal2 | 2233 | 7.638900e+02 | 2.764380e+03 | 0   | 1        | 122.67       | 5.613300e+02 | 7.305758e+04 |
++---------------+------+--------------+--------------+-----+----------+--------------+--------------+--------------+
+| sal_tx_canal8 | 2233 | 2.470000e+00 | 9.717000e+01 | 0   | 0        | 0.00         | 0.000000e+00 | 4.586000e+03 |
++---------------+------+--------------+--------------+-----+----------+--------------+--------------+--------------+
+| sal_tx_otros  | 2233 | 9.000000e-01 | 1.360000e+01 | 0   | 0        | 0.00         | 0.000000e+00 | 5.792100e+02 |
++---------------+------+--------------+--------------+-----+----------+--------------+--------------+--------------+
+
+```{r fig.height=8, fig.width=13, message=FALSE, warning=FALSE}
+# Función para agregar coeficientes de correlación
+panel.cor <- function(x, y, digits = 2, prefix = "", cex.cor, ...) {
+    usr <- par("usr")
+    on.exit(par(usr))
+    par(usr = c(0, 1, 0, 1))
+    Cor <- abs(cor(x, y)) # Elimina la función abs si lo prefieres
+    txt <- paste0(prefix, format(c(Cor, 0.123456789), digits = digits)[1])
+    if(missing(cex.cor)) {
+        cex.cor <- 0.4 / strwidth(txt)
+    }
+    text(0.5, 0.5, txt,
+         cex = 1 + cex.cor * Cor) # Escala el texto al nivel de correlación
+}
+panel.splot <- function(x)
+{
+        function(x)
+        {
+                usr <- par("usr"); on.exit(par(usr))
+                par(usr = c(0, 2, usr[3:4]), new = TRUE)
+                boxplot(x)
+        }
+}
+pairs(mias,diag.panel=panel.splot(), lower.panel = panel.cor,gap = 0)
+```
+
+```{r fig.height=7, fig.width=12}
+par(mfrow=c(1,2))
+boxplot(mias$sal_vm_canal5, outline = F, main= colnames(mias)[1])
+boxplot(mias$sal_vm_canal5, main= colnames(mias)[1])
+boxplot(mias$sal_vm_canal2, outline = F, main= colnames(mias)[2])
+boxplot(mias$sal_vm_canal2, main= colnames(mias)[2])
+boxplot(mias$sal_vm_canal8, outline = F, main= colnames(mias)[3])
+boxplot(mias$sal_vm_canal8, main= colnames(mias)[3])
+boxplot(mias$sal_vm_otros, outline = F, main= colnames(mias)[4])
+boxplot(mias$sal_vm_otros, main= colnames(mias)[4])
+boxplot(mias$sal_tx_canal5, outline = F, main= colnames(mias)[5])
+boxplot(mias$sal_tx_canal5, main= colnames(mias)[5])
+boxplot(mias$sal_tx_canal2, outline = F, main= colnames(mias)[6])
+boxplot(mias$sal_tx_canal2, main= colnames(mias)[6])
+boxplot(mias$sal_tx_canal8, outline = F, main= colnames(mias)[7])
+boxplot(mias$sal_tx_canal8, main= colnames(mias)[7])
+boxplot(mias$sal_tx_otros, outline = F, main= colnames(mias)[8])
+boxplot(mias$sal_tx_otros, main= colnames(mias)[8])
+```
+
+```{r}
+#valor del ticket promedio de salida por el canal 5
+length(mias$sal_vm_canal5[mias$sal_vm_canal5!=0])
+#valor del ticket promedio de salida por el canal 2
+length(mias$sal_vm_canal2[mias$sal_vm_canal2!=0])
+#valor del ticket promedio de salida por el canal 8
+length(mias$sal_vm_canal8[mias$sal_vm_canal8!=0])
+#valor del ticket promedio de salida por otros canales
+length(mias$sal_vm_otros[mias$sal_vm_otros!=0])
+#
+length(mias$sal_tx_canal5[mias$sal_tx_canal5!=0])
+#
+length(mias$sal_tx_canal2[mias$sal_tx_canal2!=0])
+#
+length(mias$sal_tx_canal8[mias$sal_tx_canal8!=0])
+#
+length(mias$sal_tx_otros[mias$sal_tx_otros!=0])
+```
+
