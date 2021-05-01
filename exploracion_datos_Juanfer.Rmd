@@ -1,0 +1,454 @@
+---
+title: "Descripción de Variables"
+author: "Juan Fernando Patiño Castro"
+date: "24/4/2021"
+output:
+    rmdformats::readthedown
+---
+
+```{r, message=FALSE, warning=FALSE}
+library(dplyr)
+library(knitr)
+library(kableExtra)
+library(ggplot2)
+library(ggcorrplot)
+library(RColorBrewer)
+options(scipen = 999)
+```
+
+# 1. Lectura de la base de datos
+
+```{r}
+#Se carga la base de datos
+datos_originales <- read.csv("./datos/base_trabajo_segmentacion.csv", sep = ";")
+
+#Se imprime la cabecera
+kable(head(datos_originales), "html", align = "c") %>% 
+    kable_paper("hover", full_width = F) %>% 
+    scroll_box(width = "100%") %>% 
+    kable_styling(bootstrap_options = c("hover", "condensed"))
+```
+
+# 2. Limpieza de datos
+```{r}
+#Se elimina el guión del nit
+datos_originales$nit <- gsub("-","", datos_originales$nit)
+
+#Se muestra la cabecera con el cambio realizado
+kable(head(datos_originales), "html", align = "c") %>% 
+    kable_paper("hover", full_width = F) %>% 
+    scroll_box(width = "100%") %>% 
+    kable_styling(bootstrap_options = c("hover", "condensed"))
+```
+
+# 3. selección de variables a analizar
+```{r}
+#Se seleccionan las variables que se deben analizar
+datos_asignados <- datos_originales %>% select(impo_cv, expo_vt, cxp, cxc, totalinventory, pagos_pj, pagos_pn, tiene_ventas_fisicas, tiene_ventas_electronicas)
+
+#Se muestran las columnas a analizar
+kable(names(datos_asignados), col.names = "Variable", align = "c", "html") %>% 
+    kable_paper("hover", full_width = TRUE) %>%
+    kable_styling(bootstrap_options = c( "hover", "condensed")) %>% 
+    row_spec(0, background = "tomato", color = "white")
+```
+
+# 4. Análisis de variables
+Función para resúmenes numéricos
+```{r}
+#Se crea la función para presentar resumenes numéricos
+resumen <- function(columna){
+    #Se usa la función summary para encontrar los resumenes
+    summary_canal <- summary(columna)
+    
+    #Se convierte a array y se transpone el resumen numérico
+    summary_canal <- t(as.array(summary_canal))
+    
+    #Se crean los nombres en español para los resumenes
+    nombres_resumen <- c("Mínimo", "Q1", "Mediana", "Media", "Q3", "Máximo")
+    
+    #Se estiliza el resumen con la función kable
+    kable(summary_canal, col.names = nombres_resumen, align = "c",  "html") %>% 
+        #Se utiliza el tema kable_papper
+        kable_paper("hover", full_width = TRUE) %>%
+        kable_styling(bootstrap_options = c("hover", "condensed")) %>% 
+        row_spec(0, background = "tomato", color = "white")
+}
+```
+
+Función para graficar histogramas
+```{r}
+#Se crea la función para dibujar los gráficos
+crear_histograma <- function(datos, columna, bins, xetiqueta, yetiqueta, titulo) {
+    
+    #Se crea un nuevo gráfico de ggplot
+    ggplot(datos, aes(x = columna)) + 
+        
+    #Se crea el histograma
+    geom_histogram(bins = bins) +
+    
+    #Se añade la etiqueta del eje x
+    xlab(xetiqueta) +
+    
+    #Se añade la etiqueta del eje y
+    ylab(yetiqueta) +
+    
+    #Se añade la etiqueta del titulo
+    ggtitle(titulo) +
+    
+    #Se centra el titulo
+    theme(plot.title = element_text(hjust = 0.5))
+}
+```
+
+Función para graficar densidad
+```{r}
+#Se crea la función para dibujar los gráficos
+crear_grafico_densidad <- function(datos, columna, xetiqueta, yetiqueta, titulo) {
+    
+    #Se crea un nuevo gráfico de ggplot
+    ggplot(datos, aes(x = columna)) + 
+        
+    #Se crea el gráfico
+    geom_density(col="red", fill = "coral", size = 1) +
+    
+    #Se añade la etiqueta del eje x
+    xlab(xetiqueta) +
+    
+    #Se añade la etiqueta del eje y
+    ylab(yetiqueta) +
+    
+    #Se añade la etiqueta del titulo
+    ggtitle(titulo) +
+    
+    #Se centra el titulo
+    theme(plot.title = element_text(hjust = 0.5))
+}
+```
+
+Función para graficar gráficos de barras
+```{r}
+#Se crea la función para dibujar los gráficos
+crear_grafico_barras <- function(datos, columna, xetiqueta, yetiqueta, titulo) {
+    
+    #Se crea un nuevo gráfico de ggplot
+    ggplot(datos, aes(columna)) + 
+        
+    #Se crea el gráfico de barras
+    geom_bar() +
+    
+    #Se añade la etiqueta del titulo
+    ggtitle(titulo) +
+    
+    #Se centra el titulo
+    theme(plot.title = element_text(hjust = 0.5, face = "bold")) +
+    
+    #Se añade la etiqueta del eje x e y
+    labs(x = xetiqueta, y = yetiqueta) +
+    
+    scale_fill_manual(values = brewer.pal(n = 6, name = "Accent"))
+    
+}
+```
+
+### 4.1. Variable `impo_cv`
+
+[importaciones] / [compras] categorizadas
+
+**Resumen numérico**
+
+```{r}
+resumen(datos_asignados$impo_cv)
+```
+
+**Gráfico de Barras**
+
+```{r}
+crear_grafico_barras (
+    datos = datos_asignados,
+    columna = datos_asignados$impo_cv,
+    xetiqueta = "Categoría",
+    yetiqueta = "Frecuencia",
+    titulo = "Gráfico de Barras de importaciones por compras categorizadas"
+)
+```
+
+### 4.2. Variable `expo_vt`
+
+[exportaciones] / [ventas] categorizadas
+
+**Resumen numérico**
+
+```{r}
+resumen(datos_asignados$expo_vt)
+```
+
+**Gráfico de Barras**
+
+```{r}
+crear_grafico_barras (
+    datos = datos_asignados,
+    columna = datos_asignados$expo_vt,
+    xetiqueta = "Categoría",
+    yetiqueta = "Frecuencia",
+    titulo = "Gráfico de Barras de exportaciones por ventas categorizadas"
+)
+```
+
+### 4.3. Variable `cxp`
+
+[cuentas por pagar] categorizada con seis niveles
+
+**Resumen numérico**
+
+```{r}
+resumen(datos_asignados$cxp)
+```
+
+**Gráfico de Barras**
+
+```{r}
+crear_grafico_barras (
+    datos = datos_asignados,
+    columna = datos_asignados$cxp,
+    xetiqueta = "Categoría",
+    yetiqueta = "Frecuencia",
+    titulo = "Gráfico de Barras de cuentas por pagar categorizadas"
+)
+```
+
+### 4.4. Variable `cxc`
+
+[cuentas por cobrar] categorizada con seis niveles
+
+**Resumen numérico**
+
+```{r}
+resumen(datos_asignados$cxc)
+```
+
+**Gráfico de Barras**
+
+```{r}
+crear_grafico_barras (
+    datos = datos_asignados,
+    columna = datos_asignados$cxc,
+    xetiqueta = "Categoría",
+    yetiqueta = "Frecuencia",
+    titulo = "Gráfico de Barras de cuentas por cobrar categorizadas"
+)
+```
+
+### 4.5. Variable `totalinventory`
+
+[valor de inventarios] categorizada con seis niveles
+
+**Resumen numérico**
+
+```{r}
+resumen(datos_asignados$totalinventory)
+```
+
+**Gráfico de Barras**
+
+```{r}
+crear_grafico_barras (
+    datos = datos_asignados,
+    columna = datos_asignados$totalinventory,
+    xetiqueta = "Categoría",
+    yetiqueta = "Frecuencia",
+    titulo = "Gráfico de Barras de valor de inventarios categorizados"
+)
+```
+
+### 4.6. Variable `pagos_pj`
+
+[pagos hechos a personas jurídicas] / [pagos totales]
+
+
+**Resumen numérico**
+
+```{r}
+resumen(datos_asignados$pagos_pj)
+```
+
+**Histograma**
+
+```{r}
+crear_histograma (
+    datos = datos_asignados,
+    columna = datos_asignados$pagos_pj,
+    bins = 30,
+    xetiqueta = "pagos hechos a personas jurídicas por pagos totales",
+    yetiqueta = "Frecuencia",
+    titulo = "Histograma de los pagos hechos a personas jurídicas por pagos totales"
+)
+```
+
+**Gráfico de densidad**
+
+```{r}
+crear_grafico_densidad (
+    datos = datos_asignados,
+    columna = datos_asignados$pagos_pj,
+    xetiqueta = "pagos hechos a personas jurídicas por pagos totales",
+    yetiqueta = "Densidad",
+    titulo = "Densidad de los pagos hechos a personas jurídicas por pagos totales"
+)
+```
+
+### 4.7. Variable `pagos_pn`
+
+[pagos hechos a personas naturales] / [pagos totales]
+
+**Resumen numérico**
+
+```{r}
+resumen(datos_asignados$pagos_pn)
+```
+
+**Histograma**
+
+```{r}
+crear_histograma (
+    datos = datos_asignados,
+    columna = datos_asignados$pagos_pn,
+    bins = 30,
+    xetiqueta = "pagos hechos a personas naturales por pagos totales",
+    yetiqueta = "Frecuencia",
+    titulo = "Histograma de los pagos hechos a personas naturales por pagos totales"
+)
+```
+
+
+**Gráfico de densidad**
+
+```{r}
+crear_grafico_densidad (
+    datos = datos_asignados,
+    columna = datos_asignados$pagos_pn,
+    xetiqueta = "pagos hechos a personas naturales por pagos totales",
+    yetiqueta = "Densidad",
+    titulo = "Densidad de los pagos hechos a personas naturales por pagos totales"
+)
+```
+
+### 4.8. Variable `tiene_ventas_fisicas`
+
+
+La empresa tiene puntos de venta físicos (1:Si, 0:No)
+
+**Resumen numérico**
+
+```{r}
+resumen(datos_asignados$tiene_ventas_fisicas)
+```
+
+**Gráfico de Barras**
+
+```{r}
+crear_grafico_barras (
+    datos = datos_asignados,
+    columna = datos_asignados$tiene_ventas_fisicas,
+    xetiqueta = "Categoría",
+    yetiqueta = "Frecuencia",
+    titulo = "Gráfico de Barras de empresa tiene ventas físicas"
+)
+```
+
+### 4.9. Variable `tiene_ventas_electronicas`
+
+La empresa tiene ventas electrónicas (1:Si, 0:No)
+
+**Resumen numérico**
+
+```{r}
+resumen(datos_asignados$tiene_ventas_electronicas)
+```
+
+**Gráfico de Barras**
+
+```{r}
+crear_grafico_barras (
+    datos = datos_asignados,
+    columna = datos_asignados$tiene_ventas_electronicas,
+    xetiqueta = "Categoría",
+    yetiqueta = "Frecuencia",
+    titulo = "Gráfico de Barras de empresa tiene ventas electrónicas"
+)
+```
+
+# 5. correlación de las variables
+
+```{r, fig.height = 7, fig.width = 7, fig.align='center'}
+
+#Se encuentra la matriz de correlación
+correlaciones <- cor(datos_asignados)
+
+#Se crea la gráfica de correlación para las variables
+ggcorrplot(correlaciones, method = "circle",lab = TRUE)+
+    ggtitle("Matriz de correlación entre las variables asignadas")+
+    theme(plot.title = element_text(hjust = 0.5, size = 20))
+```
+
+# 6. Análisis de variables sin datos atipicos
+
+```{r}
+#Función para remover ceros y datos atipicos
+rm_atipicos <- function(conjunto_datos, variable, rm.cero = FALSE){
+    
+    columna <- conjunto_datos[, variable]
+    
+    if (rm.cero == TRUE) {
+        columna <- columna[columna != 0]
+    }
+    
+    outliers <- boxplot(columna, plot = FALSE)$out
+    
+    sin_outliers <- columna[!columna %in% outliers]
+    
+    return(list(datos = sin_outliers, outliers = outliers))
+}
+```
+
+**Conteo de valores en cero para cada variable**:
+```{r}
+cantidad_ceros <- apply(datos_asignados, 2, function(x){sum(x==0)})
+kable(cantidad_ceros, col.names = c("Ceros")) %>% 
+    kable_paper("hover", full_width = TRUE) %>%
+    kable_styling(bootstrap_options = c("hover", "condensed")) %>% 
+    row_spec(0, background = "tomato", color = "white")
+```
+
+**Tabla general de resumenes para cada variable**:
+```{r}
+cantidad_ceros <- t(apply(datos_asignados, 2, function(x){summary(x)}))
+nombres_resumen <- c("Mínimo", "Q1", "Mediana", "Media", "Q3", "Máximo")
+kable(cantidad_ceros, col.names = nombres_resumen) %>% 
+    kable_paper("hover", full_width = TRUE) %>%
+    kable_styling(bootstrap_options = c("hover", "condensed")) %>% 
+    row_spec(0, background = "tomato", color = "white")
+```
+
+### 6.1. Variable `pagos_pj`
+
+```{r}
+sin_atipicos <- as.data.frame(rm_atipicos(datos_asignados, variable = "pagos_pj")[1])
+
+crear_histograma (
+    datos = datos_asignados,
+    columna = datos_asignados$pagos_pn,
+    bins = 30,
+    xetiqueta = "pagos hechos a personas naturales por pagos totales",
+    yetiqueta = "Frecuencia",
+    titulo = "Histograma de los pagos hechos a personas naturales por pagos totales"
+)
+```
+
+### 6.2. Variable `en_vm_canal2`
+
+```{r, fig.height = 7, fig.width = 11}
+sin_atipicos <- as.data.frame(rm_atipicos(datos_asignados, variable = "en_vm_canal2")[1])
+
+crear_histograma(sin_atipicos,secuencia = "2")
+```
