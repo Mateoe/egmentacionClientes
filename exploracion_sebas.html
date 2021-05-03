@@ -394,18 +394,45 @@ length(mias$sal_vm_canal8[mias$sal_vm_canal8!=0])</code></pre>
 <pre class="r"><code>#valor del ticket promedio de salida por otros canales
 length(mias$sal_vm_otros[mias$sal_vm_otros!=0])</code></pre>
 <pre><code>## [1] 86</code></pre>
-<pre class="r"><code>#
+<pre class="r"><code>#cantidad de transacciones de salida mensuales en promedio por el canal 5
 length(mias$sal_tx_canal5[mias$sal_tx_canal5!=0])</code></pre>
 <pre><code>## [1] 1126</code></pre>
-<pre class="r"><code>#
+<pre class="r"><code>#cantidad de transacciones de salida mensuales en promedio por el canal 2
 length(mias$sal_tx_canal2[mias$sal_tx_canal2!=0])</code></pre>
 <pre><code>## [1] 1691</code></pre>
-<pre class="r"><code>#
+<pre class="r"><code>#cantidad de transacciones de salida mensuales en promedio por el canal 8
 length(mias$sal_tx_canal8[mias$sal_tx_canal8!=0])</code></pre>
 <pre><code>## [1] 297</code></pre>
-<pre class="r"><code>#
+<pre class="r"><code>#cantidad de transacciones de salida mensuales en promedio por otros canales
 length(mias$sal_tx_otros[mias$sal_tx_otros!=0])</code></pre>
 <pre><code>## [1] 86</code></pre>
+</div>
+<div id="porcentaje-de-0s" class="section level1">
+<h1>Porcentaje de 0’s</h1>
+<pre class="r"><code>#valor del ticket promedio de salida por el canal 5
+1-(length(mias$sal_vm_canal5[mias$sal_vm_canal5!=0])/2233)</code></pre>
+<pre><code>## [1] 0.4957456</code></pre>
+<pre class="r"><code>#valor del ticket promedio de salida por el canal 2
+1-(length(mias$sal_vm_canal2[mias$sal_vm_canal2!=0])/2233)</code></pre>
+<pre><code>## [1] 0.2427228</code></pre>
+<pre class="r"><code>#valor del ticket promedio de salida por el canal 8
+1-(length(mias$sal_vm_canal8[mias$sal_vm_canal8!=0])/2233)</code></pre>
+<pre><code>## [1] 0.8669951</code></pre>
+<pre class="r"><code>#valor del ticket promedio de salida por otros canales
+1-(length(mias$sal_vm_otros[mias$sal_vm_otros!=0])/2233)</code></pre>
+<pre><code>## [1] 0.9614868</code></pre>
+<pre class="r"><code>#cantidad de transacciones de salida mensuales en promedio por el canal 5
+1-(length(mias$sal_tx_canal5[mias$sal_tx_canal5!=0])/2233)</code></pre>
+<pre><code>## [1] 0.4957456</code></pre>
+<pre class="r"><code>#cantidad de transacciones de salida mensuales en promedio por el canal 2
+1-(length(mias$sal_tx_canal2[mias$sal_tx_canal2!=0])/2233)</code></pre>
+<pre><code>## [1] 0.2427228</code></pre>
+<pre class="r"><code>#cantidad de transacciones de salida mensuales en promedio por el canal 8
+1-(length(mias$sal_tx_canal8[mias$sal_tx_canal8!=0])/2233)</code></pre>
+<pre><code>## [1] 0.8669951</code></pre>
+<pre class="r"><code>#cantidad de transacciones de salida mensuales en promedio por otros canales
+1-(length(mias$sal_tx_otros[mias$sal_tx_otros!=0])/2233)</code></pre>
+<pre><code>## [1] 0.9614868</code></pre>
 </div>
 
 

@@ -640,7 +640,7 @@ sin_atipicos <- as.data.frame(rm_atipicos(datos_en_vm, variable = "en_vm_canal9"
 crear_histograma(sin_atipicos,secuencia = "9")
 ```
 
-### 6.10. Variable `en_vm_canal9`
+### 6.10. Variable `en_vm_canal10`
 
 ```{r, fig.height = 7, fig.width = 11}
 sin_atipicos <- as.data.frame(rm_atipicos(datos_en_vm, variable = "en_vm_canal10")[1])
