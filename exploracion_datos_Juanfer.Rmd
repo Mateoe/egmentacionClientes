@@ -265,7 +265,6 @@ crear_grafico_barras (
 
 [pagos hechos a personas jurídicas] / [pagos totales]
 
-
 **Resumen numérico**
 
 ```{r}
@@ -319,7 +318,6 @@ crear_histograma (
     titulo = "Histograma de los pagos hechos a personas naturales por pagos totales"
 )
 ```
-
 
 **Gráfico de densidad**
 
@@ -433,22 +431,22 @@ kable(cantidad_ceros, col.names = nombres_resumen) %>%
 ### 6.1. Variable `pagos_pj`
 
 ```{r}
-sin_atipicos <- as.data.frame(rm_atipicos(datos_asignados, variable = "pagos_pj")[1])
-
-crear_histograma (
-    datos = datos_asignados,
-    columna = datos_asignados$pagos_pn,
-    bins = 30,
-    xetiqueta = "pagos hechos a personas naturales por pagos totales",
-    yetiqueta = "Frecuencia",
-    titulo = "Histograma de los pagos hechos a personas naturales por pagos totales"
-)
+# sin_atipicos <- as.data.frame(rm_atipicos(datos_asignados, variable = "pagos_pj")[1])
+# 
+# crear_histograma (
+#     datos = datos_asignados,
+#     columna = datos_asignados$pagos_pn,
+#     bins = 30,
+#     xetiqueta = "pagos hechos a personas naturales por pagos totales",
+#     yetiqueta = "Frecuencia",
+#     titulo = "Histograma de los pagos hechos a personas naturales por pagos totales"
+# )
 ```
 
 ### 6.2. Variable `en_vm_canal2`
 
 ```{r, fig.height = 7, fig.width = 11}
-sin_atipicos <- as.data.frame(rm_atipicos(datos_asignados, variable = "en_vm_canal2")[1])
-
-crear_histograma(sin_atipicos,secuencia = "2")
+# sin_atipicos <- as.data.frame(rm_atipicos(datos_asignados, variable = "en_vm_canal2")[1])
+# 
+# crear_histograma(sin_atipicos,secuencia = "2")
 ```
