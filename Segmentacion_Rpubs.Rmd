@@ -1,0 +1,25 @@
+---
+title: | 
+  <center> Técnicas en Aprendizaje Estadístico </center>
+  <center> Actividad: Segmentación de clientes </center>
+author: | 
+  <center> Alejandro Bedoya  </center>
+  <center> Mateo Espinal Londoño </center>
+  <center> Juan Fernando Patiño </center>
+  <center> Sebastian Agudelo Jimenez </center>
+  <center> Estefanía Echeverry Franco </center>
+date: "Abril, 2021"
+output:
+  prettydoc::html_pretty:
+    theme: architect
+    highlight: github
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Segmentación de clientes 
+
+
+
