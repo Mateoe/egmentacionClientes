@@ -15,25 +15,66 @@ output:
     highlight: github
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+
+```{r, message=FALSE, warning=FALSE}
+library(dplyr)
+library(knitr)
+library(kableExtra)
+library(ggplot2)
+library(ggcorrplot)
+library(factoextra)
+options(scipen = 999)
 ```
 
 
-# Procesamiento de datos 
-
-## 1. Lectura de la base de datos
+# 1. Lectura de la base de datos
 
 ```{r}
 #Se carga la base de datos
-datos_originales <- read.csv("./datos/base_trabajo_segmentacion.csv",
+datos_originales <- read.csv("../datos/base_trabajo_segmentacion.csv",
                              sep = ";")
+
+#Se imprime la cabecera
+
+kable(head(datos_originales), "html", align = "c") %>% 
+    kable_paper("hover", full_width = F) %>% 
+    row_spec(0, background = "tomato", color = "white") %>% 
+    scroll_box(width = "100%") %>% 
+    kable_styling(bootstrap_options = c("hover", "condensed"))
 ```
 
-## 2. Limpieza de datos
+# 2. Limpieza de datos
 ```{r}
 #Se elimina el guión del nit
 datos_originales$nit <- gsub("-","", datos_originales$nit)
+
+#Se muestra la cabecera con el cambio realizado
+kable(head(datos_originales), "html", align = "c") %>% 
+    kable_paper("hover", full_width = F) %>% 
+    row_spec(0, background = "tomato", color = "white") %>% 
+    scroll_box(width = "100%") %>% 
+    kable_styling(bootstrap_options = c("hover", "condensed"))
+```
+
+# 3. Normalización de variables
+```{r}
+#Se crea la función para escalar las variables en el rango 0-1
+normalizar <- function(columna){
+    normalizada <- (columna-min(columna))/(max(columna)-min(columna))
+}
+
+datos_normalizados <- apply(datos_originales[,2:length(datos_originales)], 
+                       2,
+                       normalizar)
+
+datos_normalizados <- as.data.frame(datos_normalizados)
+```
+
+## 3.1. Correlación de las variables
+```{r, fig.height = 20, fig.width = 20, fig.align='center'}
+corr <-cor(datos_normalizados)
+ggcorrplot(corr, lab = T)
+```
 ```
 
 
