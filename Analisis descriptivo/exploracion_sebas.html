@@ -177,7 +177,7 @@ library(papeR)</code></pre>
 <div id="lectura-de-la-base-de-datos" class="section level1">
 <h1>1. Lectura de la base de datos</h1>
 <pre class="r"><code>#Se carga la base de datos
-datos_originales &lt;- read.csv(&quot;./datos/base_trabajo_segmentacion.csv&quot;,
+datos_originales &lt;- read.csv(&quot;../datos/base_trabajo_segmentacion.csv&quot;,
                              sep = &quot;;&quot;)
 
 #Se imprime la cabecera
@@ -433,6 +433,30 @@ length(mias$sal_tx_otros[mias$sal_tx_otros!=0])</code></pre>
 <pre class="r"><code>#cantidad de transacciones de salida mensuales en promedio por otros canales
 1-(length(mias$sal_tx_otros[mias$sal_tx_otros!=0])/2233)</code></pre>
 <pre><code>## [1] 0.9614868</code></pre>
+<pre class="r"><code>entradas_anuales&lt;- datos_originales %&gt;%  select(&quot;en_vm_canal1&quot;, &quot;en_vm_canal2&quot;, &quot;en_vm_canal3&quot;, &quot;en_vm_canal4&quot;, &quot;en_vm_canal5&quot;, &quot;en_vm_canal6&quot;, &quot;en_vm_canal7&quot;, &quot;en_vm_canal8&quot;, &quot;en_vm_canal9&quot;, &quot;en_vm_canal10&quot;, &quot;en_vm_otros&quot;)
+entradas_mensuales&lt;- datos_originales %&gt;%  select(&quot;en_tx_canal1&quot;, &quot;en_tx_canal2&quot;, &quot;en_tx_canal3&quot;, &quot;en_tx_canal4&quot;, &quot;en_tx_canal5&quot;, &quot;en_tx_canal6&quot;, &quot;en_tx_canal7&quot;, &quot;en_tx_canal8&quot;, &quot;en_tx_canal9&quot;, &quot;en_tx_canal10&quot;, &quot;en_tx_otros&quot;)
+salidas_anuales&lt;- datos_originales %&gt;%  select(&quot;sal_vm_canal5&quot;, &quot;sal_vm_canal2&quot;, &quot;sal_vm_canal8&quot;, &quot;sal_vm_otros&quot;)
+salidas_mensuales&lt;- datos_originales %&gt;%  select(&quot;sal_tx_canal5&quot;, &quot;sal_tx_canal2&quot;, &quot;sal_tx_canal8&quot;, &quot;sal_tx_otros&quot;)
+
+tot_entradas_anuales&lt;- apply(entradas_anuales, 1, sum)
+tot_entradas_mensuales&lt;- apply(entradas_mensuales, 1, sum)
+tot_salidas_anuales&lt;- apply(salidas_anuales, 1, sum)
+tot_salidas_mensuales&lt;- apply(salidas_mensuales, 1, sum)
+
+entradas_anuales&lt;- apply(entradas_anuales, 1:2, function(x) {ifelse(x != 0, 1,0)})
+entradas_mensuales&lt;- apply(entradas_mensuales, 1:2, function(x) {ifelse(x != 0, 1,0)})
+salidas_anuales&lt;- apply(salidas_anuales, 1:2, function(x) {ifelse(x != 0, 1,0)})
+salidas_mensuales&lt;- apply(salidas_mensuales, 1:2, function(x) {ifelse(x != 0, 1,0)})
+
+datos_originales$tot_entradas_anuales&lt;- tot_entradas_anuales
+datos_originales$tot_entradas_mensuales&lt;- tot_entradas_mensuales
+datos_originales$tot_salidas_anuales&lt;- tot_salidas_anuales
+datos_originales$tot_salidas_mensuales&lt;- tot_salidas_mensuales
+datos_originales[,2:12]&lt;- entradas_anuales
+datos_originales[,13:23]&lt;- entradas_mensuales
+datos_originales[,24:27]&lt;- salidas_anuales
+datos_originales[,28:31]&lt;- salidas_mensuales</code></pre>
+<pre class="r"><code>write.csv(datos_originales,&quot;../datos/opcional.csv&quot;)</code></pre>
 </div>
 
 

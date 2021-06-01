@@ -15,7 +15,7 @@ library(papeR)
 
 ```{r}
 #Se carga la base de datos
-datos_originales <- read.csv("./datos/base_trabajo_segmentacion.csv",
+datos_originales <- read.csv("../datos/base_trabajo_segmentacion.csv",
                              sep = ";")
 
 #Se imprime la cabecera
@@ -153,4 +153,36 @@ length(mias$sal_tx_otros[mias$sal_tx_otros!=0])
 #cantidad de transacciones de salida mensuales en promedio por otros canales
 1-(length(mias$sal_tx_otros[mias$sal_tx_otros!=0])/2233)
 ```
+
+```{r}
+entradas_anuales<- datos_originales %>%  select("en_vm_canal1", "en_vm_canal2", "en_vm_canal3", "en_vm_canal4", "en_vm_canal5", "en_vm_canal6", "en_vm_canal7", "en_vm_canal8", "en_vm_canal9", "en_vm_canal10", "en_vm_otros")
+entradas_mensuales<- datos_originales %>%  select("en_tx_canal1", "en_tx_canal2", "en_tx_canal3", "en_tx_canal4", "en_tx_canal5", "en_tx_canal6", "en_tx_canal7", "en_tx_canal8", "en_tx_canal9", "en_tx_canal10", "en_tx_otros")
+salidas_anuales<- datos_originales %>%  select("sal_vm_canal5", "sal_vm_canal2", "sal_vm_canal8", "sal_vm_otros")
+salidas_mensuales<- datos_originales %>%  select("sal_tx_canal5", "sal_tx_canal2", "sal_tx_canal8", "sal_tx_otros")
+
+tot_entradas_anuales<- apply(entradas_anuales, 1, sum)
+tot_entradas_mensuales<- apply(entradas_mensuales, 1, sum)
+tot_salidas_anuales<- apply(salidas_anuales, 1, sum)
+tot_salidas_mensuales<- apply(salidas_mensuales, 1, sum)
+
+entradas_anuales<- apply(entradas_anuales, 1:2, function(x) {ifelse(x != 0, 1,0)})
+entradas_mensuales<- apply(entradas_mensuales, 1:2, function(x) {ifelse(x != 0, 1,0)})
+salidas_anuales<- apply(salidas_anuales, 1:2, function(x) {ifelse(x != 0, 1,0)})
+salidas_mensuales<- apply(salidas_mensuales, 1:2, function(x) {ifelse(x != 0, 1,0)})
+
+datos_originales$tot_entradas_anuales<- tot_entradas_anuales
+datos_originales$tot_entradas_mensuales<- tot_entradas_mensuales
+datos_originales$tot_salidas_anuales<- tot_salidas_anuales
+datos_originales$tot_salidas_mensuales<- tot_salidas_mensuales
+datos_originales[,2:12]<- entradas_anuales
+datos_originales[,13:23]<- entradas_mensuales
+datos_originales[,24:27]<- salidas_anuales
+datos_originales[,28:31]<- salidas_mensuales
+```
+```{r}
+write.csv(datos_originales,"../datos/opcional.csv")
+```
+
+
+
 
