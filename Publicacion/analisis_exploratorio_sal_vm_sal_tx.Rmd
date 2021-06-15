@@ -376,7 +376,7 @@ ggcorrplot(correlaciones, lab = TRUE, colors = c("pink",
                                                  "cadetblue")
 )+
   #Se añade el titulo del gráfico
-  ggtitle("Correlación entre las variables de tipo en_tx")+
+  ggtitle("Correlación entre las variables de canales de salida")+
   #Se centra el titulo
   theme(plot.title = element_text(hjust = 0.5))
 ```
