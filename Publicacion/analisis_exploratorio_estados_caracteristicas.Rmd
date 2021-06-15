@@ -1,0 +1,551 @@
+---
+title: |
+    ![](./elementos/logo.png){width=2in}  
+    Análisis exploratorio: estados financieros y características
+author: "Alejandro Bedoya - Sebastián Agudelo - Mateo Espinal - Juan Fernando Patiño - Estefanía Echeverry"
+date: "Junio - 2021"
+output:
+  prettydoc::html_pretty:
+    theme: architect
+    highlight: github
+    include:
+      after_body: ./elementos/footer.html
+---
+
+# 1. Pasos previos al análisis
+
+<br>
+
+## 1.1. Se cargan las librerías necesarias
+
+```{r, message=FALSE, warning=FALSE}
+library(dplyr)
+library(knitr)
+library(kableExtra)
+library(ggplot2)
+library(ggcorrplot)
+library(scales)
+library(formattable)
+options(scipen = 999)
+```
+
+## 1.2. Lectura de la base de datos
+
+```{r}
+#Se carga la base de datos
+datos_originales <- read.csv("../datos/base_trabajo_segmentacion.csv",
+                             sep = ";")
+
+#Se imprime la cabecera
+kable(head(datos_originales), "html", align = "c") %>% 
+    kable_paper("hover", full_width = F) %>% 
+    row_spec(0, background = "#327CCF", color = "white")%>% 
+    scroll_box(width = "100%") %>% 
+    kable_styling(bootstrap_options = c("hover", "condensed"))
+```
+
+## 1.3. Creación de funciones necesarias
+
+**Función encargada de crear las tablas de frecuencias**
+
+```{r}
+#Se defne la función para crear tablas de frecuencia 
+crear_tabla <- function(datos, columna){
+    
+    columna <- enquo(columna)
+    
+    #Se halla la frecuencia absoluta a partir de la función count
+    tabla_frecuencias <- count(datos, !!columna)
+    
+    #Se halla la frecuencia absoluta acumulada, relativa y relativa acumulada
+    tabla_frecuencias <- tabla_frecuencias %>% mutate(N = cumsum(n),
+                                                      Fr = n/sum(n),
+                                                      Fa = cumsum(Fr))
+    
+    #Se redondea el resultado de las frecuencias relativas a 4 digitos
+    tabla_frecuencias <- tabla_frecuencias %>% mutate(Fr = round(Fr, 4),
+                                                      Fa = round(Fa, 4))
+    #Se retorna la tabla de frecuencias
+    return(tabla_frecuencias)
+}
+
+```
+
+**Función encargada de mostrar las tablas de frecuencias**
+
+```{r}
+#Se define la función encargada de mostrar las tablas de frecuencias
+mostrar_tabla <- function(tabla){
+    
+    #Se extrae el nombre de la variable
+    nombre_col <- colnames(tabla)[1]
+    
+    #Se crean los nombres en español para la tabla
+    nombres_tabla <- c(nombre_col,
+                       "Frecuencia absoluta", 
+                       "Frecuencia absoluta acumulada",
+                       "Frecuencia relativa", 
+                       "Frecuencia relativa acumulada")
+    
+    #Se estiliza la tabla con la función kable
+    kable(tabla, col.names = nombres_tabla, align = "c",  "html") %>% 
+        #Se utiliza el tema kable_papper
+        kable_paper("hover", full_width = TRUE) %>%
+        kable_styling(bootstrap_options = c("hover", "condensed"), 
+                      font_size = 16) %>% 
+        row_spec(0, background = "#327CCF", color = "white")
+}
+```
+
+**Función encargada de crear los gráficos de barras**
+
+```{r}
+#Se define la función para crear los gráficos de barras
+grafico_barras <- function(tabla, etiqueta_x){
+    
+    #Se crea un nuevo gráfico de ggplot
+    ggplot(data = tabla)+
+        #Se define el gráfico de barras
+        geom_bar(
+            aes(x = tabla[, 1], y = Fr),    #Se definen las variables a graficar
+            stat = "identity",              #Se grafica la identidad x vs y
+            fill="#327CCF",                 #Se define el color de las barras
+            alpha=0.5,                      #Se define la transparencia
+            col='black'                     #Se define el borde de las barras
+        )+
+        #Se crea la etiqueta del eje x
+        ylab("frecuencia relativa")+
+        #Se crea la etiqueta del eje y
+        xlab(etiqueta_x)+
+        #Se crea el titulo del grafico
+        ggtitle(
+            paste("Gráfico de barras de",
+                  etiqueta_x)
+        )+
+        #Se crean las etiquetas de los porcentajes para cada barra
+        geom_text(
+            aes(tabla[, 1], Fr, label=paste0((Fr*100), "%")), 
+            vjust = 1.15)+
+        #Se utiliza el tema bw de ggplot
+        theme_bw()+
+        #Se ajustan la alineación del titulo y las etiquetas del eje x
+        theme(plot.title = element_text(hjust = 0.5))+
+        scale_x_continuous(breaks = tabla[, 1])
+}
+```
+
+
+**Función encargada de presentar los resúmenes numéricos**
+
+```{r}
+#Se define la función para presentar los resumenes numéricos
+resumen <- function(columna){
+    #Se usa la función summary para encontrar los resumenes
+    summary_canal <- round(summary(columna),4)  
+    
+    #Se convierte a array y se transpone el resumen numérico
+    summary_canal <- t(summary_canal)
+    
+    #Se calcula la cantidad de ceros de la variable
+    ceros <- sum(columna == 0)
+    
+    #Se calcula la proporción de ceros para cada variable
+    prop_ceros <- ceros/length(columna)
+    
+    #Se convierte la proporción de ceros a escala de porcentaje
+    prop_ceros <- round(prop_ceros,4)*100
+    
+    #Se añade el simbolo de porcentaje a la proporción de eros
+    prop_ceros <- paste0(prop_ceros,"%")
+    
+    #Se concatena el resumen numerico con la cantidad y la proporción de ceros 
+    summary_canal <- cbind(summary_canal, ceros, prop_ceros)
+    
+    #Se crean los nombres en español para los resumenes
+    nombres_resumen <- c("Mínimo", "Q1", "Mediana", "Media", "Q3", 
+                         "Máximo", "Ceros", "Proporcion ceros")
+    
+    #Se estiliza el resumen con la función kable
+    kable(summary_canal, col.names = nombres_resumen, align = "c",  "html") %>% 
+        #Se utiliza el tema kable_papper
+        kable_paper("hover", full_width = TRUE) %>%
+        kable_styling(bootstrap_options = c("hover", "condensed"), 
+                      font_size = 16) %>% 
+        row_spec(0, background = "#327CCF", color = "white")
+}
+```
+
+**Función encargada de realizar los histogramas**
+
+```{r}
+#Se crea la función para dibujar los gráficos
+crear_grafico <- function(datos, columna, bins=30, etiqueta_x){
+    
+    columna = enquo(columna)
+    
+    #Se crea el histograma
+    grafico <- ggplot(datos, aes(x = !!columna)) + 
+        geom_histogram(bins = bins, fill="#327CCF", alpha = 0.4, col = "Black")+
+        #Se añade la etiqueta del eje x
+        xlab(etiqueta_x) +
+        #Se añade la etiqueta del eje y
+        ylab("Frecuencia") +
+        #Se añade la etiqueta del titulo
+        ggtitle(
+            paste(
+              "Histograma de", 
+              etiqueta_x)
+        )+
+        theme_bw()+
+        #Se centra el titulo
+        theme(plot.title = element_text(hjust = 0.5))
+    
+    return(grafico)
+}
+```
+
+<br>
+<br>
+
+# 2. Análisis de variables categóricas ordinales
+
+<br>
+
+## 2.1. `impo_cv`
+
+```{r, fig.height = 6, fig.width = 9}
+tabla_frecuencias <- crear_tabla(datos_originales, impo_cv)
+mostrar_tabla(tabla_frecuencias)
+grafico_barras(tabla_frecuencias, "proporción de importaciones sobre compras")
+```
+
+<div style="text-align: justify"> 
+La variable `impo_cv` almacena la proporción de compras que se han realizado a través de importaciones  $\frac{importaciones}{compras}$, esta se encuentra categorizada de forma ordinal en 5 niveles, donde el nivel 1 representa la proporción más baja y el nivel 5 representa la más alta, por ello para el análisis se utiliza la siguiente redefinición:
+
+* 1 = Bajo
+* 2 = Moderadamente bajo
+* 3 = Medio
+* 4 = Moderadamente alto
+* 5 = Alto
+
+El gráfico de barras y la tabla de frecuencias nos muestra que alrededor del 36.9% de observaciones están agrupadas en el nivel 1 y aproximadamente del 37.08% en el nivel dos, reflejando que la mayoría de las empresas (el 73.98%) presentan una baja o moderadamente baja proporción de imporaciones respecto a sus compras totales, adicionalmente, el valor del nivel 5 nos indica que tan solo el 2.06% importa la mayor parte de su materia prima.
+</div>
+
+
+## 2.2. `expo_vt`
+
+```{r, fig.height = 6, fig.width = 9}
+tabla_frecuencias <- crear_tabla(datos_originales, expo_vt)
+mostrar_tabla(tabla_frecuencias)
+grafico_barras(tabla_frecuencias, "proporción de exportaciones sobre ventas")
+```
+
+<div style="text-align: justify"> 
+La variable `expo_vt` almacena la proporción de ventas que se han sido exportadas  $\frac{exportaciones}{ventas}$, esta se encuentra categorizada de forma ordinal en 3 niveles, donde el nivel 1 representa la proporción más baja y el nivel 3 representa la más alta, por ello para el análisis se utiliza la siguiente redefinición:
+
+* 1 = Bajo
+* 2 = Medio
+* 3 = Alto
+
+Del gráfico de barras y la tabla de frecuencias observamos que alrededor del 54.86% de las empresas se encuentran agrupadas en el nivel 3, reflejando que la mayor parte presenta una proporción media de exportaciones respecto a las ventas totales, por otro lado el 36.9% presenta una proporción baja y tan solo el 8.24% exporta la mayor parte de sus productos.
+</div>
+
+## 2.3. `cxp`
+
+```{r, fig.height = 6, fig.width = 9}
+tabla_frecuencias <- crear_tabla(datos_originales, cxp)
+mostrar_tabla(tabla_frecuencias)
+grafico_barras(tabla_frecuencias, "cuentas por pagar")
+```
+
+<div style="text-align: justify"> 
+La variable `cxp` representa las cuentas por pagar de cada empresa, esta se encuentra categorizada de forma ordinal en 6 niveles, donde el nivel 1 simboliza la cantidad más baja y el nivel 6 simboliza la más alta, por ello para el análisis se utiliza la siguiente redefinición:
+
+* 1 = Bajo
+* 2 = Moderadamente bajo
+* 3 = Medio bajo
+* 4 = Medio Alto
+* 5 = Moderadamente alto
+* 6 = Alto
+
+Del gráfico de barras y la tabla de frecuencias observamos que el 32.65% de los clientes presentan una cantidad moderadamente baja de cuentas por pagar y el 21.81% presenta una cantidad baja, esto nos indica que la mayor parte de las empresas tienen un bajo número de obligaciones financieras, sin embargo, es destacable que el 17.51% se encuentren en el nivel más alto.
+</div>
+
+## 2.4. `cxc`
+
+```{r, fig.height = 6, fig.width = 9}
+tabla_frecuencias <- crear_tabla(datos_originales, cxc)
+mostrar_tabla(tabla_frecuencias)
+grafico_barras(tabla_frecuencias, "cuentas por cobrar")
+```
+
+<div style="text-align: justify"> 
+La variable `cxc` representa las cuentas por cobrar de cada empresa, esta se encuentra categorizada de forma ordinal en 6 niveles, donde el nivel 1 simboliza la cantidad más baja y el nivel 6 simboliza la más alta, por ello para el análisis se utiliza la siguiente redefinición:
+
+* 1 = Bajo
+* 2 = Moderadamente bajo
+* 3 = Medio bajo
+* 4 = Medio Alto
+* 5 = Moderadamente alto
+* 6 = Alto
+
+Del gráfico de barras y la tabla de frecuencias observamos que el 27.23% de los clientes presentan una cantidad alta de cuentas por cobrar y el 24.23% presenta una cantidad moderadamente baja. Es destacable que el 57.37% de las empresas se encuentren en los 3 primeros niveles, indicando que la mayor parte de estas presenta una baja, moderadamente baja o media baja cantidad de deudas a favor.
+</div>
+
+## 2.5. `totalinventory`
+
+```{r, fig.height = 6, fig.width = 9}
+tabla_frecuencias <- crear_tabla(datos_originales, totalinventory)
+mostrar_tabla(tabla_frecuencias)
+grafico_barras(tabla_frecuencias, "total de inventarios")
+```
+
+<div style="text-align: justify"> 
+La variable `totalinventory` representa el valor de inventarios de cada empresa, esta se encuentra categorizada de forma ordinal en 6 niveles, donde el nivel 1 simboliza la cantidad más baja y el nivel 6 simboliza la más alta, por ello para el análisis se utiliza la siguiente redefinición:
+
+* 1 = Bajo
+* 2 = Moderadamente bajo
+* 3 = Medio bajo
+* 4 = Medio Alto
+* 5 = Moderadamente alto
+* 6 = Alto
+
+Del gráfico de barras y la tabla de frecuencias observamos que el 25.93% de los clientes presentan un total de inventarios moderadamente bajo, mientras que el 24.27% presenta la cantidad más alta. La mayor parte de las empresas (el 59.38%) se encuentran en los tres primeros niveles, reflejando que es más común tener valores bajos, moderadamente bajos o medio bajos en el total de inventarios.
+</div>
+
+## 2.6. `tiene_ventas_fisicas`
+
+```{r, fig.height = 6, fig.width = 9}
+tabla_frecuencias <- crear_tabla(datos_originales, tiene_ventas_fisicas)
+mostrar_tabla(tabla_frecuencias)
+grafico_barras(tabla_frecuencias, "ventas físicas")
+```
+
+<div style="text-align: justify"> 
+La variable `tiene_ventas_fisicas` establece si la empresa tiene o no ventas físicas, donde:
+
+* No = 0 
+* Si = 1.
+
+Del gráfico de barras y la tabla de frecuencias observamos que el 52.44% no poseen ventas físicas y el 47.56% si las posee.
+</div>
+
+## 2.7. `tiene_ventas_electronicas`
+
+```{r, fig.height = 6, fig.width = 9}
+tabla_frecuencias <- crear_tabla(datos_originales, tiene_ventas_electronicas)
+mostrar_tabla(tabla_frecuencias)
+grafico_barras(tabla_frecuencias, "ventas electrónicas")
+```
+
+<div style="text-align: justify"> 
+La variable `tiene_ventas_electronicas` establece si la empresa tiene o no ventas electrónicas, donde: 
+
+* No = 0
+* Si = 1.
+
+Del gráfico de barras y la tabla de frecuencias observamos que la gran mayoría de las empresas no poseen ventas electrónicas y que tan solo el 5.02% si las poseen.
+</div>
+
+## 2.8. `rotacion_inventarios`
+
+```{r, fig.height = 6, fig.width = 9}
+tabla_frecuencias <- crear_tabla(datos_originales, rotacion_inventarios)
+mostrar_tabla(tabla_frecuencias)
+grafico_barras(tabla_frecuencias, "rotación de inventarios")
+```
+
+<div style="text-align: justify"> 
+La variable `rotacion_inventarios` representa la rotación de inventarios en días para cada empresa, esta se encuentra categorizada de forma ordinal en 6 niveles, donde el nivel 1 simboliza la rotación más corta y el nivel 6 simboliza la más larga, por ello para el análisis se utiliza la siguiente redefinición:
+
+* 1 = Corto
+* 2 = Moderadamente corto
+* 3 = Medio corto
+* 4 = Medio largo
+* 5 = Moderadamente largo
+* 6 = Largo
+
+Del gráfico de barras y la tabla de frecuencias observamos que el 29.29% de los clientes presentan una corta rotación de inventarios, que va decreciendo para cada categoría a excepción del nivel 6, el cual nos muestra que el 21.14% de las empresas presenta una rotación larga. 
+</div>
+
+## 2.9. `rotacion_cxc`
+
+```{r, fig.height = 6, fig.width = 9}
+tabla_frecuencias <- crear_tabla(datos_originales, rotacion_cxc)
+mostrar_tabla(tabla_frecuencias)
+grafico_barras(tabla_frecuencias, "rotación de cuentas por cobrar")
+```
+
+<div style="text-align: justify"> 
+La variable `rotacion_cxc` representa la rotación de las cuentas por cobrar en días para cada empresa, esta se encuentra categorizada de forma ordinal en 4 niveles, donde el nivel 1 simboliza la rotación más corta y el nivel 4 simboliza la más larga, por ello para el análisis se utiliza la siguiente redefinición:
+
+* 1 = Corto
+* 2 = Medio corto
+* 3 = Medio largo
+* 4 = Largo
+
+Del gráfico de barras y la tabla de frecuencias observamos que la rotación de las cuentas por cobrar se encuentra agrupada con números muy similares, donde el 28.8% de las empresas tiene una rotación corta, el 26.69% se encuentran en la categoría medio corta, el 25.39% tienen la rotación más larga y el 19.12% cuenta con una rotación medio larga
+</div>
+
+## 2.10. `rotacion_cxp`
+
+```{r, fig.height = 6, fig.width = 9}
+tabla_frecuencias <- crear_tabla(datos_originales, rotacion_cxp)
+mostrar_tabla(tabla_frecuencias)
+grafico_barras(tabla_frecuencias, "rotación de cuentas por pagar")
+```
+
+<div style="text-align: justify"> 
+La variable `rotacion_cxp` representa la rotación de las cuentas por pagar en días para cada empresa, esta se encuentra categorizada de forma ordinal en 4 niveles, donde el nivel 1 simboliza la rotación más corta y el nivel 4 simboliza la más larga, por ello para el análisis se utiliza la siguiente redefinición:
+
+* 1 = Corto
+* 2 = Medio corto
+* 3 = Medio largo
+* 4 = Largo
+
+Del gráfico de barras y la tabla de frecuencias observamos que el 36.95% de las empresas se encuentran agrupadas en el nivel 1 y el 28.03% en el 2, reflejando que el 64.98% se caracterizan por estar en los ciclos más cortos. Por otro lado, en la categoría de los ciclos largos se encuentra el 20.51% de las empresas, y en el ciclo medio largo tan solo el 14.51%.
+</div>
+
+
+## 2.11. `ciclo_negocio`
+
+```{r, fig.height = 6, fig.width = 9}
+tabla_frecuencias <- crear_tabla(datos_originales, ciclo_negocio)
+mostrar_tabla(tabla_frecuencias)
+grafico_barras(tabla_frecuencias, "ciclo de negocio")
+```
+
+<div style="text-align: justify"> 
+La variable `ciclo_negocio` representa la rotación del ciclo de negocios en días para cada empresa, esta se encuentra categorizada de forma ordinal en 6 niveles, donde el nivel 1 simboliza la rotación más corta y el nivel 6 simboliza la más larga, por ello para el análisis se utiliza la siguiente redefinición:
+
+* 1 = Corto
+* 2 = Moderadamente corto
+* 3 = Medio corto
+* 4 = Medio largo
+* 5 = Moderadamente largo
+* 6 = Largo
+
+Del gráfico de barras y la tabla de frecuencias observamos que los ciclos de negocio cortos son los menos populares, seguido del moderadamente corto y el medio corto, estos tres primeros niveles representan tan solo al 31.89% de las empresas. Por otro lado, es claro que los ciclos largos (25.08%) son los más comunes.
+</div>
+
+## 2.12. `ciclo_financiero`
+
+```{r, fig.height = 6, fig.width = 9}
+tabla_frecuencias <- crear_tabla(datos_originales, ciclo_financiero)
+mostrar_tabla(tabla_frecuencias)
+grafico_barras(tabla_frecuencias, "ciclo financiero")
+```
+
+<div style="text-align: justify"> 
+La variable `ciclo_financiero` representa la rotación del ciclo financiero en días para cada empresa, esta se encuentra categorizada de forma ordinal en 6 niveles, donde el nivel 1 simboliza la rotación más corta y el nivel 6 simboliza la más larga, por ello para el análisis se utiliza la siguiente redefinición:
+
+* 1 = Corto
+* 2 = Moderadamente corto
+* 3 = Medio corto
+* 4 = Medio largo
+* 5 = Moderadamente largo
+* 6 = Largo
+
+Del gráfico de barras y la tabla de frecuencias observamos que el 41.83% de las empresas se encuentran en los tres primeros niveles, donde el 12.05% tienen ciclos cortos, el 14.11% ciclos moderadamente cortos y el 15.67% ciclos medio cortos. Por otro lado, se resalta que los ciclos largos (26.15%) son los más populares.
+</div>
+
+<br>
+<br>
+
+# 3. Variables continuas
+
+<br>
+
+## 3.1. `pagos_pj`
+
+```{r, fig.height = 6, fig.width = 9}
+crear_grafico(datos_originales, pagos_pj, 30, "pagos a personas jurídicas")
+resumen(datos_originales$pagos_pj)
+```
+
+<div style="text-align: justify">
+Del histograma y el resumen numérico se observa que el pago a personas jurídicas es algo frecuente, esto se nota a partir de la proporción de ceros (2.06%), la cual al ser muy baja nos permite confirmar que mas de el 97% de las empresas han realizado este tipo de pagos. Se resalta además que en promedio las empresas destinan a este tipo de transacciones el 53.93% de sus pagos totales.
+
+De la gran similitud entre la media y la mediana se puede concluir que la distribución es aproximadamente simétrica, por lo tanto no presenta valores máximos o mínimos que tengan una fuerte influencia.
+</div>
+
+## 3.2. `pagos_pn`
+
+```{r, fig.height = 6, fig.width = 9}
+crear_grafico(datos_originales, pagos_pn, 30, "pagos a personas naturales")
+resumen(datos_originales$pagos_pn)
+```
+
+<div style="text-align: justify">
+Del histograma y el resumen numérico se observa que el pago a personas naturales es menos frecuente que el pago a personas jurídicas, esto se nota a partir de la proporción de ceros (12.23%), la cual es mayor al resultado de la variable anterior, sin embargo sigue siendo moderadamente bajo, concluyendo con esto que el pago a personas naturales es bastante frecuente. Se resalta además que en promedio las empresas destinan a este tipo de transacciones el 44.06% de sus pagos totales.
+
+De la gran similitud entre la media y la mediana se puede concluir que la distribución es aproximadamente simétrica, por lo tanto no presenta valores máximos o mínimos que tengan una fuerte influencia.
+</div>
+
+## 3.3. `recaudos_pj`
+
+```{r, fig.height = 6, fig.width = 9}
+crear_grafico(datos_originales, recaudos_pj, 30, "recaudos de personas jurídicas")
+resumen(datos_originales$recaudos_pj)
+```
+
+<div style="text-align: justify">
+Del histograma y el resumen numérico se observa que la proporción de ceros (93.24%) es demasiado alta, llevandonos a concluir que este tipo de transacciones son muy poco frecuentes en las empresas.
+</div>
+
+## 3.4. `recaudos_pn`
+
+```{r, fig.height = 6, fig.width = 9}
+crear_grafico(datos_originales, recaudos_pn, 30, "recaudos de personas naturales")
+resumen(datos_originales$recaudos_pn)
+```
+
+<div style="text-align: justify">
+Similar a lo apreciado para la variable anterior, a partir del histograma y el resumen numérico se observa que la proporción de ceros (92.16%) es demasiado alta, llevandonos a concluir que este tipo de transacciones son muy poco frecuentes en las empresas.
+</div>
+
+<br>
+<br>
+
+# 4. Correlación entre las variables
+
+<br>
+
+## 4.1. Categóricas ordinales
+```{r, fig.height = 7, fig.width = 10}
+#Se seleccionan las variables categóricas
+categoricas <- datos_originales %>% select(!matches("vm|tx|pagos|recaudos|nit"))
+
+#Se calulan las correlaciones entre las variables ordinales
+correlaciones <- cor(categoricas, method = "spearman")
+
+#Se muestra el gráfico de correlación
+ggcorrplot(correlaciones, lab = TRUE, colors = c("pink", 
+                                                 "white",
+                                                 "cadetblue")
+)+
+  #Se añade el titulo del gráfico
+  ggtitle("Correlación entre las variables categóricas")+
+  #Se centra el titulo
+  theme(plot.title = element_text(hjust = 0.5))
+```
+
+## 4.2. Cotinuas
+
+```{r, fig.height = 6, fig.width = 9}
+#Se seleccionan las variables continuas
+continuas <- datos_originales %>% select(matches("pagos|recaudos"))
+
+#Se calulan las correlaciones entre las variables ordinales
+correlaciones <- cor(continuas)
+
+#Se muestra el gráfico de correlación
+ggcorrplot(correlaciones, lab = TRUE, colors = c("pink", 
+                                                 "white",
+                                                 "cadetblue")
+)+
+  #Se añade el titulo del gráfico
+  ggtitle("Correlación entre las variables continuas")+
+  #Se centra el titulo
+  theme(plot.title = element_text(hjust = 0.5))
+```

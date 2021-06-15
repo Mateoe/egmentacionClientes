@@ -1,0 +1,338 @@
+---
+title: |
+    ![](./elementos/logo.png){width=2in}  
+    Segmentación de clientes corporativos
+author: "Alejandro Bedoya - Sebastián Agudelo - Mateo Espinal - Juan Fernando Patiño - Estefanía Echeverry"
+date: "Junio - 2021"
+output:
+  prettydoc::html_pretty:
+    theme: architect
+    highlight: github
+    include:
+      after_body: ./elementos/footer.html
+
+---
+
+<br>
+
+# Introducción
+<div style='text-align: justify;'> 
+En la actualidad es vital para toda empresa u organización conocer a fondo las necesidades, deseos y preferencias de sus clientes, con el objetivo de generar nuevas oportunidades en torno al desarrollo y optimización de productos y servicios, la creación de canales de comunicación y estrategias de publicidad orientadas a un publico claramente definido, y en general, el establecimiento de un modelo de negocio personalizado para cada grupo de clientes, permitiendo la fidelización de aquellos que se encuentran asociados a la organización y la atracción de potenciales consumidores. Motivados por lo anterior y atendiendo a la solicitud de una empresa anónima, este documento presenta una propuesta de segmentación de clientes que permitirá identificar los principales patrones de uso de productos y la relación de estos con los estados financieros.
+</div>
+
+<br>
+
+# Contexto
+<div style='text-align: justify;'>
+Una compañía del sector financiero requiere una segmentación de clientes, quienes tienen la cualidad particular de ser otras empresas, con el objetivo de obtener grupos con características comunes que permitan identificar patrones uso de los diferentes canales y productos y la relación de estos con los estados financieros de cada cliente, sin embargo por privacidad el solicitante ha decidido no aportar información acerca del contexto empresarial de la organización, brindándonos tan solo la base de datos requerida para construir la propuesta. La descripción de las variables allí contenidas se presenta a continuación:
+</div>
+
+**Variables de comportamiento de los clientes en canales y productos**
+<div style='text-align: justify;'>    
+Dentro de esta categoría se encuentran cuatro subgrupos de variables que determinan como interactúan los clientes con cada uno de los canales de la empresa. Dado que no se conoce el contexto o tipo de organización con la que estamos trabajando, suponemos que cada canal representa un medio por el cual se pueden realizar transacciones monetarias, como lo pueden ser pago en efectivo, giro bancario, transferencia bancaria, cheque, pagaré, etc.
+</div>    
+    
+1. El subgrupo de **variables en_vm_canalX** representa el valor del ticket promedio anual de entrada a través del canal **X**.
+
+\newline
+
+2. El subgrupo de **variables en_tx_canalX** representa la cantidad de transacciones de entrada promedio mensuales a través del canal **X**.
+    
+\newline
+
+3. El subgrupo de **variables sal_vm_canalX** representa el valor del ticket promedio anual de salida a través del canal **X**.
+    
+\newline    
+    
+4. El subgrupo de **variables sal_vm_canalX** representa la cantidad de transacciones de salida promedio mensuales a través **X**.
+
+<div style='text-align: justify;'>
+A continuación se presentan las tablas que indican las variables pertenecientes a cada subgrupo mencionado anteriormente.
+</div>
+
+
+|variables en_vm_canalX|variables en_tx_canalX|    
+|--------------|-----------|    
+|en_vm_canal1 |en_tx_canal1 |
+|en_vm_canal2 |en_tx_canal2 |
+|en_vm_canal3 |en_tx_canal3 |
+|en_vm_canal4 |en_tx_canal4 |
+|en_vm_canal5 |en_tx_canal5 |
+|en_vm_canal6 |en_tx_canal6 |
+|en_vm_canal7 |en_tx_canal7 |
+|en_vm_canal8 |en_tx_canal8 |
+|en_vm_canal9 |en_tx_canal9 |
+|en_vm_canal10|en_tx_canal10|
+|en_vm_otros  |en_tx_otros  |
+
+|variables sal_vm_canalX|variables sal_tx_canalX|    
+|--------------|-----------| 
+|sal_vm_canal2 |sal_tx_canal2 |
+|sal_vm_canal5 |sal_tx_canal5 |
+|sal_vm_canal8 |sal_tx_canal8 |
+|sal_vm_otros  |sal_tx_otros  |
+
+<br>
+
+**Variables de estados financieros y características de los clientes**
+
+<div style='text-align: justify;'>
+Dentro de esta categoría se encuentran las caracteristicas propias de cada cliente reflejadas a través de sus estados financieros. Las variables asociadas y su descripción se encuentran en la siguiente tabla:
+</div>
+
+<table>
+<col width="250">
+  <tr>
+    <th>Variable</th>
+    <th>Descripción</th>
+  </tr>
+  <tr>
+    <td>`impo_cv`</td>
+    <td style='text-align: justify;'>$\frac {Importaciones}{Compras}$ indica la proporción de compras que son importadas.
+    <br>
+    Variable categorizada ordinalmente en cinco niveles.</td>
+  </tr>
+  <tr>
+    <td>`expo_vt`</td>
+    <td style='text-align: justify;'>$\frac {Exportaciones}{Ventas}$ indica la proporción de ventas que son exportadas.
+    <br></br>
+    Variable categorizada ordinalmente en tres niveles.</td>
+  </tr>
+  <tr>
+    <td>`cxp`</td>
+    <td style='text-align: justify;'> Cuentas por pagar, indica las deudas que tiene la empresa debido a la adquisición de bienes y servicios.
+    <br></br>
+    Variable categorizada ordinalmente en seis niveles.</td>
+  </tr>
+  <tr>
+    <td>`cxc`</td>
+    <td style='text-align: justify;'> Cuentas por cobrar, indica los derechos de cobro que tiene la empresa sobre algún tercero debido a la venta de productos o la prestación previa de servicios.
+    <br></br>
+    Variable categorizada ordinalmente en seis niveles.</td>
+  </tr>
+  <tr>
+    <td>`totalinventory`</td>
+    <td style='text-align: justify;'> Valor de inventarios.
+    <br></br>
+    Variable categorizada ordinalmente en seis niveles.</td>
+  </tr>
+  <tr>
+    <td>`pagos_pj`</td>
+    <td style='text-align: justify;'> $\frac {Pagos Hechos A Personas Juridicas}{Pagos Totales}$ refleja la proporción de pagos que ha realizado la empresa a personas jurídicas.
+  </tr>
+  <tr>
+    <td>`pagos_pn`</td>
+    <td style='text-align: justify;'> $\frac {Pagos Hechos A Personas Naturales}{Pagos Totales}$ refleja la proporción de pagos que ha realizado la empresa a personas naturales.
+  </tr>
+  <tr>
+    <td>`tiene_ventas_fisicas`</td>
+    <td style='text-align: justify;'> Variable binaria que indica si la empresa tiene puntos de venta físicos.
+    <br>1: Si
+    <br>2: No
+  </tr>
+  <tr>
+    <td>`tiene_ventas_electronicas`</td>
+    <td style='text-align: justify;'> Variable binaria que indica si la empresa tiene venta electronicas.
+    <br>1: Si
+    <br>2: No
+  </tr>
+  <tr>
+    <td>`recaudos_pj`</td>
+    <td style='text-align: justify;'> $\frac {Recaudos Provenientes De Personas Juridicas}{Recaudos Totales}$ refleja la proporción de recaudos que ha realizado la empresa a personas jurídicas.
+  </tr>
+  <tr>
+    <td>`pagos_pn`</td>
+    <td style='text-align: justify;'> $\frac {Recaudos Provenientes De Personas Naturales}{Recaudos Totales}$ refleja la proporción de recaudos que ha realizado la empresa a personas naturales.
+  </tr>
+  <tr>
+    <td>`rotacion_inventarios`</td>
+    <td style='text-align: justify;'> Indica la rotación de inventario en días.
+    <br> Variable categorizada en seis niveles.
+    </td>
+  </tr>
+  <tr>
+    <td>`rotacion_cxc`</td>
+    <td style='text-align: justify;'>  Indica la rotación de cuentas por cobrar en días.
+    <br> Variable categorizada en seis niveles.
+    </td>
+  </tr>
+  <tr>
+    <td>`rotacion_cxp`</td>
+    <td style='text-align: justify;'> Indica la rotación de cuentas por pagar en días.
+    <br> Variable categorizada en seis niveles.
+    </td>
+  </tr>
+  <tr>
+    <td>`ciclo_negocio`</td>
+    <td style='text-align: justify;'>  Indica la duración del ciclo de negocio en días.
+    <br> Variable categorizada en seis niveles.
+    </td>
+  </tr>
+  <tr>
+    <td>`ciclo_financiero`</td>
+    <td style='text-align: justify;'>  Indica la rotación del ciclo financiero en días.
+    <br> Variable categorizada en seis niveles.
+    </td>
+  </tr>
+</table>
+
+<br>
+
+# Análisis exploratorio
+
+<div style='text-align: justify;'> 
+Con el objetivo de crear una idea clara del comportamiento de las variables y descubrir como los clientes interactuan en cada una de ellas, iniciamos realizando un análisis exploratorio haciendo uso de la descripción proporcionada anteriormente.
+</div>
+
+<div style='text-align: justify;'> 
+Dado que el conjunto de datos proporcionado cuenta con 46 caracteristicas a describir, este documento presenta para las variables de comportamiento en canales y productos un resumen de cada subgrupo y el correspondiente enlace en el cual se podrá consultar el análisis detallado que contiene todas las funciones y el código necesario para ser reproducido de forma independiente. En lo que respecta a las variables pertenecientes a la categoría de estados financieros y características de los clientes, solo se incluye el enlace donde se podrá consultar todo el análisis detallado, esto ultimo dado que al ser datos categóricos ordinales con niveles diferentes y algunos continuos, vale la pena entender cada aspecto a detalle.
+</div>
+
+
+## 1. Comportamiento de los clientes en canales y productos
+
+<div style='text-align: justify;'> 
+Este grupo de variables registran el valor y la cantidad de transacciones, tanto de entrada como de salida en un determinado periodo de tiempo, permitiéndonos entender como los clientes interactúan con cada uno de los canales de la organización y obtener conocimiento a partir de ello, aportándonos con esto una primera impresión de posibles patrones o tendencias de uso.
+</div>
+
+### 1.1. Variables de tipo `en_vm_canalX`
+
+<div style='text-align: justify;'>
+Como se mencionó previamente, este subgrupo de variables registran el valor del ticket promedio de entrada a través de un canal determinado, para facilitar su comprensión estos se asocian con medios a través de los cuales se pueden realizar pagos por la adquisición de productos o servicios. Su codificación sigue el siguiente esquema:
+
+* **en:** Entrada
+* **vm:** Valor medio anual
+* **X:** Número identificador del canal
+
+A continuación se presentan las conclusiones generales de lo evidenciado en el [análisis exploratorio de variables en_vm_canalX](https://www.google.com), haciendo uso de la tabla que reúne todos los resultados de los resumenes numéricos.
+</div>
+
+![](./elementos/en_vm.png)
+
+<div style='text-align: justify;'>
+1. Algunos canales son frecuentemente más usados por los clientes, esto se observa principalmente en los dos primeros que no superan el 10% de sus entradas en cero y el sexto que no supera el 20%, los demás presentan una proporción de ceros superior al 30%.
+
+2. Los canales 7, 10 y "otros" tienen la gran mayoría de entradas en cero, indicando que pueden ser de difícil acceso, restrictivos o exclusivos para un público determinado.
+
+3. Observando la media se destaca que a través de los canales 1, 2, 5 y 7 se realizan transacciones de mayor valor.
+
+4. El canal 7 a pesar de tener la mayor proporción de entradas en cero (90.82%), posee el segundo máximo más alto de todos, indicando que se puede tratar de un medio exclusivo o con facilidades para realizar transacciones de grandes valores monetarios. Algo similar sucede con el canal 4, pero en una magnitud menor.
+
+5. El canal 10 además de poseer la segunda proporción de entradas en cero (89.48%) más alta, es el que presenta los valores más bajos, por lo cual se intuye que se puede tratar de un medio restrictivo, de difícil acceso o limitante.
+
+6. De los puntos 1 y 3 se resalta que el canal 2 además de ser típicamente usado también presenta valores máximos muy altos, dando la impresión de ser flexible, de fácil acceso y poco restrictivo. Para el canal 2 se puede concluir de forma similar, pero en una magnitud monetaria menor.
+
+7. Los canales 3, 8 y 9 tienen una apariencia bastante promedio, con una proporción de ceros no superior al 33% y con valores monetarios moderadamente bajos.
+
+8. Como se observo del punto 1, el canal 6 presenta un uso bastante alto, sin embargo, como se puede notar en la tabla, sus valores monetarios son relativamente bajos, indicando que es de fácil acceso y uso para transacciones de magnitudes económicas moderadamente bajas.
+
+9. A pesar de que "otros" presenta la tercera proporción de ceros más alta, las magnitudes económicas que maneja son moderadamente altas.
+</div>
+
+
+### 1.2. Variables de tipo `en_tx_canalX`
+
+<div style='text-align: justify;'>
+Este subgrupo de variables registran la cantidad de transacciones mensuales promedio de entrada a través de un canal determinado. Su codificación sigue el siguiente esquema:
+
+* **en:** Entrada
+* **tx:** Transacciones mensuales promedio
+* **X:** Número identificador del canal
+
+A continuación se presentan las conclusiones generales de lo evidenciado en el [análisis exploratorio de variables en_tx_canalX](https://www.google.com), haciendo uso de la tabla que reúne todos los resultados de los resumenes numéricos.
+</div>
+
+![](./elementos/en_tx.png)
+
+<div style='text-align: justify;'>
+1. El canal 4 a pesar de poseer una proporción de ceros del 71.25%, maneja un máximo de transacciones significativamente más alto que el de los demás, superando los tres millones y medio, lo cual afecta en gran medida el valor de la media.
+
+2. Los canales 1 y 2 al poseer una baja proporción de ceros (no superior al 10%) y manejar un número moderadamente alto de transacciones, dan la apariencia de ser fácilmente accesibles, flexibles y comunmente más usados que los demás.
+
+3. El canal 10 se destaca no solo por poseer la segunda proporción de entradas en cero más alta (89.48%) , además posee un valor máximo extremadamente bajo, reflejando que es poco usado, con lo cual se intuye que es restrictivo, de difícil acceso o limitante.
+
+4. El canal 3 es en promedio el segundo a través del cual se realiza un número mayor de transacciones de entrada, además al poseer una proporción de entradas en cero no mayor al 32%, da la impresión de tener una accesibilidad moderadamente alta.
+
+5. A pesar de que "otros" tiene la tercera mayor proporción de entradas en cero (81.91%), posee el segundo máximo mas alto en el número de transacciones, y una media considerablemente alta.
+
+6. El canal 5 aparentemente es un canal de uso medio en cuanto al número de transacciones de entrada, no solo por manejar una proporción de entradas en cero cercana al 50% sino también porque la cantidad de transacciones para cada medida de resumen es moderadamente baja.
+
+7. El canal 6 al tener una proporción de entradas en cero cercana al 20% y un número moderado de transacciones en cada una de sus medidas de resumen, da la apariencia de ser típicamente usado y de fácil acceso, con un comportamiento similar a los dos primeros canales pero en una magnitud menor.
+
+8. El canal 7 posee la porporción más elevada de entradas en cero (90.82%), lo cual afecta significativamente el valor de la media, sin embargo los valores máximos son bastante promedio en comparación con el resto de las variables, reflejando que se puede tratar de un canal exclusivo o dedicado a clientes específicos.
+
+9. Los canales 8 y 9 tienen un aspecto bastante promedio en comparación con los demás, con una proporción de ceros es cercana al 33% y un número moderado de transacciones.
+</div>
+
+
+
+### 1.3. Variables de tipo `sal_vm_canalX` y `sal_tx_canalX`
+
+<div style='text-align: justify;'>
+Estos dos subgrupos de variables registran el valor del ticket promedio y la cantidad de transacciones mensuales promedio de salida a través de un canal determinado, para facilitar su comprensión se asocia una transacción de salida como una transferencia monetaria por motivo de devolución. 
+
+A continuación se presentan las conclusiones generales de lo evidenciado en el [análisis exploratorio de variables sal_vm_canalX y sal_tx_canalX](https://www.google.com).
+</div>
+
+
+**Conclusiones: `sal_vm_canalX`**
+
+![](./elementos/sal_vm.png)
+
+<div style='text-align: justify;'>
+Como se puede observar en la tabla, existe una clara tendencia en el uso y valor transaccional de cada canal,donde:
+
+* El canal 2 maneja los valores monetarios más altos y posee la menor proporción de ceros (24.27%), reflejando que es comunmente usado.
+* El canal 5 posee el doble de entradas en cero y valores menores que el anterior en cada medida del resumen numérico, reflejando que es de uso medio y más limitado.
+* El canal 8 por su parte maneja una alta cantidad de entradas en cero, con valores significativamente menores en cada una de las medidas, dando la impresión de ser más restrictivo y poco usado para transacciones de salida.
+* "Otros" posee mas del 96% de sus entradas en cero, dando la idea de ser un canal raramente usado para este tipo de operaciones, el cual maneja montos significativamente pequeños en comparación con los demás.
+</div>
+
+
+**Conclusiones: `sal_tx_canalX`**
+
+![](./elementos/sal_tx.png)
+
+<div style='text-align: justify;'>
+Los resultados de este análisis presentan una tendencia similar a lo evidenciado para las variables de tipo `sal_vm_canalX` donde que el comportamiento en cuanto al uso es similar para ambos, dado que poseen la misma proporción de entradas en cero, sin embargo se destaca que:
+
+* El canal 2 es transaccionalmente más activo que los demás, presentando valores demasiado altos en todas las medidas de resumen.
+* Si bien en promedio el canal 5 presenta un mayor número de transacciones, el canal 8 muestra valores máximos significativamente más altos.
+* Similar a lo expresado anteriormente, "otros" a pesar de ser raramente usado para transacciones de salida tiene un valor máximo levemente mayor al observado en el canal 5.
+</div>
+
+
+## 2. Estados financieros y características 
+
+<div style='text-align: justify;'> 
+Este grupo de variables presenta las características propias de cada empresa (cliente) a través de sus estados financieros, las cuales se analizarán con el objetivo de comprender a fondo los posibles rasgos y propiedades comunes que aporten una idea detallada de qué tipo de clientes se encuentran asociados a la organización.
+
+Dado que en los estados financieros y características se cuenta con dos tipos de variables, uno categorizado ordinalmente y otro continuo, en este caso no se realiza una metodología de resumen como lo observado para los canales y productos, en su lugar se proporciona el enlace al documento detallado donde se aportan todas las gráficas, tablas, interpretaciones de niveles y análisis que permiten comprender a profundidad las particularidades de los clientes.
+
+Todo lo mencionado previamente se encuentra disponible en el siguiente enlace: [análisis exploratorio - estados financieros y características](https://www.google.com).
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

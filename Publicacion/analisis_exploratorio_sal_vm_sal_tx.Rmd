@@ -1,0 +1,382 @@
+---
+title: |
+    ![](./elementos/logo.png){width=2in}  
+    Análisis exploratorio: sal_vm_canalX y sal_tx_canalX
+author: "Alejandro Bedoya - Sebastián Agudelo - Mateo Espinal - Juan Fernando Patiño - Estefanía Echeverry"
+date: "Junio - 2021"
+output:
+  prettydoc::html_pretty:
+    theme: architect
+    highlight: github
+    include:
+      after_body: ./elementos/footer.html
+---
+
+# 1. Pasos previos al análisis
+
+<br>
+
+## 1.1. Se cargan las librerías necesarias
+
+```{r, message=FALSE, warning=FALSE}
+library(dplyr)
+library(knitr)
+library(kableExtra)
+library(ggplot2)
+library(ggcorrplot)
+library(scales)
+library(formattable)
+options(scipen = 999)
+```
+
+## 1.2. Lectura de la base de datos
+
+```{r}
+#Se carga la base de datos
+datos_originales <- read.csv("../datos/base_trabajo_segmentacion.csv",
+                             sep = ";")
+
+#Se imprime la cabecera
+kable(head(datos_originales), "html", align = "c") %>% 
+    kable_paper("hover", full_width = F) %>% 
+    row_spec(0, background = "#327CCF", color = "white")%>% 
+    scroll_box(width = "100%") %>% 
+    kable_styling(bootstrap_options = c("hover", "condensed"))
+```
+
+## 1.3. Creación de funciones necesarias
+
+**Función encargada de presentar los resúmenes numéricos**
+
+```{r}
+#Se define la función para presentar los resumenes numéricos
+resumen <- function(columna, moneda = TRUE){
+    #Se usa la función summary para encontrar los resumenes
+    summary_canal <- summary(columna)  
+    
+    #Se convierte a array y se transpone el resumen numérico
+    summary_canal <- t(summary_canal)
+    
+    if(moneda == TRUE){
+        
+        #Se transforman las cantidades a formato de moneda
+        summary_canal <- t(apply(summary_canal, 2, dollar))
+    }else{
+        
+        #Se crea el fomato numérico para los datos
+        numerico <- dollar_format(prefix = "")
+        
+        #Se añade separador de miles a las cantidades
+        summary_canal <- t(apply(summary_canal, 2, numerico))
+    }
+    
+    #Se calcula la cantidad de ceros de la variable
+    ceros <- sum(columna == 0)
+    
+    #Se calcula la proporción de ceros para cada variable
+    prop_ceros <- ceros/length(columna)
+    
+    #Se convierte la proporción de ceros a escala de porcentaje
+    prop_ceros <- round(prop_ceros,4)*100
+    
+    #Se añade el simbolo de porcentaje a la proporción de eros
+    prop_ceros <- paste0(prop_ceros,"%")
+    
+    #Se concatena el resumen numerico con la cantidad y la proporción de ceros 
+    summary_canal <- cbind(summary_canal, ceros, prop_ceros)
+    
+    #Se crean los nombres en español para los resumenes
+    nombres_resumen <- c("Mínimo", "Q1", "Mediana", "Media", "Q3", 
+                         "Máximo", "Ceros", "Proporcion ceros")
+    
+    #Se estiliza el resumen con la función kable
+    kable(summary_canal, col.names = nombres_resumen, align = "c",  "html") %>% 
+        #Se utiliza el tema kable_papper
+        kable_paper("hover", full_width = TRUE) %>%
+        kable_styling(bootstrap_options = c("hover", "condensed"), 
+                      font_size = 16) %>% 
+        row_spec(0, background = "#327CCF", color = "white")
+}
+```
+
+**Función encargada de realizar los histogramas**
+
+```{r}
+#Se crea la función para dibujar los gráficos
+crear_grafico <- function(datos, columna, bins=300, numero_columna, vm = TRUE){
+    
+    columna = enquo(columna)
+    
+    #Se elije el tipo de etiqueta según la variable analizada
+    if(vm == TRUE){
+        etiqueta <- "valor del ticket"
+    }else{
+        etiqueta <- "transacciones"
+    }
+    
+    #Se crea el histograma
+    grafico <- ggplot(datos, aes(x = !!columna)) + 
+        geom_histogram(bins = bins, fill="#327CCF", alpha = 0.4, col = "Black")+
+        #Se añade la etiqueta del eje x
+        xlab(
+            paste(etiqueta,
+                  "promedio de salida por el canal", 
+                  numero_columna)
+        ) +
+        #Se añade la etiqueta del eje y
+        ylab("Frecuencia") +
+        #Se añade la etiqueta del titulo
+        ggtitle(
+            paste("Histograma de",
+                  etiqueta,
+                  "promedio de salida por el canal", 
+                  numero_columna)
+        ) +
+        theme_bw()+
+        #Se centra el titulo
+        theme(plot.title = element_text(hjust = 0.5))
+    
+    return(grafico)
+}
+```
+
+<br>
+<br>
+
+# 2. Análisis de las variables `sal_vm_canalx`
+
+<br>
+
+## 2.1. `sal_vm_canal2`
+
+```{r, fig.height = 6, fig.width = 9}
+crear_grafico(datos_originales, sal_vm_canal2, bins = 320, numero_columna = 2)
+resumen(datos_originales$sal_vm_canal2)
+```
+
+<div style="text-align: justify"> 
+Del histograma se resalta que la distribución del valor del ticket promedio de salida por el canal 2 se encuentra altamente sesgada a la derecha, lo cual se evidencia también en el resumen numérico donde la <span style="color:#327CCF">mediana (`r dollar(median(datos_originales$sal_vm_canal2))`)</span> se encuentra en la escala de cientos de millones, mientras que la <span style="color:#327CCF"> media (`r dollar(mean(datos_originales$sal_vm_canal2))`)</span> se encuentra en la escala de miles de millones, superando no solo el valor de la medida anterior, sino también el del <span style="color:#327CCF"> cuartil 3 (`r dollar(quantile(datos_originales$sal_vm_canal2, 0.75))`)</span>, indicando la presencia de valores máximos con una escala muy superior a la mayoría de los datos.
+
+Se destaca además que la  <span style="color:#327CCF"> proporción de entradas en cero (`r round(100*sum(datos_originales$sal_vm_canal2 == 0)/length(datos_originales$sal_vm_canal2),2)`%)</span> es relativamente baja, indicando que es un canal típicamente usado para las salidas y en el cual se manejan grandes valores montários. 
+</div>
+
+## 2.2. `sal_vm_canal5`
+
+```{r, fig.height = 6, fig.width = 9}
+crear_grafico(datos_originales, sal_vm_canal5, bins = 320, numero_columna = 5)
+resumen(datos_originales$sal_vm_canal5)
+```
+
+<div style="text-align: justify"> 
+Del histograma se resalta que la distribución del valor del ticket promedio de salida por el canal 5 se encuentra altamente sesgada a la derecha, lo cual se evidencia también en el resumen numérico donde la <span style="color:#327CCF">mediana (`r dollar(median(datos_originales$sal_vm_canal5))`)</span> se encuentra en una escala demasiado baja en comparació con la <span style="color:#327CCF"> media (`r dollar(mean(datos_originales$sal_vm_canal5))`)</span> la cual se sitúa en la escala de miles de millones, superando no solo el valor de la medida anterior, sino también al <span style="color:#327CCF"> cuartil 3 (`r dollar(quantile(datos_originales$sal_vm_canal5, 0.75))`)</span>, indicando la presencia de muchos datos en cero y de valores máximos con una escala muy superior a la mayoría de los datos.
+
+Se destaca además que la  <span style="color:#327CCF"> proporción de entradas en cero (`r round(100*sum(datos_originales$sal_vm_canal5 == 0)/length(datos_originales$sal_vm_canal5),2)`%)</span> es de practicamente el 50%, indicando que es un canal de uso medio, en el cual se manejan grandes valores montários, pero menores en comparación con el canal anterior. 
+</div>
+
+## 2.3. `sal_vm_canal8`
+
+```{r, fig.height = 6, fig.width = 9}
+crear_grafico(datos_originales, sal_vm_canal8, bins = 320, numero_columna = 8)
+resumen(datos_originales$sal_vm_canal8)
+```
+
+<div style="text-align: justify"> 
+Del histograma se resalta que la distribución del valor del ticket promedio de salida por el canal 8 se encuentra extremadamente sesgada a la derecha, lo cual se evidencia también en el resumen numérico donde la <span style="color:#327CCF">mediana (`r dollar(median(datos_originales$sal_vm_canal8))`)</span> y el <span style="color:#327CCF"> cuartil 3 (`r dollar(quantile(datos_originales$sal_vm_canal8, 0.75))`)</span> presentan un valor de cero, con una <span style="color:#327CCF"> proporción de entradas en cero (`r round(100*sum(datos_originales$sal_vm_canal8 == 0)/length(datos_originales$sal_vm_canal8),2)`%) </span> demasiado alta, influyendo fuertemente sobre el valor de la <span style="color:#327CCF"> media (`r dollar(mean(datos_originales$sal_vm_canal8))`)</span>.
+
+Lo anterior nos muestra el escenario de un canal de poco uso en el que se manejan valores monetarios medianamente bajos, indicando que podría ser restrictivo o poco popular.
+</div>
+
+
+## 2.4. `sal_vm_otros`
+
+```{r, fig.height = 6, fig.width = 9}
+crear_grafico(datos_originales, sal_vm_otros, bins = 320, numero_columna = "otros")
+resumen(datos_originales$sal_vm_otros)
+```
+
+<div style="text-align: justify"> 
+Del histograma se resalta que la distribución del valor del ticket promedio de salida por el canal otros se encuentra extremadamente sesgada a la derecha, lo cual se evidencia también en el resumen numérico donde la <span style="color:#327CCF">mediana (`r dollar(median(datos_originales$sal_vm_otros))`)</span> y el <span style="color:#327CCF"> cuartil 3 (`r dollar(quantile(datos_originales$sal_vm_otros, 0.75))`)</span> presentan un valor de cero, con una <span style="color:#327CCF"> proporción de entradas en cero (`r round(100*sum(datos_originales$sal_vm_otros == 0)/length(datos_originales$sal_vm_otros),2)`%) </span> supremamente alta, influyendo fuertemente sobre el valor de la <span style="color:#327CCF"> media (`r dollar(mean(datos_originales$sal_vm_otros))`)</span>.
+
+Lo aterior nos muestra el escenario de un canal de un uso muy limitado, en el que se manejan valores monetarios bajos, indicando que podría ser muy restrictivo, poco popular o exclusivo.
+</div>
+
+
+## 2.5. Tabla general de resumenes numéricos
+
+```{r}
+#Se seleccionan las columnas de tipo sal_vm
+datos_sal_vm <- datos_originales %>% select(sal_vm_canal2,
+                                            sal_vm_canal5,
+                                            sal_vm_canal8,
+                                            sal_vm_otros)
+
+#Se aplica la función summary a cada columna
+resumen_general <- t(apply(datos_sal_vm, 2, function(x){summary(x)}))
+
+#Se convierte el resulado anterior a data frame
+resumen_general <- as.data.frame(resumen_general)
+
+#Se convierten las cantidades a formato de moneda
+resumen_general <- apply(resumen_general, 2, dollar)
+
+#Se calcula la cantidad de ceros para cada variable
+cantidad_ceros <- apply(datos_sal_vm, 2, function(x){sum(x==0)})
+
+#Se calcula la proporción de ceros para cada variable
+proporcion_ceros <- apply(datos_sal_vm, 
+                          2, 
+                          function(x){
+                            p_ceros <- sum(x==0)/length(x)
+                            p_ceros <- round(p_ceros ,4)*100
+                            paste0(p_ceros, "%")
+                            }
+                          )
+
+#Se concatene el resumen con la cantidad y la proporción de ceros
+resumen_general <- cbind(resumen_general, cantidad_ceros, proporcion_ceros)
+
+#Se crean las etiquetas de la cabecera para los resumenes
+nombres_resumen <- c(
+  "Mínimo", "Q1", "Mediana", "Media", "Q3", "Máximo", "Ceros", "Proporcion ceros"
+  )
+
+#Se muestra la tabla estilizada con la función kable
+kable(resumen_general, col.names = nombres_resumen, align = "r") %>%
+    kable_paper("hover", full_width = TRUE) %>%
+    kable_styling(bootstrap_options = c("hover", "condensed"), font_size = 14) %>% 
+    row_spec(0, background = "#327CCF", color = "white")
+```
+
+<br> <br>
+
+# 3. Análisis de las variables `sal_tx_canalx`
+
+<br>
+
+```{r, echo = FALSE}
+numero <- dollar_format(prefix = "")
+```
+
+## 3.1. `sal_tx_canal2`
+
+```{r, fig.height = 6, fig.width = 9}
+crear_grafico(datos_originales, sal_tx_canal2, 
+              bins = 320, numero_columna = 2,vm = FALSE)
+resumen(datos_originales$sal_tx_canal2, moneda = FALSE)
+```
+
+<div style="text-align: justify"> 
+Del histograma se resalta que la distribución del número de transacciones promedio de salida por el canal 2 se encuentra altamente sesgada a la derecha, lo cual se refleja en el resumen numérico donde la <span style="color:#327CCF"> media (`r numero(mean(datos_originales$sal_tx_canal2))`)</span> es mayor a la <span style="color:#327CCF">mediana (`r numero(median(datos_originales$sal_tx_canal2))`)</span> y al <span style="color:#327CCF"> cuartil 3 (`r numero(quantile(datos_originales$sal_tx_canal2, 0.75))`)</span>, indicando la presencia de máximos con valores altos en comparación con el resto de los datos.
+
+Se destaca además que la  <span style="color:#327CCF"> proporción de entradas en cero (`r round(100*sum(datos_originales$sal_tx_canal2 == 0)/length(datos_originales$sal_tx_canal2),2)`%)</span> es moderadamente baja, indicando que es un canal típicamente usado para las transacciones de salida. 
+</div>
+
+
+## 3.2. `sal_tx_canal5`
+
+```{r, fig.height = 6, fig.width = 9}
+crear_grafico(datos_originales, sal_tx_canal5, 
+              bins = 320, numero_columna = 5,vm = FALSE)
+resumen(datos_originales$sal_tx_canal5, moneda = FALSE)
+```
+
+<div style="text-align: justify"> 
+Del histograma se resalta que la distribución del número de transacciones promedio de salida por el canal 5 se encuentra altamente sesgada a la derecha, lo cual se evidencia también en el resumen numérico donde la <span style="color:#327CCF">mediana (`r numero(median(datos_originales$sal_tx_canal5))`)</span> es mas baja que la <span style="color:#327CCF"> media (`r numero(mean(datos_originales$sal_tx_canal5))`)</span>, siendo esta ultima levemente mayor al <span style="color:#327CCF"> cuartil 3 (`r numero(quantile(datos_originales$sal_tx_canal5, 0.75))`)</span>.
+
+Se destaca además que la  <span style="color:#327CCF"> proporción de entradas en cero (`r round(100*sum(datos_originales$sal_tx_canal5 == 0)/length(datos_originales$sal_tx_canal5),2)`%)</span> es de practicamente el 50%, indicando que es un canal de uso medio, en el cual se manejan un número moderado de transacciones, no superando las `r numero(max(datos_originales$sal_tx_canal5))` por cliente. 
+</div>
+
+## 3.3. `sal_tx_canal8`
+
+```{r, fig.height = 6, fig.width = 9}
+crear_grafico(datos_originales, sal_tx_canal8, 
+              bins = 320, numero_columna = 8,vm = FALSE)
+resumen(datos_originales$sal_tx_canal8, moneda = FALSE)
+```
+
+<div style="text-align: justify"> 
+Del histograma se resalta que la distribución del número de transacciones promedio de salida por el canal 8 se encuentra extremadamente sesgada a la derecha, lo cual se evidencia también en el resumen numérico donde la <span style="color:#327CCF">mediana (`r numero(median(datos_originales$sal_tx_canal8))`)</span> y el <span style="color:#327CCF"> cuartil 3 (`r numero(quantile(datos_originales$sal_tx_canal8, 0.75))`)</span> son ambos cero, con una <span style="color:#327CCF"> proporción de entradas en cero (`r round(100*sum(datos_originales$sal_tx_canal8 == 0)/length(datos_originales$sal_tx_canal8),2)`%)</span> muy elevada, causando un fuerte impacto sobre la <span style="color:#327CCF"> media (`r numero(mean(datos_originales$sal_tx_canal8))`)</span>.
+
+Lo anterior nos muestra el escenario de un canal de poco uso en el que se manejan en promedio un número moderadamente bajo de transacciones, sin embargo, al presentar un máximo de transacciones alto, se intuye que podría tratarse de un canal restrictivo, exclusivo o de difícil acceso.
+
+## 3.4. `sal_tx_otros`
+
+```{r, fig.height = 6, fig.width = 9}
+crear_grafico(datos_originales, sal_tx_otros, 
+              bins = 320, numero_columna = "otros",vm = FALSE)
+resumen(datos_originales$sal_tx_otros, moneda = FALSE)
+```
+
+<div style="text-align: justify"> 
+Del histograma se resalta que la distribución del número de transacciones promedio de salida por el canal otros se encuentra extremadamente sesgada a la derecha, con un comportamiento muy similar al canal anterior pero con valores menores, donde la <span style="color:#327CCF">mediana (`r numero(median(datos_originales$sal_tx_otros))`)</span> y el <span style="color:#327CCF"> cuartil 3 (`r numero(quantile(datos_originales$sal_tx_otros, 0.75))`)</span> son ambos cero, con una <span style="color:#327CCF"> proporción de entradas en cero (`r round(100*sum(datos_originales$sal_tx_otros == 0)/length(datos_originales$sal_tx_otros),2)`%)</span> muy elevada, causando un fuerte impacto sobre la <span style="color:#327CCF"> media (`r numero(mean(datos_originales$sal_tx_otros))`)</span>, la cual es menor a una transacción.
+
+Lo aterior nos muestra el escenario de un canal de un uso muy limitado, en el que se maneja un numero muy bajo de transacciones, indicando que podría ser muy restrictivo, poco popular o exclusivo.
+
+## 3.5. Tabla general de resumenes numéricos
+
+```{r}
+#Se seleccionan las columnas de tipo sal_tx
+datos_sal_tx <- datos_originales %>% select(sal_tx_canal2,
+                                            sal_tx_canal5,
+                                            sal_tx_canal8,
+                                            sal_tx_otros)
+
+#Se aplica la función summary a cada columna
+resumen_general <- t(apply(datos_sal_tx, 2, function(x){summary(x)}))
+
+#Se convierte el resulado anterior a data frame
+resumen_general <- as.data.frame(resumen_general)
+
+#Se crea el formato numerico para los datos
+numerico <- dollar_format(prefix = "")
+
+#Se convierten las cantidades a formato numerico
+resumen_general <- apply(resumen_general, 2, numerico)
+
+#Se calcula la cantidad de ceros para cada variable
+cantidad_ceros <- apply(datos_sal_tx, 2, function(x){sum(x==0)})
+
+#Se calcula la proporción de ceros para cada variable
+proporcion_ceros <- apply(datos_sal_tx, 
+                          2, 
+                          function(x){
+                            p_ceros <- sum(x==0)/length(x)
+                            p_ceros <- round(p_ceros ,4)*100
+                            paste0(p_ceros, "%")
+                            }
+                          )
+
+#Se concatene el resumen con la cantidad y la proporción de ceros
+resumen_general <- cbind(resumen_general, cantidad_ceros, proporcion_ceros)
+
+#Se crean las etiquetas de la cabecera para los resumenes
+nombres_resumen <- c(
+  "Mínimo", "Q1", "Mediana", "Media", "Q3", "Máximo", "Ceros", "Proporcion ceros"
+  )
+
+#Se muestra la tabla estilizada con la función kable
+kable(resumen_general, col.names = nombres_resumen, align = "r") %>% 
+    kable_paper("hover", full_width = TRUE) %>%
+    kable_styling(bootstrap_options = c("hover", "condensed"), font_size = 14) %>% 
+    row_spec(0, background = "#327CCF", color = "white")
+```
+
+<br> <br>
+
+# 4. Correlación entre las variables
+
+```{r, fig.height = 6, fig.width = 9}
+
+#Se calulan las correlaciones entre las variables
+correlaciones <- cor(cbind(datos_sal_vm,datos_sal_tx))
+
+#Se muestra el gráfico de correlación
+ggcorrplot(correlaciones, lab = TRUE, colors = c("pink", 
+                                                 "white",
+                                                 "cadetblue")
+)+
+  #Se añade el titulo del gráfico
+  ggtitle("Correlación entre las variables de tipo en_tx")+
+  #Se centra el titulo
+  theme(plot.title = element_text(hjust = 0.5))
+```

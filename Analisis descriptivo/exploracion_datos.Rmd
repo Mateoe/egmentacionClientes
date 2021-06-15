@@ -9,7 +9,7 @@ output: html_document
 
 ```{r}
 #Se carga la base de datos
-datos_originales <- read.csv("./datos/base_trabajo_segmentacion.csv",
+datos_originales <- read.csv("../datos/base_trabajo_segmentacion.csv",
                              sep = ";")
 
 #Se imprime la cabecera
