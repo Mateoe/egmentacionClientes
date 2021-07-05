@@ -2,29 +2,41 @@
 title: |
     ![](./elementos/logo.png){width=2in}  
     Segmentación de clientes corporativos
-author: "Alejandro Bedoya - Sebastián Agudelo - Mateo Espinal - Juan Fernando Patiño - Estefanía Echeverry"
-date: "Junio - 2021"
+    
+author:
+ - Alejandro Bedoya - Sebastián Agudelo 
+ - Mateo Espinal  - Juan Fernando Patiño 
+ - Estefanía Echeverry
+
+date: "Julio - 2021"
 output:
   prettydoc::html_pretty:
     theme: architect
     highlight: github
     include:
       after_body: ./elementos/footer.html
+---
+
+<br>
+
+<center>
+<h1>Introducción</h1>
+</center>
+
+<div style='text-align: justify;'> 
+En la actualidad es vital para toda empresa u organización conocer a fondo las necesidades, deseos y preferencias de sus clientes, con el objetivo de generar nuevas oportunidades en torno al desarrollo y optimización de productos y servicios, la creación de canales de comunicación y estrategias de publicidad orientadas a un publico claramente definido, y en general, el establecimiento de un modelo de negocio personalizado para cada grupo de clientes, permitiendo la fidelización de aquellos que se encuentran asociados a la organización y la atracción de potenciales consumidores. Motivados por lo anterior y atendiendo a la solicitud de una empresa anónima, este documento presenta una propuesta de segmentación de clientes que permitirá identificar los principales patrones de uso de productos y la relación de estos con los estados financieros.
+</div>
 
 ---
 
 <br>
 
-# Introducción
-<div style='text-align: justify;'> 
-En la actualidad es vital para toda empresa u organización conocer a fondo las necesidades, deseos y preferencias de sus clientes, con el objetivo de generar nuevas oportunidades en torno al desarrollo y optimización de productos y servicios, la creación de canales de comunicación y estrategias de publicidad orientadas a un publico claramente definido, y en general, el establecimiento de un modelo de negocio personalizado para cada grupo de clientes, permitiendo la fidelización de aquellos que se encuentran asociados a la organización y la atracción de potenciales consumidores. Motivados por lo anterior y atendiendo a la solicitud de una empresa anónima, este documento presenta una propuesta de segmentación de clientes que permitirá identificar los principales patrones de uso de productos y la relación de estos con los estados financieros.
-</div>
+<center>
+<h1>Contexto</h1>
+</center>
 
-<br>
-
-# Contexto
 <div style='text-align: justify;'>
-Una compañía del sector financiero requiere una segmentación de clientes, quienes tienen la cualidad particular de ser otras empresas, con el objetivo de obtener grupos con características comunes que permitan identificar patrones uso de los diferentes canales y productos y la relación de estos con los estados financieros de cada cliente, sin embargo por privacidad el solicitante ha decidido no aportar información acerca del contexto empresarial de la organización, brindándonos tan solo la base de datos requerida para construir la propuesta. La descripción de las variables allí contenidas se presenta a continuación:
+Una compañía del sector financiero requiere una segmentación de clientes (quienes tienen la cualidad de ser otras empresas), con el objetivo de obtener grupos con características comunes que permitan identificar patrones de uso de los diferentes canales y productos y la relación de estos con los estados financieros de cada cliente, sin embargo, por privacidad el solicitante ha decidido no aportar información acerca del contexto empresarial de la organización, brindándonos tan solo la base de datos requerida para construir la propuesta. La descripción de las variables allí contenidas se presenta a continuación:
 </div>
 
 **Variables de comportamiento de los clientes en canales y productos**
@@ -72,10 +84,7 @@ A continuación se presentan las tablas que indican las variables pertenecientes
 |sal_vm_canal8 |sal_tx_canal8 |
 |sal_vm_otros  |sal_tx_otros  |
 
-<br>
-
 **Variables de estados financieros y características de los clientes**
-
 <div style='text-align: justify;'>
 Dentro de esta categoría se encuentran las caracteristicas propias de cada cliente reflejadas a través de sus estados financieros. Las variables asociadas y su descripción se encuentran en la siguiente tabla:
 </div>
@@ -176,16 +185,20 @@ Dentro de esta categoría se encuentran las caracteristicas propias de cada clie
   </tr>
 </table>
 
+---
+
 <br>
 
-# Análisis exploratorio
+<center>
+<h1>Análisis exploratorio</h1>
+</center>
 
 <div style='text-align: justify;'> 
-Con el objetivo de crear una idea clara del comportamiento de las variables y descubrir como los clientes interactuan en cada una de ellas, iniciamos realizando un análisis exploratorio haciendo uso de la descripción proporcionada anteriormente.
+Con el objetivo de crear una idea clara del comportamiento de las variables y descubrir como los clientes interactuan con cada una de ellas, iniciamos realizando un análisis exploratorio haciendo uso de la descripción proporcionada anteriormente.
 </div>
 
 <div style='text-align: justify;'> 
-Dado que el conjunto de datos proporcionado cuenta con 46 caracteristicas a describir, este documento presenta para las variables de comportamiento en canales y productos un resumen de cada subgrupo y el correspondiente enlace en el cual se podrá consultar el análisis detallado que contiene todas las funciones y el código necesario para ser reproducido de forma independiente. En lo que respecta a las variables pertenecientes a la categoría de estados financieros y características de los clientes, solo se incluye el enlace donde se podrá consultar todo el análisis detallado, esto ultimo dado que al ser datos categóricos ordinales con niveles diferentes y algunos continuos, vale la pena entender cada aspecto a detalle.
+Dado que el conjunto de datos cuenta con 46 caracteristicas a describir, este documento presenta para las variables de comportamiento en canales y productos un resumen de cada subgrupo y el correspondiente enlace en el cual se podrá consultar el análisis detallado que contiene todas las funciones y el código necesario para ser reproducido de forma independiente. En lo que respecta a las variables pertenecientes a la categoría de estados financieros y características de los clientes, solo se incluye el enlace donde se podrá consultar todo el análisis detallado, esto ultimo dado que al ser datos categóricos ordinales con niveles diferentes y algunos continuos, vale la pena entender cada aspecto a detalle.
 </div>
 
 
@@ -204,7 +217,7 @@ Como se mencionó previamente, este subgrupo de variables registran el valor del
 * **vm:** Valor medio anual
 * **X:** Número identificador del canal
 
-A continuación se presentan las conclusiones generales de lo evidenciado en el [análisis exploratorio de variables en_vm_canalX](https://mateoe.github.io/segmentacionClientes/Publicacion/analisis_exploratorio_en_vm.html), haciendo uso de la tabla que reúne todos los resultados de los resumenes numéricos.
+A continuación se presentan las conclusiones generales de lo evidenciado en el **[análisis exploratorio de variables en_vm_canalX](https://mateoe.github.io/segmentacionClientes/Publicacion/analisis_exploratorio_en_vm.html)**, haciendo uso de la tabla que reúne todos los resultados de los resumenes numéricos.
 </div>
 
 ![](./elementos/en_vm.png)
@@ -239,7 +252,7 @@ Este subgrupo de variables registran la cantidad de transacciones mensuales prom
 * **tx:** Transacciones mensuales promedio
 * **X:** Número identificador del canal
 
-A continuación se presentan las conclusiones generales de lo evidenciado en el [análisis exploratorio de variables en_tx_canalX](https://mateoe.github.io/segmentacionClientes/Publicacion/analisis_exploratorio_en_tx.html), haciendo uso de la tabla que reúne todos los resultados de los resumenes numéricos.
+A continuación se presentan las conclusiones generales de lo evidenciado en el **[análisis exploratorio de variables en_tx_canalX](https://mateoe.github.io/segmentacionClientes/Publicacion/analisis_exploratorio_en_tx.html)**, haciendo uso de la tabla que reúne todos los resultados de los resumenes numéricos.
 </div>
 
 ![](./elementos/en_tx.png)
@@ -265,13 +278,12 @@ A continuación se presentan las conclusiones generales de lo evidenciado en el 
 </div>
 
 
-
 ### 1.3. Variables de tipo `sal_vm_canalX` y `sal_tx_canalX`
 
 <div style='text-align: justify;'>
 Estos dos subgrupos de variables registran el valor del ticket promedio y la cantidad de transacciones mensuales promedio de salida a través de un canal determinado, para facilitar su comprensión se asocia una transacción de salida como una transferencia monetaria por motivo de devolución. 
 
-A continuación se presentan las conclusiones generales de lo evidenciado en el [análisis exploratorio de variables sal_vm_canalX y sal_tx_canalX](https://mateoe.github.io/segmentacionClientes/Publicacion/analisis_exploratorio_sal_vm_sal_tx.html).
+A continuación se presentan las conclusiones generales de lo evidenciado en el **[análisis exploratorio de variables sal_vm_canalX y sal_tx_canalX](https://mateoe.github.io/segmentacionClientes/Publicacion/analisis_exploratorio_sal_vm_sal_tx.html)**.
 </div>
 
 
@@ -309,30 +321,45 @@ Este grupo de variables presenta las características propias de cada empresa (c
 
 Dado que en los estados financieros y características se cuenta con dos tipos de variables, uno categorizado ordinalmente y otro continuo, en este caso no se realiza una metodología de resumen como lo observado para los canales y productos, en su lugar se proporciona el enlace al documento detallado donde se aportan todas las gráficas, tablas, interpretaciones de niveles y análisis que permiten comprender a profundidad las particularidades de los clientes.
 
-Todo lo mencionado previamente se encuentra disponible en el siguiente enlace: [análisis exploratorio - estados financieros y características](https://mateoe.github.io/segmentacionClientes/Publicacion/analisis_exploratorio_estados_caracteristicas.html).
-
+Todo lo mencionado previamente se encuentra disponible en el siguiente enlace: **[análisis exploratorio - estados financieros y características](https://mateoe.github.io/segmentacionClientes/Publicacion/analisis_exploratorio_estados_caracteristicas.html)**.
 </div>
 
+---
 
+<br>
 
+<center>
+<h1>Segmentación</h1>
+</center>
 
+<div style='text-align: justify;'>
+Antes de iniciar este proceso es importante recordar que nuestro conjunto de datos cuenta con variables mixtas, es decir, algunas características son continuas y otras categóricas ordinales, lo cual se puede apreciar tanto en el contexto como en el análisis exploratorio. Lo anterior indica que no es adecuado utilizar métricas, medidas de distancia y/o algoritmos que requieran que los datos sean continuos (como puede ser el caso de K-means), debido a ello a continuación se describe resumidamente la medida de distancia y el algoritmo a utilizar:
+</div>
 
+**Medida de distancia**
+<div style='text-align: justify;'>
+La _distancia de Gower_ es una medida de disimilitud que indica el grado de diferencia entre dos observaciones, estableciendo un valor entre $0$ y $1$, donde $(0)$ indica que ambas son iguales y $(1)$ indica que son completamente diferentes, ésta combina diferentes métricas para variables cuantitativas, nominales y ordinales, por lo que es popularmente usada para datos mixtos.
 
+En el siguiente articulo se define y describe detalladamente el funcionamiento de la medida de disimilitud mencionada previamente: _[distancia de Gower](https://medium.com/analytics-vidhya/gowers-distance-899f9c4bd553)_. 
+</div>
 
+**Algoritmo**
+<div style='text-align: justify;'>
+El algoritmo pam (Partición alrededor de medoides) según la _[documentación oficial](https://www.rdocumentation.org/packages/cluster/versions/2.1.2/topics/pam)_ es una versión más robusta del algoritmo *K-means*, la cual se basa en encontrar los medoides que permitan dividir el conjunto de datos en $K$ grupos previamente definidos, donde un medoide se refiere a un objeto que posee la mínima disimilitud promedio entre él y todas las demás observaciones al interior del grupo. Este algoritmo tiene la ventaja de aceptar matrices de disimilitud como la proporcionada por la _distancia de Gower_.
 
+El siguiente articulo define y describe detalladamente su funcionamiento: _[pam](https://www.datanovia.com/en/lessons/k-medoids-in-r-algorithm-and-practical-examples/)_.
+</div>
 
+## Proceso de segmentación
+<div style='text-align: justify;'>
+Con la intención de evitar sobrecargar el informe principal con todo el proceso para la obtención de grupos dicho procedimiento se realizó en el documento denominado **[proceso de segmentación](add.link)**, en el cual se llevaron a cabo las siguientes actividades a detalle:
 
+1. Pasos previos a la segmentación.
+2. Refactorización y creación de nuevas variables.
+3. Segmentación.
+</div>
 
+---
 
-
-
-
-
-
-
-
-
-
-
-
+<br>
 
