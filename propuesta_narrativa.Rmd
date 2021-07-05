@@ -217,7 +217,7 @@ Como se mencionó previamente, este subgrupo de variables registran el valor del
 * **vm:** Valor medio anual
 * **X:** Número identificador del canal
 
-A continuación se presentan las conclusiones generales de lo evidenciado en el **[análisis exploratorio de variables en_vm_canalX](https://mateoe.github.io/segmentacionClientes/Publicacion/analisis_exploratorio_en_vm.html)**, haciendo uso de la tabla que reúne todos los resultados de los resumenes numéricos.
+A continuación se presentan las conclusiones generales de lo evidenciado en el **[análisis exploratorio de variables en_vm_canalX](https://mateoe.github.io/segmentacionClientes/analisis/analisis_exploratorio_en_vm.html)**, haciendo uso de la tabla que reúne todos los resultados de los resumenes numéricos.
 </div>
 
 ![](./elementos/en_vm.png)
@@ -252,7 +252,7 @@ Este subgrupo de variables registran la cantidad de transacciones mensuales prom
 * **tx:** Transacciones mensuales promedio
 * **X:** Número identificador del canal
 
-A continuación se presentan las conclusiones generales de lo evidenciado en el **[análisis exploratorio de variables en_tx_canalX](https://mateoe.github.io/segmentacionClientes/Publicacion/analisis_exploratorio_en_tx.html)**, haciendo uso de la tabla que reúne todos los resultados de los resumenes numéricos.
+A continuación se presentan las conclusiones generales de lo evidenciado en el **[análisis exploratorio de variables en_tx_canalX](https://mateoe.github.io/segmentacionClientes/analisis/analisis_exploratorio_en_tx.html)**, haciendo uso de la tabla que reúne todos los resultados de los resumenes numéricos.
 </div>
 
 ![](./elementos/en_tx.png)
@@ -283,7 +283,7 @@ A continuación se presentan las conclusiones generales de lo evidenciado en el 
 <div style='text-align: justify;'>
 Estos dos subgrupos de variables registran el valor del ticket promedio y la cantidad de transacciones mensuales promedio de salida a través de un canal determinado, para facilitar su comprensión se asocia una transacción de salida como una transferencia monetaria por motivo de devolución. 
 
-A continuación se presentan las conclusiones generales de lo evidenciado en el **[análisis exploratorio de variables sal_vm_canalX y sal_tx_canalX](https://mateoe.github.io/segmentacionClientes/Publicacion/analisis_exploratorio_sal_vm_sal_tx.html)**.
+A continuación se presentan las conclusiones generales de lo evidenciado en el **[análisis exploratorio de variables sal_vm_canalX y sal_tx_canalX](https://mateoe.github.io/segmentacionClientes/analisis/analisis_exploratorio_sal_vm_sal_tx.html)**.
 </div>
 
 
@@ -321,7 +321,7 @@ Este grupo de variables presenta las características propias de cada empresa (c
 
 Dado que en los estados financieros y características se cuenta con dos tipos de variables, uno categorizado ordinalmente y otro continuo, en este caso no se realiza una metodología de resumen como lo observado para los canales y productos, en su lugar se proporciona el enlace al documento detallado donde se aportan todas las gráficas, tablas, interpretaciones de niveles y análisis que permiten comprender a profundidad las particularidades de los clientes.
 
-Todo lo mencionado previamente se encuentra disponible en el siguiente enlace: **[análisis exploratorio - estados financieros y características](https://mateoe.github.io/segmentacionClientes/Publicacion/analisis_exploratorio_estados_caracteristicas.html)**.
+Todo lo mencionado previamente se encuentra disponible en el siguiente enlace: **[análisis exploratorio - estados financieros y características](https://mateoe.github.io/segmentacionClientes/analisis/analisis_exploratorio_estados_caracteristicas.html)**.
 </div>
 
 ---
@@ -352,7 +352,7 @@ El siguiente articulo define y describe detalladamente su funcionamiento: _[pam]
 
 ## Proceso de segmentación
 <div style='text-align: justify;'>
-Con la intención de evitar sobrecargar el informe principal con todo el proceso para la obtención de grupos dicho procedimiento se realizó en el documento denominado **[proceso de segmentación](add.link)**, en el cual se llevaron a cabo las siguientes actividades a detalle:
+Con la intención de evitar sobrecargar el informe principal con todo el proceso para la obtención de grupos dicho procedimiento se realizó en el documento denominado **[proceso de segmentación](https://mateoe.github.io/segmentacionClientes/proceso_segmentacion.html)**, en el cual se llevaron a cabo las siguientes actividades a detalle:
 
 1. Pasos previos a la segmentación.
 2. Refactorización y creación de nuevas variables.
