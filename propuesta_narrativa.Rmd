@@ -340,14 +340,14 @@ Antes de iniciar este proceso es importante recordar que nuestro conjunto de dat
 <div style='text-align: justify;'>
 La _distancia de Gower_ es una medida de disimilitud que indica el grado de diferencia entre dos observaciones, estableciendo un valor entre $0$ y $1$, donde $(0)$ indica que ambas son iguales y $(1)$ indica que son completamente diferentes, ésta combina diferentes métricas para variables cuantitativas, nominales y ordinales, por lo que es popularmente usada para datos mixtos.
 
-En el siguiente articulo se define y describe detalladamente el funcionamiento de la medida de disimilitud mencionada previamente: _[distancia de Gower](https://medium.com/analytics-vidhya/gowers-distance-899f9c4bd553)_. 
+En el siguiente articulo se define y describe detalladamente el funcionamiento de la medida de disimilitud mencionada previamente: _<a href = "https://medium.com/analytics-vidhya/gowers-distance-899f9c4bd553" target = "_blank">distancia de Gower</a>_. 
 </div>
 
 **Algoritmo**
 <div style='text-align: justify;'>
-El algoritmo pam (Partición alrededor de medoides) según la _[documentación oficial](https://www.rdocumentation.org/packages/cluster/versions/2.1.2/topics/pam)_ es una versión más robusta del algoritmo *K-means*, la cual se basa en encontrar los medoides que permitan dividir el conjunto de datos en $K$ grupos previamente definidos, donde un medoide se refiere a un objeto que posee la mínima disimilitud promedio entre él y todas las demás observaciones al interior del grupo. Este algoritmo tiene la ventaja de aceptar matrices de disimilitud como la proporcionada por la _distancia de Gower_.
+El algoritmo pam (Partición alrededor de medoides) según la _<a href = "https://www.rdocumentation.org/packages/cluster/versions/2.1.2/topics/pam" target = "_blank">documentación oficial</a>_ es una versión más robusta del algoritmo *K-means*, la cual se basa en encontrar los medoides que permitan dividir el conjunto de datos en $K$ grupos previamente definidos, donde un medoide se refiere a un objeto que posee la mínima disimilitud promedio entre él y todas las demás observaciones al interior del grupo. Este algoritmo tiene la ventaja de aceptar matrices de disimilitud como la proporcionada por la _distancia de Gower_.
 
-El siguiente articulo define y describe detalladamente su funcionamiento: _[pam](https://www.datanovia.com/en/lessons/k-medoids-in-r-algorithm-and-practical-examples/)_.
+El siguiente articulo define y describe detalladamente su funcionamiento: _<a href = "https://www.datanovia.com/en/lessons/k-medoids-in-r-algorithm-and-practical-examples/" target = "_blank">pam</a>_.
 </div>
 
 ## Proceso de segmentación
@@ -362,4 +362,5 @@ Con la intención de evitar sobrecargar el informe principal con todo el proceso
 ---
 
 <br>
+
 

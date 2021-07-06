@@ -361,7 +361,7 @@ kable(mas_cercanos, "html", align = "c") %>%
 <div style="text-align: justify">
 Para determinar el número optimo de grupos $(k)$ se utilizará el método de silhouette, este calcula un coeficiente para cada observación donde se determina el grado de similitud con su propio grupo, finalmente se calcula el promedio de los resultados para determinar la puntuación de silhouette.
 
-Una descripción completa de este método puede ser encontrada en: [método de silhouette](https://towardsdatascience.com/silhouette-method-better-than-elbow-method-to-find-optimal-clusters-378d62ff6891).
+Una descripción completa de este método puede ser encontrada en: _<a href = "https://towardsdatascience.com/silhouette-method-better-than-elbow-method-to-find-optimal-clusters-378d62ff6891" target = "_blank">método de silhouette</a>_
 </div>
 
 **Se calcula la puntuación de silhouette entre 2 y 8**

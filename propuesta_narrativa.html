@@ -426,12 +426,12 @@ Segmentación
 <strong>Medida de distancia</strong>
 <div style="text-align: justify;">
 <p>La <em>distancia de Gower</em> es una medida de disimilitud que indica el grado de diferencia entre dos observaciones, estableciendo un valor entre <span class="math inline">\(0\)</span> y <span class="math inline">\(1\)</span>, donde <span class="math inline">\((0)\)</span> indica que ambas son iguales y <span class="math inline">\((1)\)</span> indica que son completamente diferentes, ésta combina diferentes métricas para variables cuantitativas, nominales y ordinales, por lo que es popularmente usada para datos mixtos.</p>
-<p>En el siguiente articulo se define y describe detalladamente el funcionamiento de la medida de disimilitud mencionada previamente: <em><a href="https://medium.com/analytics-vidhya/gowers-distance-899f9c4bd553">distancia de Gower</a></em>.</p>
+<p>En el siguiente articulo se define y describe detalladamente el funcionamiento de la medida de disimilitud mencionada previamente: <em><a href="https://medium.com/analytics-vidhya/gowers-distance-899f9c4bd553" target="_blank">distancia de Gower</a></em>.</p>
 </div>
 <strong>Algoritmo</strong>
 <div style="text-align: justify;">
-<p>El algoritmo pam (Partición alrededor de medoides) según la <em><a href="https://www.rdocumentation.org/packages/cluster/versions/2.1.2/topics/pam">documentación oficial</a></em> es una versión más robusta del algoritmo <em>K-means</em>, la cual se basa en encontrar los medoides que permitan dividir el conjunto de datos en <span class="math inline">\(K\)</span> grupos previamente definidos, donde un medoide se refiere a un objeto que posee la mínima disimilitud promedio entre él y todas las demás observaciones al interior del grupo. Este algoritmo tiene la ventaja de aceptar matrices de disimilitud como la proporcionada por la <em>distancia de Gower</em>.</p>
-<p>El siguiente articulo define y describe detalladamente su funcionamiento: <em><a href="https://www.datanovia.com/en/lessons/k-medoids-in-r-algorithm-and-practical-examples/">pam</a></em>.</p>
+<p>El algoritmo pam (Partición alrededor de medoides) según la <em><a href="https://www.rdocumentation.org/packages/cluster/versions/2.1.2/topics/pam" target="_blank">documentación oficial</a></em> es una versión más robusta del algoritmo <em>K-means</em>, la cual se basa en encontrar los medoides que permitan dividir el conjunto de datos en <span class="math inline">\(K\)</span> grupos previamente definidos, donde un medoide se refiere a un objeto que posee la mínima disimilitud promedio entre él y todas las demás observaciones al interior del grupo. Este algoritmo tiene la ventaja de aceptar matrices de disimilitud como la proporcionada por la <em>distancia de Gower</em>.</p>
+<p>El siguiente articulo define y describe detalladamente su funcionamiento: <em><a href="https://www.datanovia.com/en/lessons/k-medoids-in-r-algorithm-and-practical-examples/" target="_blank">pam</a></em>.</p>
 </div>
 </div>
 <div id="proceso-de-segmentación" class="section level2">
