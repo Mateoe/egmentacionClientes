@@ -30,6 +30,7 @@ En la actualidad es vital para toda empresa u organización conocer a fondo las 
 ---
 
 <br>
+<br>
 
 <center>
 <h1>Contexto</h1>
@@ -188,6 +189,7 @@ Dentro de esta categoría se encuentran las caracteristicas propias de cada clie
 ---
 
 <br>
+<br>
 
 <center>
 <h1>Análisis exploratorio</h1>
@@ -327,6 +329,7 @@ Todo lo mencionado previamente se encuentra disponible en el siguiente enlace: *
 ---
 
 <br>
+<br>
 
 <center>
 <h1>Segmentación</h1>
@@ -362,5 +365,593 @@ Con la intención de evitar sobrecargar el informe principal con todo el proceso
 ---
 
 <br>
+<br>
+
+<center>
+<h1>Análisis de resultados</h1>
+</center>
+
+<div style='text-align: justify;'>
+Tras completar el proceso anterior se obtiene una base de datos segmentada donde las observaciones se asocian a un conjunto con características comunes, sin embargo, aún son desconocidas las propiedades de cada uno de estos, con ello en mente este análisis busca describir el comportamiento de los grupos a través de las 47 variables proporcionadas inicialmente.
+</div>
+
+<br>
+
+## 1. Pasos previos al análisis
+
+### 1.1. Se cargan las librerías necesarias
+```{r, message=FALSE, warning=FALSE}
+library(dplyr)        #Para manipulación de datos
+library(ggplot2)      #Para la creación de gráficos
+library(knitr)        #Para estilizar tablas
+library(kableExtra)   #Para complementar el estilo de las tablas
+library(scales)       #Para definir los formatos de moneda, numéricos, etc.
+options(scipen = 999) #Para la correcta visualización de cantidades grandes.
+```
+
+### 1.2. Lectura de la base de datos segmentada
+<details style = "margin-bottom: 10px; margin-left: 5px">
+  <summary style = "padding: 2px 10px">
+    <strong><span style = "color: #E83E8C">Click para ver el código</span></strong>
+  </summary>
+```{r}
+#Se lee el conjunto de datos obtenido del proceso de segmentación
+datos_segmentados <- read.csv("./datos/segmentacion.csv", row.names = 1)
 
 
+#Se crea la cabecera de los datos
+cabecera_datos <- kable(head(datos_segmentados), "html", align = "c") %>% 
+    kable_paper("hover", full_width = F) %>% 
+    row_spec(0, background = "#327CCF", color = "white")%>% 
+    scroll_box(width = "100%") %>% 
+    kable_styling(bootstrap_options = c("hover", "condensed"))
+```
+</details>
+
+```{r}
+#Se muestra la cabecera de los datos
+cabecera_datos
+```
+
+### 1.3. Proporción de datos en cada grupo
+
+<details style = "margin-bottom: 10px; margin-left: 5px">
+  <summary style = "padding: 2px 10px">
+    <strong><span style = "color: #E83E8C">Click para el código de la tabla</span></strong>
+  </summary>
+```{r}
+#Se crea la tabla de proporción de datos a partir de los datos segmentados
+proporcion_datos <- datos_segmentados %>% 
+                    group_by(grupo) %>% 
+                    #Para cada grupo se calcula el número de clientes que pertenecen
+                    summarise(Clientes = length(grupo),
+                              #Se calcula la proporcion de clientes en el grupo
+                              Proporción = Clientes/nrow(datos_segmentados))
+
+#Se redondea la proporción a dos dígitos decimales
+proporcion_datos$Proporción <- round(proporcion_datos$Proporción*100, 2)
+
+#Se añade el simbolo de porcentaje a la proporción
+proporcion_datos$Proporción <- paste0(proporcion_datos$Proporción, "%")
+
+#Se crea la tabla con la función kable
+mostrar_proporcion <- kable(proporcion_datos, align = "r",  "html") %>% 
+    #Se utiliza el tema kable_papper
+    kable_paper("hover", full_width = TRUE) %>%
+    kable_styling(bootstrap_options = c("hover", "condensed"), 
+                  font_size = 16) %>% 
+    row_spec(0, background = "#327CCF", color = "white")
+
+```
+</details>
+
+```{r}
+#Se muestra la tabla
+mostrar_proporcion
+```
+
+
+### 1.4. Definición de funciones necesarias
+<div style='text-align: justify;'>
+Con el objetivo de evitar código redundante se definen las funciones necesarias para crear los elementos a ser utilizados en cada análisis. 
+</div>
+
+**Función encargada de la creación de tablas**
+<details style = "margin-bottom: 10px; margin-left: 5px">
+  <summary style = "padding: 2px 10px">
+    <strong><span style = "color: #E83E8C">Click para ver el código</span></strong>
+  </summary>
+```{r}
+#Se define la función solicitando el conjunto de datos, la columna resumir, 
+#si los datos son continuos y si se desea utilizar el formato de moneda
+resumir_datos <- function(conjunto_datos, columna, continuo = TRUE, moneda = TRUE){
+    
+    columna <- enquo(columna)
+    
+    #Se define el resumen a partir del conjunto de datos proporcionado
+    resumen <- conjunto_datos %>%
+        #Se agrupa a partir de la columna "grupo"
+        group_by(grupo) %>%
+        #Se calculan los resumenes numéricos
+        summarise(Media = mean(!!columna),
+                  Mínimo = min(!!columna),
+                  Q1 = quantile(!!columna,0.25),
+                  Mediana = median(!!columna),
+                  Q3 = quantile(!!columna,0.75),
+                  Máximo = max(!!columna)) %>% 
+        #Los valores con decimales se redondean a dos dígitos
+        apply(., 2, round, digits = 2) %>% 
+        #Se transforma el resultado a data.frame
+        as.data.frame 
+
+    #Se determina si el conjunto de datos es continuo
+    if (continuo == TRUE) {
+        
+        #Se determina si se desea utilizar el formato de moneda
+        if (moneda == TRUE) {
+            #Se añade el simbolo identificador de moneda 
+            formato <- dollar_format(prefix = "$")
+        }else{
+            #No se añade prefijo al formato numérico
+            formato <- dollar_format(prefix = "")
+        }
+        
+        #Se extraen los nombres de los resumenes
+        numericas <- resumen %>% select(-grupo) %>% names
+        
+        #Se aplica el formato numérico a los resumenes
+        resumen[, numericas] <- resumen %>%
+            select(all_of(numericas)) %>% 
+            apply(., 2, formato) %>% 
+            #Se convierte el resultado a data.frame
+            as.data.frame
+        
+        #Se calcula la proporción de datos en cero para cada grupo
+        ceros <- conjunto_datos %>%
+            group_by(grupo) %>% 
+            summarise(
+                proporcion = (sum(!!columna == 0)/length(!!columna))*100
+                
+            )
+        
+        #Se añade la proporción de ceros a los resumenes
+        resumen$ceros <- ceros %>% 
+                         select(proporcion) %>% 
+                         #Se redondea a dos digitos decimales
+                         round(2) %>% 
+                         #Se crea un formato de porcentaje para la proporción
+                         apply(., 
+                               1, function(x){
+                                   paste0(x,"%")
+                                   }
+                               )
+        
+    }
+    
+    
+    #Se estiliza el resumen con la función kable
+    kable(resumen, align = "r",  "html") %>% 
+        #Se utiliza el tema kable_papper
+        kable_paper("hover", full_width = TRUE) %>%
+        kable_styling(bootstrap_options = c("hover", "condensed"), 
+                      font_size = 16) %>% 
+        row_spec(0, background = "#327CCF", color = "white")
+}
+```
+</details>
+
+<br>
+
+## 2. Descripción de grupos a través de cada variable
+
+<div style='text-align: justify;'>
+Para cada variable se creará una tabla donde se presentarán los resumenes numéricos correspondientes a los grupos, la cual será usada de base determinar las principales características que los diferencian.
+
+
+**Observación**: Los datos continuos cuentan con un resumen adicional denominado "ceros", este registra la proporción de datos en cero dentro de cada grupo, calculado de la siguiente manera: 
+</div>
+
+<br>
+
+<div style='text-align: center; font-size: 22px'>
+$ceros = \frac{totalCerosGrupo}{tamañoGrupo}$
+</div>
+
+<br>
+
+### 2.1. Valor del ticket promedio de entrada por el canal 1
+
+```{r}
+resumir_datos(datos_segmentados, en_vm_canal1)
+```
+
+<div style='text-align: justify;'>
+En el análisis exploratorio se observó que este canal es uno de los más usados, presentando una baja proporción de entradas en cero, es decir, la mayor parte de los clientes han hecho uso de este medio, teniendo en cuenta lo anterior se resalta que:
+
+1. El grupo 1 contiene la mayor parte de las entradas en cero, donde un 23.48% de los clientes pertenecientes a este no han realizado movimientos a través del canal.
+
+2. El grupo 2 contiene a los clientes más activos, donde tan solo el 0.34% no le ha dado uso al canal.
+
+3. El grupo 2 está constituido por clientes que manejan valores monetarios más elevado, donde el 75% de ellos superan los \$236,162,973 mientras que en el canal 1 el 75% están por debajo de los \$157,447,372 lo cual se evidencia además en la gran diferencia entre las medias.
+
+Para este canal se concluye que el grupo 2 es más activo y presenta valores significativamente más altos que el grupo 1.
+</div> 
+
+### 2.2. Valor del ticket promedio de entrada por el canal 2
+
+```{r}
+resumir_datos(datos_segmentados, en_vm_canal2)
+```
+
+<div style='text-align: justify;'>
+El análisis exploratorio nos ayudó a evidenciar que este canal es el más activo al tener la proporción de entradas en cero mas baja, además es uno de los que presenta valores monetarios más altos, considerando esto los resultados de la tabla nos indican lo siguiente:
+
+1. Nuevamente el grupo 1 contiene la mayor parte de las entradas en cero donde 20.17% de los clientes pertenecientes a este no usan el canal.
+
+2. El grupo 2 conserva la mayor parte de actividad donde tan solo el 0.88% de los clientes no usan el canal.
+
+3. Similar a los resultados del canal anterior, el grupo 2 presenta valores monetarios mas altos donde la media de este es significativamente mayor, lo cual se evidencia además en el resto de medidas.
+
+Para este canal se concluye que el grupo 2 es más activo y presenta valores monetarios más altos.
+</div>
+
+### 2.3. Valor del ticket promedio de entrada por el canal 3
+
+```{r}
+resumir_datos(datos_segmentados, en_vm_canal3)
+```
+
+<div style='text-align: justify;'>
+El canal 3 resulto ser bastante promedio en el análisis exploratorio, con un una proporción de uso moderadamente alta y valores monetarios medianamente bajos, teniendo esto en cuanta se concluye lo siguiente:
+
+1. La mayor parte de los clientes del grupo 1 son inactivos en este canal, lo cual se representa con una proporción de entradas en cero del 66.3%.
+
+2. Los clientes pertenecientes al grupo 2 siguen siendo bastante activos, registrando una proporción de entradas en cero de tan solo el 13.36%.
+
+3. Similar a los dos canales anteriores, el grupo 2 maneja valores monetarios más altos, lo cual se puede evidenciar en la gran diferencia entre todas las medidas que no se encuentran en cero.
+
+Se concluye que el grupo 2 continúa siendo más activo y presenta valores monetarios más altos que el grupo 1.
+</div>
+
+### 2.4. Valor del ticket promedio de entrada por el canal 4
+
+```{r}
+resumir_datos(datos_segmentados, en_vm_canal4)
+```
+
+<div style='text-align: justify;'>
+El canal 4 presenta una tasa moderadamente alta de inactividad con una proporción de entradas en cero superior al 70%, por lo cual se concluye lo siguiente:
+
+1. El grupo 1 es altamente inactivo dado que el 92.96% de los clientes pertenecientes a este no le dan ningún uso al canal.
+
+2. El grupo 2 presenta una inactividad del 60.12%, lo cual se explica por el bajo uso del canal en general, sin embargo, todos sus valores son superiores a los del grupo 1, por lo cual la conclusión es similar a las anteriores.
+</div>
+
+### 2.5. Valor del ticket promedio de entrada por el canal 5
+
+```{r}
+resumir_datos(datos_segmentados, en_vm_canal5)
+```
+
+<div style='text-align: justify;'>
+El canal 5 conserva la misma tendencia, donde el grupo 1 es significativamente más inactivo con una proporción de entradas en cero cercana al 80%, evidenciando que en su mayoría los clientes pertenecientes a este no hacen uso del canal y aquellos que lo usan presentan valores monetarios menores a los del grupo 2, lo cual se evidencia en la gran diferencia en la escala de las medias y los máximos correspondientes. 
+</div>
+
+### 2.6. Valor del ticket promedio de entrada por el canal 6
+
+```{r}
+resumir_datos(datos_segmentados, en_vm_canal6)
+```
+
+<div style='text-align: justify;'>
+El canal 6 presenta una significativa diferencia en la proporción de ceros, donde al rededor de la mitad de los clientes pertenecientes al grupo 1 no le dan ningún uso, mientras que los pertenecientes al grupo 2 son altamente activos (con una proporción de entradas en ceros de 1.89%).
+
+El grupo 2 continúa manejando valores monetarios bastante elevados en comparación con el grupo 1.
+</div>
+
+### 2.7. Valor del ticket promedio de entrada por el canal 7
+
+```{r}
+resumir_datos(datos_segmentados, en_vm_canal7)
+```
+
+<div style='text-align: justify;'>
+En el análisis exploratorio se observó que el canal 7 es el más inactivo de todos, con una proporción de entradas en cero cercana al 90%, por lo cual de la tabla se resalta que ambos grupos presentan una baja proporción de uso, donde el número 1 es el que mas se destaca.
+
+El grupo 2 se continúa posicionando como más activo y fuerte monetariamente.
+</div>
+
+### 2.8. Valor del ticket promedio de entrada por el canal 8
+
+```{r}
+resumir_datos(datos_segmentados, en_vm_canal8)
+```
+
+<div style='text-align: justify;'>
+El canal 8 continúa presentando la misma tendencia evidenciada hasta el momento, donde el grupo 2 presenta una gran participación con tan solo un 9.38% de inactividad, mientras que el 76.93% de los clientes pertenecientes al grupo 1 no presentan actividad a través del canal, adicionalmente se resalta que el grupo 2 continúa teniendo valores monetarios más altos.
+</div>
+
+### 2.9. Valor del ticket promedio de entrada por el canal 9
+
+```{r}
+resumir_datos(datos_segmentados, en_vm_canal9)
+```
+
+<div style='text-align: justify;'>
+Como se puede observar de la tabla, el canal 9 se comporta de manera similar al anterior pero con valores monetarios más bajos, por lo tanto la conclusión es la misma, el grupo 2 se posiciona como el más activo con sumas monetarias más altas.
+</div>
+
+### 2.10. Valor del ticket promedio de entrada por el canal 10
+
+```{r}
+resumir_datos(datos_segmentados, en_vm_canal10)
+```
+
+<div style='text-align: justify;'>
+El canal 10 se destacó en el análisis exploratorio por poseer una proporción de entradas en cero cercana al 90% y tener los valores monetarios más bajos, por lo cual se observa que el grupo 1 se lleva la mayor proporción de inactividad, donde el 99.03% de los clientes pertenecientes a este no le dan ningún uso.
+
+Hasta este punto la conclusión no cambia, el grupo 2 continúa siendo más activo y manejando magnitudes monetarias mayores.
+</div>
+
+### 2.11. Valor del ticket promedio de entrada por el canal otros
+
+```{r}
+resumir_datos(datos_segmentados, en_vm_otros)
+```
+
+<div style='text-align: justify;'>
+Finalmente el canal "otros" aporta una información similar al canal anterior y conserva la misma tendencia evidenciada a través de todos los canales para el valor del ticket promedio, por lo tanto se concluye que el grupo 2 contiene a los clientes más activos y que poseen valores monetarios mayores.
+</div>
+
+### 2.12. Transacciones de entrada por el canal 1
+
+```{r}
+resumir_datos(datos_segmentados, en_tx_canal1, moneda = FALSE)
+```
+
+<div style='text-align: justify;'>
+1. La tabla nos presenta una clara diferencia entre las transacciones de ambos grupos, donde el 75% de los clientes pertenecientes primero no superan las 9.25, mientras que el 75% de los integrantes del segundo sobrepasan las 36.02.
+
+2. La gran diferencia entre las medias indica que el grupo 2 está constituido por clientes más activos en cuanto al número de transacciones en comparación con los del grupo 1.
+</div>
+
+### 2.13. Transacciones de entrada por el canal 2
+
+```{r}
+resumir_datos(datos_segmentados, en_tx_canal2, moneda = FALSE)
+```
+
+<div style='text-align: justify;'>
+1. Similar a lo evidenciado previamente, se observa una clara diferencia para ambos grupos, mientras que para el primero el 75% de los clientes no realizan más de 13.54 transacciones, en el segundo el 75% realizan mínimo 32.37, además se resalta que en este canal la diferencia entre las medidas de ambos grupos son levemente mas estrechas que lo evidenciado en el anterior, a excepción de el valor máximo.
+
+2. La gran brecha entre la magnitud del valor máximo y la media de ambos grupos indica que los clientes del segundo manejan un volumen mayor de transacciones
+</div>
+
+### 2.14. Transacciones de entrada por el canal 3
+
+```{r}
+resumir_datos(datos_segmentados, en_tx_canal3, moneda = FALSE)
+```
+
+<div style='text-align: justify;'>
+Debido a la alta presencia de valores en cero se aprecia una diferencia mas extrema en el canal 3, en este los clientes del grupo 1 manejan un volumen sumamente menor de transacciones que los del grupo 2 lo cual se refleja en cada una de las medidas de resumen.
+
+Se empieza a observar una clara tendencia en la cual el grupo 2 se destaca por presentar cantidades transaccionales más altas.
+</div>
+
+### 2.15. Transacciones de entrada por el canal 4
+
+```{r}
+resumir_datos(datos_segmentados, en_tx_canal4, moneda = FALSE)
+```
+
+<div style='text-align: justify;'>
+1. En el canal 4 el grupo 1 presenta una alta proporción de entradas en cero, reflejandose esto en el valor de la media.
+
+2. El grupo 2 muestra más actividad que el anterior y presenta un volumen mucho mayor de transacciones, con un máximo superior a las tres millones.
+</div>
+
+### 2.16. Transacciones de entrada por el canal 5
+
+```{r}
+resumir_datos(datos_segmentados, en_tx_canal5, moneda = FALSE)
+```
+
+<div style='text-align: justify;'>
+El canal 5 continúa mostrando la tendencia evidenciada hasta el momento donde el grupo 2 presenta una mayor actividad con una menor proporción de ceros y muestra valores más altos en cada uno de los resumenes numéricos.
+</div>
+
+### 2.17. Transacciones de entrada por el canal 6
+
+```{r}
+resumir_datos(datos_segmentados, en_tx_canal6, moneda = FALSE)
+```
+
+<div style='text-align: justify;'>
+En este canal el grupo 1 se muestra altamente inactivo, donde más del 75% de los clientes no han realizado ninguna transacción, mostrando una clara inactividad en comparación con los integrantes del grupo 2, los cuales en su mayoría han realizado más de 3.40 transacciones.
+</div>
+
+### 2.18. Transacciones de entrada por el canal 7
+
+```{r}
+resumir_datos(datos_segmentados, en_tx_canal7, moneda = FALSE)
+```
+
+<div style='text-align: justify;'>
+El canal 7 muestra una alta inactividad por parte de ambos grupos, sin embargo, el grupo 2 es claramente más activo al presentar una menor cantidad de datos en cero y un valor máximo mucho mas alto.
+</div>
+
+### 2.19. Transacciones de entrada por el canal 8
+
+```{r}
+resumir_datos(datos_segmentados, en_tx_canal8, moneda = FALSE)
+```
+
+<div style='text-align: justify;'>
+En el canal 8 se evidencia que el grupo 1 es claramente más inactivo con un número máximo de transacciones inferior a las 39 y una proporción de ceros superior al 75%. Por su parte el grupo 2 continúa mostrando más actividad y numero mayores en cada una de las medidas. 
+</div>
+
+### 2.20. Transacciones de entrada por el canal 9
+
+```{r}
+resumir_datos(datos_segmentados, en_tx_canal9, moneda = FALSE)
+```
+
+<div style='text-align: justify;'>
+El canal 9 muestra el mismo comportamiento que el anterior, donde la proporción de ceros del grupo 1 supera el 75% y cada una de sus medidas de resumen se encuentran por debajo de las del grupo 2.  
+</div>
+
+### 2.21. Transacciones de entrada por el canal 10
+
+```{r}
+resumir_datos(datos_segmentados, en_tx_canal10, moneda = FALSE)
+```
+
+<div style='text-align: justify;'>
+En el canal 10 el grupo 1 se encuentra casi completamente inactivo, donde el 99.03% de clientes no registran ninguna transacción y el número máximo realizado es de 3.
+
+El grupo 2 muestra una disminución en la proporción de ceros, presentando una inactividad menor y un número de transacciones realizadas levemente más alto.
+</div>
+
+### 2.22. Transacciones de entrada por el canal otros
+
+```{r}
+resumir_datos(datos_segmentados, en_tx_otros, moneda = FALSE)
+```
+
+<div style='text-align: justify;'>
+Finalmente el canal "otros" conserva la misma tendencia que se ha observado tanto para el valor medio como para las transacciones, donde el grupo 2 muestra una inactividad menor y números más elevados en todas las medidas.
+</div>
+
+### 2.23. Valor del ticket promedio de salida por el canal 2
+
+```{r}
+resumir_datos(datos_segmentados, sal_vm_canal2)
+```
+
+<div style='text-align: justify;'>
+El canal 2 es el más activo entre los relacionados con las salidas, donde el grupo 1 muestra una proporción de entradas en cero del 48.76%, reflejando que aproximadamente la mitad de los clientes pertenecientes a este le han dado uso.
+
+El grupo 2 presenta una proporción de entradas en cero significativamente más baja, reflejando una mayor actividad y presentando valores más altos en cada una de las mediadas de resumen, lo cual indica que está constituido por clientes económicamente más fuertes.
+</div>
+
+### 2.24. Valor del ticket promedio de salida por el canal 5
+
+```{r}
+resumir_datos(datos_segmentados, sal_vm_canal5)
+```
+
+<div style='text-align: justify;'>
+El canal 5 muestra un aumento en la inactividad de ambos grupos, donde cerca del 80% de los clientes asociados al grupo 1 no han realizado movimientos de salida a través de este medio. Por su parte el grupo 2 continúa registra una inactividad del 33.74%, que se podría calificar como relativamente baja en comparación con el primero.
+
+En este canal se aprecia una mayor diferencia entre las medidas de resumen de ambos grupos, donde el numero dos continúa manejando magnitudes económicas más altas.
+</div>
+
+
+### 2.25. Valor del ticket promedio de salida por el canal 8
+
+```{r}
+resumir_datos(datos_segmentados, sal_vm_canal8)
+```
+
+<div style='text-align: justify;'>
+En este canal el grupo 1 registra una inactividad sumamente alta, reflejando un uso bajo por parte de los clientes asociados a este. Se destaca además un gran aumento en la inactividad del grupo 2, sin embargo, sigue siendo menor que la del primero.
+
+El grupo 2 continua siendo mas activo y manejando valores mayores en cada una de las medidas de resumen.
+</div>
+
+### 2.26. Valor del ticket promedio de salida por el canal otros
+
+```{r}
+resumir_datos(datos_segmentados, sal_vm_otros)
+```
+
+<div style='text-align: justify;'>
+El canal "otros" muestra una alta inactividad por parte de ambos grupos, reflejando que es un medio poco utilizado para las transacciones de salida.
+
+Se resalta que el grupo 2 continúa manteniendo la tendencia que se ha presentado desde el principio, manejando una actividad mayor y valores monetarios más altos.
+</div>
+
+## SAL_TX
+
+```{r}
+resumir_datos(datos_segmentados, sal_tx_canal2, moneda = FALSE)
+```
+
+```{r}
+resumir_datos(datos_segmentados, sal_tx_canal5, moneda = FALSE)
+```
+
+```{r}
+resumir_datos(datos_segmentados, sal_tx_canal8, moneda = FALSE)
+```
+
+```{r}
+resumir_datos(datos_segmentados, sal_tx_otros, moneda = FALSE)
+```
+
+## CATEGORICAS
+
+```{r}
+resumir_datos(datos_segmentados, impo_cv, continuo = FALSE, moneda = FALSE)
+```
+
+```{r}
+resumir_datos(datos_segmentados, expo_vt, continuo = FALSE, moneda = FALSE)
+```
+
+```{r}
+resumir_datos(datos_segmentados, cxp, continuo = FALSE, moneda = FALSE)
+```
+
+```{r}
+resumir_datos(datos_segmentados, cxc, continuo = FALSE, moneda = FALSE)
+```
+
+```{r}
+resumir_datos(datos_segmentados, totalinventory, continuo = FALSE, moneda = FALSE)
+```
+
+```{r}
+resumir_datos(datos_segmentados, pagos_pj, continuo = FALSE, moneda = FALSE)
+```
+
+```{r}
+resumir_datos(datos_segmentados, pagos_pn, continuo = FALSE, moneda = FALSE)
+```
+
+```{r}
+resumir_datos(datos_segmentados, tiene_ventas_fisicas, continuo = FALSE, moneda = FALSE)
+```
+
+```{r}
+resumir_datos(datos_segmentados, tiene_ventas_electronicas, continuo = FALSE, moneda = FALSE)
+```
+
+```{r}
+resumir_datos(datos_segmentados, recaudos_pj, continuo = FALSE, moneda = FALSE)
+```
+
+```{r}
+resumir_datos(datos_segmentados, recaudos_pn, continuo = FALSE, moneda = FALSE)
+```
+
+```{r}
+resumir_datos(datos_segmentados, rotacion_inventarios, continuo = FALSE, moneda = FALSE)
+```
+
+```{r}
+resumir_datos(datos_segmentados, rotacion_cxc, continuo = FALSE, moneda = FALSE)
+```
+
+```{r}
+resumir_datos(datos_segmentados, rotacion_cxp, continuo = FALSE, moneda = FALSE)
+```
+
+```{r}
+resumir_datos(datos_segmentados, ciclo_negocio, continuo = FALSE, moneda = FALSE)
+```
+
+```{r}
+resumir_datos(datos_segmentados, ciclo_financiero, continuo = FALSE, moneda = FALSE)
+```
