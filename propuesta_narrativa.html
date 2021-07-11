@@ -547,7 +547,7 @@ Análisis de resultados
 </h1>
 </center>
 <div style="text-align: justify;">
-<p>Tras completar el proceso anterior se obtiene una base de datos segmentada donde las observaciones se asocian a un conjunto con características comunes, sin embargo, aún son desconocidas las propiedades de cada uno de estos, con ello en mente este análisis busca describir el comportamiento de los grupos a través de las 47 variables proporcionadas inicialmente.</p>
+<p>Tras completar el proceso anterior se obtiene una base de datos segmentada donde las observaciones se asocian a un conjunto con características comunes, sin embargo, aún son desconocidas las propiedades de cada uno de estos, con ello en mente este análisis busca describir el comportamiento de los grupos a través de las 46 variables proporcionadas inicialmente.</p>
 </div>
 <p><br></p>
 </div>
@@ -560,7 +560,8 @@ Análisis de resultados
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(knitr)        <span class="co">#Para estilizar tablas</span></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(kableExtra)   <span class="co">#Para complementar el estilo de las tablas</span></span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(scales)       <span class="co">#Para definir los formatos de moneda, numéricos, etc.</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">scipen =</span> <span class="dv">999</span>) <span class="co">#Para la correcta visualización de cantidades grandes.</span></span></code></pre></div>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(maditr)       <span class="co">#Para redimensionar tablas</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">scipen =</span> <span class="dv">999</span>) <span class="co">#Para la correcta visualización de cantidades grandes.</span></span></code></pre></div>
 </div>
 <div id="lectura-de-la-base-de-datos-segmentada" class="section level3">
 <h3>1.2. Lectura de la base de datos segmentada</h3>
@@ -1686,7 +1687,7 @@ Proporción
 <div style="text-align: justify;">
 <p>Con el objetivo de evitar código redundante se definen las funciones necesarias para crear los elementos a ser utilizados en cada análisis.</p>
 </div>
-<strong>Función encargada de la creación de tablas</strong>
+<strong>Función encargada de la creación de tablas de resumen</strong>
 <details style="margin-bottom: 10px; margin-left: 5px">
 <summary style="padding: 2px 10px">
 <strong><span style="color: #E83E8C">Click para ver el código</span></strong>
@@ -1767,6 +1768,70 @@ Proporción
 <span id="cb6-74"><a href="#cb6-74" aria-hidden="true" tabindex="-1"></a>        <span class="fu">row_spec</span>(<span class="dv">0</span>, <span class="at">background =</span> <span class="st">&quot;#327CCF&quot;</span>, <span class="at">color =</span> <span class="st">&quot;white&quot;</span>)</span>
 <span id="cb6-75"><a href="#cb6-75" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
 </details>
+<strong>Función encargada de la creación de tablas de proporciones</strong>
+<details style="margin-bottom: 10px; margin-left: 5px">
+<summary style="padding: 2px 10px">
+<strong><span style="color: #E83E8C">Click para ver el código</span></strong>
+</summary>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Se crea la función que recibe como argumento un conjunto de datos y una variable</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>proporciones_categoricas <span class="ot">&lt;-</span> <span class="cf">function</span>(datos, variable){</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    variable <span class="ot">&lt;-</span> <span class="fu">enquo</span>(variable)</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    <span class="co">#Se crea la formula para redimensionar los datos</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    formula_dcast <span class="ot">&lt;-</span> <span class="fu">paste</span>(<span class="fu">quo_name</span>(variable),</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>                     <span class="st">&quot;grupo&quot;</span>,</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>                     <span class="at">sep=</span><span class="st">&quot;~&quot;</span>)</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    <span class="co">#Se convierte la formula de string al formato adecuado</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    formula_dcast <span class="ot">&lt;-</span> <span class="fu">as.formula</span>(formula_dcast)</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>    <span class="co">#Se crea el resumen a partir de los datos proporcionados</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>    resumen <span class="ot">&lt;-</span> datos <span class="sc">%&gt;%</span> </span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>           <span class="co">#Se selecciona el grupo y la variable del conjunto de datos</span></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>           <span class="fu">select</span>(grupo, <span class="sc">!!</span>variable) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>           <span class="co">#Se grupa primero por la variable y luego por el grupo</span></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>           <span class="fu">group_by</span>(<span class="sc">!!</span>variable, grupo) <span class="sc">%&gt;%</span></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>           <span class="co">#Se cuenta el número de clientes en cada grupo</span></span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>           count <span class="sc">%&gt;%</span> </span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>           <span class="co">#Se redimensiona el resumen dejando a los grupos en las columnas y</span></span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>           <span class="co">#las categorías en las filas</span></span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>           <span class="fu">dcast</span>(formula_dcast) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>           <span class="co">#Se transforma el resultado a dataframe</span></span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>           <span class="fu">as.data.frame</span>()</span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>    <span class="co">#Se almacenan los nombre de las columnas que no son las categorias</span></span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>    nombres <span class="ot">&lt;-</span> resumen <span class="sc">%&gt;%</span> <span class="fu">select</span>(<span class="sc">!</span><span class="fu">matches</span>(<span class="fu">quo_name</span>(variable))) <span class="sc">%&gt;%</span> <span class="fu">names</span>()</span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>    resumen[, nombres] <span class="ot">&lt;-</span> resumen <span class="sc">%&gt;%</span> </span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>                          <span class="co">#Se seleccionan las columnas </span></span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>                          <span class="fu">select</span>(<span class="fu">all_of</span>(nombres)) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>                          <span class="co">#Se crean las proporciones</span></span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a>                          <span class="fu">apply</span>(., </span>
+<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a>                                <span class="dv">2</span>,</span>
+<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a>                                <span class="cf">function</span>(x){</span>
+<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a>                                    <span class="fu">paste0</span>(</span>
+<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a>                                        <span class="fu">round</span>(x<span class="sc">/</span><span class="fu">sum</span>(x)<span class="sc">*</span><span class="dv">100</span>,<span class="dv">2</span>),</span>
+<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a>                                        <span class="st">&quot;%&quot;</span>)</span>
+<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a>                                }) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a>                          <span class="co">#Se transofrma el resultado a dataframe</span></span>
+<span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a>                          <span class="fu">as.data.frame</span>()</span>
+<span id="cb7-44"><a href="#cb7-44" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-45"><a href="#cb7-45" aria-hidden="true" tabindex="-1"></a>    <span class="co">#Se refactorizan los nombres de los grupos</span></span>
+<span id="cb7-46"><a href="#cb7-46" aria-hidden="true" tabindex="-1"></a>    nombres_nuevos <span class="ot">&lt;-</span> <span class="fu">paste</span>(<span class="st">&quot;grupo&quot;</span>, nombres)</span>
+<span id="cb7-47"><a href="#cb7-47" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-48"><a href="#cb7-48" aria-hidden="true" tabindex="-1"></a>    <span class="co">#Se añaden los nombres al resumen</span></span>
+<span id="cb7-49"><a href="#cb7-49" aria-hidden="true" tabindex="-1"></a>    <span class="fu">names</span>(resumen) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">quo_name</span>(variable),nombres_nuevos)</span>
+<span id="cb7-50"><a href="#cb7-50" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-51"><a href="#cb7-51" aria-hidden="true" tabindex="-1"></a>    <span class="co">#Se estiliza el resumen con la función kable</span></span>
+<span id="cb7-52"><a href="#cb7-52" aria-hidden="true" tabindex="-1"></a>    <span class="fu">kable</span>(resumen, <span class="at">align =</span> <span class="st">&quot;c&quot;</span>,  <span class="st">&quot;html&quot;</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-53"><a href="#cb7-53" aria-hidden="true" tabindex="-1"></a>        <span class="co">#Se utiliza el tema kable_papper</span></span>
+<span id="cb7-54"><a href="#cb7-54" aria-hidden="true" tabindex="-1"></a>        <span class="fu">kable_paper</span>(<span class="st">&quot;hover&quot;</span>, <span class="at">full_width =</span> <span class="cn">TRUE</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb7-55"><a href="#cb7-55" aria-hidden="true" tabindex="-1"></a>        <span class="fu">kable_styling</span>(<span class="at">bootstrap_options =</span> <span class="fu">c</span>(<span class="st">&quot;hover&quot;</span>, <span class="st">&quot;condensed&quot;</span>), </span>
+<span id="cb7-56"><a href="#cb7-56" aria-hidden="true" tabindex="-1"></a>                      <span class="at">font_size =</span> <span class="dv">16</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb7-57"><a href="#cb7-57" aria-hidden="true" tabindex="-1"></a>        <span class="fu">row_spec</span>(<span class="dv">0</span>, <span class="at">background =</span> <span class="st">&quot;#327CCF&quot;</span>, <span class="at">color =</span> <span class="st">&quot;white&quot;</span>)</span>
+<span id="cb7-58"><a href="#cb7-58" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+</details>
 <p><br></p>
 </div>
 </div>
@@ -1774,16 +1839,25 @@ Proporción
 <h2>2. Descripción de grupos a través de cada variable</h2>
 <div style="text-align: justify;">
 <p>Para cada variable se creará una tabla donde se presentarán los resumenes numéricos correspondientes a los grupos, la cual será usada de base determinar las principales características que los diferencian.</p>
-<p><strong>Observación</strong>: Los datos continuos cuentan con un resumen adicional denominado “ceros”, este registra la proporción de datos en cero dentro de cada grupo, calculado de la siguiente manera:</p>
+<p><strong>Observaciones</strong></p>
+<ol style="list-style-type: decimal">
+<li>Los datos continuos cuentan con un resumen adicional denominado “ceros”, este registra la proporción de datos en cero dentro de cada grupo, calculado de la siguiente manera:</li>
+</ol>
 </div>
 <p><br></p>
 <div style="text-align: center; font-size: 22px">
 <p><span class="math inline">\(ceros = \frac{totalCerosGrupo}{tamañoGrupo}\)</span></p>
 </div>
 <p><br></p>
+<div style="text-align: justify;">
+<ol start="2" style="list-style-type: decimal">
+<li>Las datos categóricos cuentan con una tabla adicional que registra la proporción de empresas que se encuentran en cada nivel.</li>
+</ol>
+</div>
+<p><br></p>
 <div id="valor-del-ticket-promedio-de-entrada-por-el-canal-1" class="section level3">
 <h3>2.1. Valor del ticket promedio de entrada por el canal 1</h3>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, en_vm_canal1)</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, en_vm_canal1)</span></code></pre></div>
 <table class=" lightable-paper lightable-hover table table-hover table-condensed" style="font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto; font-size: 16px; margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -1880,7 +1954,7 @@ $251,092,000,000
 </div>
 <div id="valor-del-ticket-promedio-de-entrada-por-el-canal-2" class="section level3">
 <h3>2.2. Valor del ticket promedio de entrada por el canal 2</h3>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, en_vm_canal2)</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, en_vm_canal2)</span></code></pre></div>
 <table class=" lightable-paper lightable-hover table table-hover table-condensed" style="font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto; font-size: 16px; margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -1977,7 +2051,7 @@ $695,285,000,000
 </div>
 <div id="valor-del-ticket-promedio-de-entrada-por-el-canal-3" class="section level3">
 <h3>2.3. Valor del ticket promedio de entrada por el canal 3</h3>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, en_vm_canal3)</span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, en_vm_canal3)</span></code></pre></div>
 <table class=" lightable-paper lightable-hover table table-hover table-condensed" style="font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto; font-size: 16px; margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -2074,7 +2148,7 @@ $52,076,541,969
 </div>
 <div id="valor-del-ticket-promedio-de-entrada-por-el-canal-4" class="section level3">
 <h3>2.4. Valor del ticket promedio de entrada por el canal 4</h3>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, en_vm_canal4)</span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, en_vm_canal4)</span></code></pre></div>
 <table class=" lightable-paper lightable-hover table table-hover table-condensed" style="font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto; font-size: 16px; margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -2169,7 +2243,7 @@ $405,096,000,000
 </div>
 <div id="valor-del-ticket-promedio-de-entrada-por-el-canal-5" class="section level3">
 <h3>2.5. Valor del ticket promedio de entrada por el canal 5</h3>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, en_vm_canal5)</span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, en_vm_canal5)</span></code></pre></div>
 <table class=" lightable-paper lightable-hover table table-hover table-condensed" style="font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto; font-size: 16px; margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -2260,7 +2334,7 @@ $806,965,000,000
 </div>
 <div id="valor-del-ticket-promedio-de-entrada-por-el-canal-6" class="section level3">
 <h3>2.6. Valor del ticket promedio de entrada por el canal 6</h3>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, en_vm_canal6)</span></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, en_vm_canal6)</span></code></pre></div>
 <table class=" lightable-paper lightable-hover table table-hover table-condensed" style="font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto; font-size: 16px; margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -2352,7 +2426,7 @@ $14,523,636,565
 </div>
 <div id="valor-del-ticket-promedio-de-entrada-por-el-canal-7" class="section level3">
 <h3>2.7. Valor del ticket promedio de entrada por el canal 7</h3>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, en_vm_canal7)</span></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, en_vm_canal7)</span></code></pre></div>
 <table class=" lightable-paper lightable-hover table table-hover table-condensed" style="font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto; font-size: 16px; margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -2444,7 +2518,7 @@ $770,542,000,000
 </div>
 <div id="valor-del-ticket-promedio-de-entrada-por-el-canal-8" class="section level3">
 <h3>2.8. Valor del ticket promedio de entrada por el canal 8</h3>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, en_vm_canal8)</span></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, en_vm_canal8)</span></code></pre></div>
 <table class=" lightable-paper lightable-hover table table-hover table-condensed" style="font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto; font-size: 16px; margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -2535,7 +2609,7 @@ $10,038,465,888
 </div>
 <div id="valor-del-ticket-promedio-de-entrada-por-el-canal-9" class="section level3">
 <h3>2.9. Valor del ticket promedio de entrada por el canal 9</h3>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, en_vm_canal9)</span></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, en_vm_canal9)</span></code></pre></div>
 <table class=" lightable-paper lightable-hover table table-hover table-condensed" style="font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto; font-size: 16px; margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -2626,7 +2700,7 @@ $5,408,476,569
 </div>
 <div id="valor-del-ticket-promedio-de-entrada-por-el-canal-10" class="section level3">
 <h3>2.10. Valor del ticket promedio de entrada por el canal 10</h3>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, en_vm_canal10)</span></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, en_vm_canal10)</span></code></pre></div>
 <table class=" lightable-paper lightable-hover table table-hover table-condensed" style="font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto; font-size: 16px; margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -2718,7 +2792,7 @@ $180,475,245
 </div>
 <div id="valor-del-ticket-promedio-de-entrada-por-el-canal-otros" class="section level3">
 <h3>2.11. Valor del ticket promedio de entrada por el canal otros</h3>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, en_vm_otros)</span></code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, en_vm_otros)</span></code></pre></div>
 <table class=" lightable-paper lightable-hover table table-hover table-condensed" style="font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto; font-size: 16px; margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -2809,7 +2883,7 @@ $160,039,000,000
 </div>
 <div id="transacciones-de-entrada-por-el-canal-1" class="section level3">
 <h3>2.12. Transacciones de entrada por el canal 1</h3>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, en_tx_canal1, <span class="at">moneda =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, en_tx_canal1, <span class="at">moneda =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
 <table class=" lightable-paper lightable-hover table table-hover table-condensed" style="font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto; font-size: 16px; margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -2903,7 +2977,7 @@ ceros
 </div>
 <div id="transacciones-de-entrada-por-el-canal-2" class="section level3">
 <h3>2.13. Transacciones de entrada por el canal 2</h3>
-<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, en_tx_canal2, <span class="at">moneda =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, en_tx_canal2, <span class="at">moneda =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
 <table class=" lightable-paper lightable-hover table table-hover table-condensed" style="font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto; font-size: 16px; margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -2997,7 +3071,7 @@ ceros
 </div>
 <div id="transacciones-de-entrada-por-el-canal-3" class="section level3">
 <h3>2.14. Transacciones de entrada por el canal 3</h3>
-<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, en_tx_canal3, <span class="at">moneda =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, en_tx_canal3, <span class="at">moneda =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
 <table class=" lightable-paper lightable-hover table table-hover table-condensed" style="font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto; font-size: 16px; margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -3089,7 +3163,7 @@ ceros
 </div>
 <div id="transacciones-de-entrada-por-el-canal-4" class="section level3">
 <h3>2.15. Transacciones de entrada por el canal 4</h3>
-<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, en_tx_canal4, <span class="at">moneda =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, en_tx_canal4, <span class="at">moneda =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
 <table class=" lightable-paper lightable-hover table table-hover table-condensed" style="font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto; font-size: 16px; margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -3183,7 +3257,7 @@ ceros
 </div>
 <div id="transacciones-de-entrada-por-el-canal-5" class="section level3">
 <h3>2.16. Transacciones de entrada por el canal 5</h3>
-<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, en_tx_canal5, <span class="at">moneda =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, en_tx_canal5, <span class="at">moneda =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
 <table class=" lightable-paper lightable-hover table table-hover table-condensed" style="font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto; font-size: 16px; margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -3274,7 +3348,7 @@ ceros
 </div>
 <div id="transacciones-de-entrada-por-el-canal-6" class="section level3">
 <h3>2.17. Transacciones de entrada por el canal 6</h3>
-<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, en_tx_canal6, <span class="at">moneda =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, en_tx_canal6, <span class="at">moneda =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
 <table class=" lightable-paper lightable-hover table table-hover table-condensed" style="font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto; font-size: 16px; margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -3365,7 +3439,7 @@ ceros
 </div>
 <div id="transacciones-de-entrada-por-el-canal-7" class="section level3">
 <h3>2.18. Transacciones de entrada por el canal 7</h3>
-<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, en_tx_canal7, <span class="at">moneda =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, en_tx_canal7, <span class="at">moneda =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
 <table class=" lightable-paper lightable-hover table table-hover table-condensed" style="font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto; font-size: 16px; margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -3456,7 +3530,7 @@ ceros
 </div>
 <div id="transacciones-de-entrada-por-el-canal-8" class="section level3">
 <h3>2.19. Transacciones de entrada por el canal 8</h3>
-<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, en_tx_canal8, <span class="at">moneda =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, en_tx_canal8, <span class="at">moneda =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
 <table class=" lightable-paper lightable-hover table table-hover table-condensed" style="font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto; font-size: 16px; margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -3547,7 +3621,7 @@ ceros
 </div>
 <div id="transacciones-de-entrada-por-el-canal-9" class="section level3">
 <h3>2.20. Transacciones de entrada por el canal 9</h3>
-<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, en_tx_canal9, <span class="at">moneda =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, en_tx_canal9, <span class="at">moneda =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
 <table class=" lightable-paper lightable-hover table table-hover table-condensed" style="font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto; font-size: 16px; margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -3638,7 +3712,7 @@ ceros
 </div>
 <div id="transacciones-de-entrada-por-el-canal-10" class="section level3">
 <h3>2.21. Transacciones de entrada por el canal 10</h3>
-<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, en_tx_canal10, <span class="at">moneda =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, en_tx_canal10, <span class="at">moneda =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
 <table class=" lightable-paper lightable-hover table table-hover table-condensed" style="font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto; font-size: 16px; margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -3730,7 +3804,7 @@ ceros
 </div>
 <div id="transacciones-de-entrada-por-el-canal-otros" class="section level3">
 <h3>2.22. Transacciones de entrada por el canal otros</h3>
-<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, en_tx_otros, <span class="at">moneda =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, en_tx_otros, <span class="at">moneda =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
 <table class=" lightable-paper lightable-hover table table-hover table-condensed" style="font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto; font-size: 16px; margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -3821,7 +3895,7 @@ ceros
 </div>
 <div id="valor-del-ticket-promedio-de-salida-por-el-canal-2" class="section level3">
 <h3>2.23. Valor del ticket promedio de salida por el canal 2</h3>
-<div class="sourceCode" id="cb29"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, sal_vm_canal2)</span></code></pre></div>
+<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, sal_vm_canal2)</span></code></pre></div>
 <table class=" lightable-paper lightable-hover table table-hover table-condensed" style="font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto; font-size: 16px; margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -3907,13 +3981,13 @@ $856,183,000,000
 </tbody>
 </table>
 <div style="text-align: justify;">
-<p>El canal 2 es el más activo entre los relacionados con las salidas, donde el grupo 1 muestra una proporción de entradas en cero del 48.76%, reflejando que aproximadamente la mitad de los clientes pertenecientes a este le han dado uso.</p>
+<p>El canal 2 es el más activo entre los relacionados con las salidas, donde el grupo 1 muestra una proporción de entradas en cero del 48.76%, reflejando que aproximadamente la mitad de los clientes pertenecientes a este lo han utilizado en alguna medida.</p>
 <p>El grupo 2 presenta una proporción de entradas en cero significativamente más baja, reflejando una mayor actividad y presentando valores más altos en cada una de las mediadas de resumen, lo cual indica que está constituido por clientes económicamente más fuertes.</p>
 </div>
 </div>
 <div id="valor-del-ticket-promedio-de-salida-por-el-canal-5" class="section level3">
 <h3>2.24. Valor del ticket promedio de salida por el canal 5</h3>
-<div class="sourceCode" id="cb30"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, sal_vm_canal5)</span></code></pre></div>
+<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, sal_vm_canal5)</span></code></pre></div>
 <table class=" lightable-paper lightable-hover table table-hover table-condensed" style="font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto; font-size: 16px; margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -4005,7 +4079,7 @@ $806,965,000,000
 </div>
 <div id="valor-del-ticket-promedio-de-salida-por-el-canal-8" class="section level3">
 <h3>2.25. Valor del ticket promedio de salida por el canal 8</h3>
-<div class="sourceCode" id="cb31"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, sal_vm_canal8)</span></code></pre></div>
+<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, sal_vm_canal8)</span></code></pre></div>
 <table class=" lightable-paper lightable-hover table table-hover table-condensed" style="font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto; font-size: 16px; margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -4097,7 +4171,7 @@ $23,931,431,000
 </div>
 <div id="valor-del-ticket-promedio-de-salida-por-el-canal-otros" class="section level3">
 <h3>2.26. Valor del ticket promedio de salida por el canal otros</h3>
-<div class="sourceCode" id="cb32"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, sal_vm_otros)</span></code></pre></div>
+<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, sal_vm_otros)</span></code></pre></div>
 <table class=" lightable-paper lightable-hover table table-hover table-condensed" style="font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto; font-size: 16px; margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -4187,10 +4261,9 @@ $622,080,714
 <p>Se resalta que el grupo 2 continúa manteniendo la tendencia que se ha presentado desde el principio, manejando una actividad mayor y valores monetarios más altos.</p>
 </div>
 </div>
-</div>
-<div id="sal_tx" class="section level2">
-<h2>SAL_TX</h2>
-<div class="sourceCode" id="cb33"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, sal_tx_canal2, <span class="at">moneda =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<div id="transacciones-de-salida-por-el-canal-2" class="section level3">
+<h3>2.27. Transacciones de salida por el canal 2</h3>
+<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, sal_tx_canal2, <span class="at">moneda =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
 <table class=" lightable-paper lightable-hover table table-hover table-condensed" style="font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto; font-size: 16px; margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -4275,7 +4348,13 @@ ceros
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb34"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, sal_tx_canal5, <span class="at">moneda =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<div style="text-align: justify;">
+<p>Las transacciones de salida a través del canal 2 muestran una correspondencia con los resultados del valor del ticket promedio de salida, donde en general los clientes del grupo 2 muestran una actividad mucho mayor, con una proporción de ceros del 10.93%, adicionalmente se evidencia que continúa superando al grupo 1 en la cantidad de transacciones a través de todas las medidas de resumen.</p>
+</div>
+</div>
+<div id="transacciones-de-salida-por-el-canal-5" class="section level3">
+<h3>2.28. Transacciones de salida por el canal 5</h3>
+<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, sal_tx_canal5, <span class="at">moneda =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
 <table class=" lightable-paper lightable-hover table table-hover table-condensed" style="font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto; font-size: 16px; margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -4360,7 +4439,13 @@ ceros
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb35"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, sal_tx_canal8, <span class="at">moneda =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<div style="text-align: justify;">
+<p>Los resultados del canal 5 nos muestran lo mismo que se ha visto hasta el momento, donde el grupo 2 maneja una cantidad mayor de transacciones y presenta una actividad mayor a la evidenciada para el grupo 1.</p>
+</div>
+</div>
+<div id="transacciones-de-salida-por-el-canal-8" class="section level3">
+<h3>2.29. Transacciones de salida por el canal 8</h3>
+<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, sal_tx_canal8, <span class="at">moneda =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
 <table class=" lightable-paper lightable-hover table table-hover table-condensed" style="font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto; font-size: 16px; margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -4445,7 +4530,13 @@ ceros
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb36"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, sal_tx_otros, <span class="at">moneda =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<div style="text-align: justify;">
+<p>El canal 8 nos muestra una inactividad casi total por parte de los clientes del grupo 1, los cuales además manejan valores menores a los del grupo 2.</p>
+</div>
+</div>
+<div id="transacciones-de-salida-por-el-canal-otros" class="section level3">
+<h3>2.30. Transacciones de salida por el canal otros</h3>
+<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, sal_tx_otros, <span class="at">moneda =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
 <table class=" lightable-paper lightable-hover table table-hover table-condensed" style="font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto; font-size: 16px; margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -4530,10 +4621,13 @@ ceros
 </tr>
 </tbody>
 </table>
+<div style="text-align: justify;">
+<p>Si bien ambos grupos presentan una inactividad importante a través de este canal, los resultados de la tabla nos permiten finalmente concluir que el grupo 2 se consolida como el más activo, con valores mas altos en cada uno de los canales tanto de entrada como de salida.</p>
 </div>
-<div id="categoricas" class="section level2">
-<h2>CATEGORICAS</h2>
-<div class="sourceCode" id="cb37"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, impo_cv, <span class="at">continuo =</span> <span class="cn">FALSE</span>, <span class="at">moneda =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+</div>
+<div id="proporción-de-fracimportacionescompras" class="section level3">
+<h3>2.31. Proporción de <strong><span class="math inline">\(\frac{importaciones}{compras}\)</span></strong></h3>
+<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, impo_cv, <span class="at">continuo =</span> <span class="cn">FALSE</span>, <span class="at">moneda =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
 <table class=" lightable-paper lightable-hover table table-hover table-condensed" style="font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto; font-size: 16px; margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -4609,7 +4703,89 @@ Máximo
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb38"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, expo_vt, <span class="at">continuo =</span> <span class="cn">FALSE</span>, <span class="at">moneda =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<div style="text-align: justify;">
+<p>La tabla nos indica que los clientes del grupo 2 tienden a realizar más importaciones que los del grupo 1, lo cual se evidencia principalmente en los valores de la mediana y la media.</p>
+</div>
+<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">proporciones_categoricas</span>(datos_segmentados, impo_cv)</span></code></pre></div>
+<table class=" lightable-paper lightable-hover table table-hover table-condensed" style="font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto; font-size: 16px; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:center;color: white !important;background-color: #327CCF !important;">
+impo_cv
+</th>
+<th style="text-align:center;color: white !important;background-color: #327CCF !important;">
+grupo 1
+</th>
+<th style="text-align:center;color: white !important;background-color: #327CCF !important;">
+grupo 2
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+52.9%
+</td>
+<td style="text-align:center;">
+27.94%
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+32.04%
+</td>
+<td style="text-align:center;">
+40.22%
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+7.32%
+</td>
+<td style="text-align:center;">
+17.07%
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+5.52%
+</td>
+<td style="text-align:center;">
+12.75%
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+5
+</td>
+<td style="text-align:center;">
+2.21%
+</td>
+<td style="text-align:center;">
+2.02%
+</td>
+</tr>
+</tbody>
+</table>
+<div style="text-align: justify;">
+<p>Por otro lado, la tabla de proporciones nos indica que los clientes asociados al grupo 1 están principalmente concentrados en los dos principales niveles, reflejando que se trata de empresas que realizan una baja o nula cantidad de importaciones respecto a sus compras totales. Por su parte los asociados al grupo 2 están concentrados del nivel 2 en adelante, indicando que se trata de empresas que realizan más importaciones que lo evidenciado para el primer grupo.</p>
+</div>
+</div>
+<div id="proporción-de-fracexportacionesventas" class="section level3">
+<h3>2.32. Proporción de <strong><span class="math inline">\(\frac{exportaciones}{ventas}\)</span></strong></h3>
+<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, expo_vt, <span class="at">continuo =</span> <span class="cn">FALSE</span>, <span class="at">moneda =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
 <table class=" lightable-paper lightable-hover table table-hover table-condensed" style="font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto; font-size: 16px; margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -4685,7 +4861,67 @@ Máximo
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb39"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, cxp, <span class="at">continuo =</span> <span class="cn">FALSE</span>, <span class="at">moneda =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<div style="text-align: justify;">
+<p>La tabla de resumenes numéricos indica que los clientes asociados al grupo 2 tienden a exportar más productos que los del grupo 1, esto se puede apreciar principalmente en los valores de la mediana y la media.</p>
+</div>
+<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">proporciones_categoricas</span>(datos_segmentados, expo_vt)</span></code></pre></div>
+<table class=" lightable-paper lightable-hover table table-hover table-condensed" style="font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto; font-size: 16px; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:center;color: white !important;background-color: #327CCF !important;">
+expo_vt
+</th>
+<th style="text-align:center;color: white !important;background-color: #327CCF !important;">
+grupo 1
+</th>
+<th style="text-align:center;color: white !important;background-color: #327CCF !important;">
+grupo 2
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+52.9%
+</td>
+<td style="text-align:center;">
+27.94%
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+42.13%
+</td>
+<td style="text-align:center;">
+62.08%
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+4.97%
+</td>
+<td style="text-align:center;">
+9.99%
+</td>
+</tr>
+</tbody>
+</table>
+<div style="text-align: justify;">
+<p>La tabla de proporciones nos permite confirmar lo afirmado anteriormente, donde aproximadamente la mitad de los clientes asociados al grupo 1 poseen una baja o nula proporción de importaciones, mientras que los pertenecientes al grupo 2 se concentran principalmente en el nivel 2, indicando que poseen en su mayoría una proporción de importaciones más alta.</p>
+</div>
+</div>
+<div id="cuentas-por-pagar" class="section level3">
+<h3>2.33. Cuentas por pagar</h3>
+<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, cxp, <span class="at">continuo =</span> <span class="cn">FALSE</span>, <span class="at">moneda =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
 <table class=" lightable-paper lightable-hover table table-hover table-condensed" style="font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto; font-size: 16px; margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -4761,7 +4997,100 @@ Máximo
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb40"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, cxc, <span class="at">continuo =</span> <span class="cn">FALSE</span>, <span class="at">moneda =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<div style="text-align: justify;">
+<p>La tabla de resumenes numéricos indica que que los clientes asociados al grupo 2 poseen una mayor cantidad de cuentas por pagar, lo cual se aprecia en la superioridad que presentan en cada una de las medidas.</p>
+</div>
+<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">proporciones_categoricas</span>(datos_segmentados, cxp)</span></code></pre></div>
+<table class=" lightable-paper lightable-hover table table-hover table-condensed" style="font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto; font-size: 16px; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:center;color: white !important;background-color: #327CCF !important;">
+cxp
+</th>
+<th style="text-align:center;color: white !important;background-color: #327CCF !important;">
+grupo 1
+</th>
+<th style="text-align:center;color: white !important;background-color: #327CCF !important;">
+grupo 2
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+34.67%
+</td>
+<td style="text-align:center;">
+15.72%
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+36.05%
+</td>
+<td style="text-align:center;">
+31.31%
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+11.74%
+</td>
+<td style="text-align:center;">
+18.42%
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+4.83%
+</td>
+<td style="text-align:center;">
+8.37%
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+5
+</td>
+<td style="text-align:center;">
+3.04%
+</td>
+<td style="text-align:center;">
+5.33%
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+6
+</td>
+<td style="text-align:center;">
+9.67%
+</td>
+<td style="text-align:center;">
+20.85%
+</td>
+</tr>
+</tbody>
+</table>
+<div style="text-align: justify;">
+<p>La tabla de proporciones nos permite observar de una mejor manera lo mencionado anteriormente dado que para el los dos primeros niveles se observa una clara superioridad del grupo 1, indicando que se constituye en gran medida por clientes que tienen una baja o moderadamente baja cantidad de cuentas por pagar, comportamiento que se invierte a partir del nivel 3, donde el grupo 2 empieza a dominar, indicando que posee una proporción mayor de empresas con gran cantidad de cuentas por pagar.</p>
+</div>
+</div>
+<div id="cuentas-por-cobrar" class="section level3">
+<h3>2.34. Cuentas por cobrar</h3>
+<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, cxc, <span class="at">continuo =</span> <span class="cn">FALSE</span>, <span class="at">moneda =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
 <table class=" lightable-paper lightable-hover table table-hover table-condensed" style="font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto; font-size: 16px; margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -4837,7 +5166,100 @@ Máximo
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb41"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, totalinventory, <span class="at">continuo =</span> <span class="cn">FALSE</span>, <span class="at">moneda =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<div style="text-align: justify;">
+<p>Las cuentas por cobrar evidencian un comportamiento similar a las cuentas por pagar, donde existe una clara dominación por parte del grupo 2 en cada una de las medidas, indicando que los clientes asociados a este poseen una cantidad superior de deudas a favor en comparación con el grupo 1.</p>
+</div>
+<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">proporciones_categoricas</span>(datos_segmentados, cxc)</span></code></pre></div>
+<table class=" lightable-paper lightable-hover table table-hover table-condensed" style="font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto; font-size: 16px; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:center;color: white !important;background-color: #327CCF !important;">
+cxc
+</th>
+<th style="text-align:center;color: white !important;background-color: #327CCF !important;">
+grupo 1
+</th>
+<th style="text-align:center;color: white !important;background-color: #327CCF !important;">
+grupo 2
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+27.21%
+</td>
+<td style="text-align:center;">
+8.5%
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+28.18%
+</td>
+<td style="text-align:center;">
+22.6%
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+15.47%
+</td>
+<td style="text-align:center;">
+20.18%
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+6.08%
+</td>
+<td style="text-align:center;">
+9.18%
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+5
+</td>
+<td style="text-align:center;">
+5.11%
+</td>
+<td style="text-align:center;">
+8.3%
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+6
+</td>
+<td style="text-align:center;">
+17.96%
+</td>
+<td style="text-align:center;">
+31.24%
+</td>
+</tr>
+</tbody>
+</table>
+<div style="text-align: justify;">
+<p>La tabla de proporciones muestra de una forma más clara el comportamiento previamente descrito, donde el grupo 1 domina principalmente en los dos primeros niveles, mientras que el segundo grupo domina principalmente a partir del tercer nivel, confirmando que este ultimo está constituido por clientes con más cuentas por cobrar.</p>
+</div>
+</div>
+<div id="total-de-inventarios" class="section level3">
+<h3>2.35. Total de inventarios</h3>
+<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, totalinventory, <span class="at">continuo =</span> <span class="cn">FALSE</span>, <span class="at">moneda =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
 <table class=" lightable-paper lightable-hover table table-hover table-condensed" style="font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto; font-size: 16px; margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -4913,7 +5335,100 @@ Máximo
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb42"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, pagos_pj, <span class="at">continuo =</span> <span class="cn">FALSE</span>, <span class="at">moneda =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<div style="text-align: justify;">
+<p>En el total de inventarios se evidencia nuevamente lo visto para las cuentas por pagar y por cobrar, donde el grupo 1 presenta valores mas bajos en todas las medidas, indicando que los clientes del grupo 2 poseen un total de inventarios superior.</p>
+</div>
+<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="fu">proporciones_categoricas</span>(datos_segmentados, totalinventory)</span></code></pre></div>
+<table class=" lightable-paper lightable-hover table table-hover table-condensed" style="font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto; font-size: 16px; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:center;color: white !important;background-color: #327CCF !important;">
+totalinventory
+</th>
+<th style="text-align:center;color: white !important;background-color: #327CCF !important;">
+grupo 1
+</th>
+<th style="text-align:center;color: white !important;background-color: #327CCF !important;">
+grupo 2
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+29.56%
+</td>
+<td style="text-align:center;">
+10.93%
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+34.53%
+</td>
+<td style="text-align:center;">
+22%
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+12.71%
+</td>
+<td style="text-align:center;">
+18.49%
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+5.8%
+</td>
+<td style="text-align:center;">
+11.47%
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+5
+</td>
+<td style="text-align:center;">
+3.59%
+</td>
+<td style="text-align:center;">
+8.16%
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+6
+</td>
+<td style="text-align:center;">
+13.81%
+</td>
+<td style="text-align:center;">
+28.95%
+</td>
+</tr>
+</tbody>
+</table>
+<div style="text-align: justify;">
+<p>La tabla de proporciones confirma lo mencionado anteriormente, donde el grupo 1 domina principalmente en los dos primeros niveles, evidenciando que los cientes asociados a este poseen un bajo o medio bajo total de inventarios, mientras que los pertenecientes al grupo 2 se distribuyen en valores más altos.</p>
+</div>
+</div>
+<div id="pagos-a-personas-jurídicas" class="section level3">
+<h3>2.36. Pagos a personas jurídicas</h3>
+<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, pagos_pj, <span class="at">continuo =</span> <span class="cn">FALSE</span>, <span class="at">moneda =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
 <table class=" lightable-paper lightable-hover table table-hover table-condensed" style="font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto; font-size: 16px; margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -4989,7 +5504,13 @@ Máximo
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb43"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, pagos_pn, <span class="at">continuo =</span> <span class="cn">FALSE</span>, <span class="at">moneda =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<div style="text-align: justify;">
+<p>En esta característica se invierte la tendencia vista hasta el momento, donde las empresas pertenecientes al grupo 1 presentan valores más elevados en todas las medidas de resumen, indicando que poseen una mayor proporción de pagos hechos a personas jurídicas que las pertenecientes al grupo 2.</p>
+</div>
+</div>
+<div id="pagos-a-personas-naturales" class="section level3">
+<h3>2.37. Pagos a personas naturales</h3>
+<div class="sourceCode" id="cb49"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, pagos_pn, <span class="at">continuo =</span> <span class="cn">FALSE</span>, <span class="at">moneda =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
 <table class=" lightable-paper lightable-hover table table-hover table-condensed" style="font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto; font-size: 16px; margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -5065,7 +5586,13 @@ Máximo
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb44"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, tiene_ventas_fisicas, <span class="at">continuo =</span> <span class="cn">FALSE</span>, <span class="at">moneda =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<div style="text-align: justify;">
+<p>Contrario al punto anterior, en las medidas de resumen se aprecia que los clientes del grupo 2 tiende a realizar una mayor proporción de pagos a personas jurídicas en comparación con los asociados al grupo 1.</p>
+</div>
+</div>
+<div id="tiene-ventas-físicas" class="section level3">
+<h3>2.38. Tiene ventas físicas</h3>
+<div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, tiene_ventas_fisicas, <span class="at">continuo =</span> <span class="cn">FALSE</span>, <span class="at">moneda =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
 <table class=" lightable-paper lightable-hover table table-hover table-condensed" style="font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto; font-size: 16px; margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -5141,7 +5668,56 @@ Máximo
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb45"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, tiene_ventas_electronicas, <span class="at">continuo =</span> <span class="cn">FALSE</span>, <span class="at">moneda =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<div style="text-align: justify;">
+<p>Los resultados de las medidas de resumen nos permiten afirmar que el grupo 2 posee una mayor proporción de empresas que tienen ventas físicas, esto se aprecia principalmente en el valor de la media.</p>
+</div>
+<div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="fu">proporciones_categoricas</span>(datos_segmentados, tiene_ventas_fisicas)</span></code></pre></div>
+<table class=" lightable-paper lightable-hover table table-hover table-condensed" style="font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto; font-size: 16px; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:center;color: white !important;background-color: #327CCF !important;">
+tiene_ventas_fisicas
+</th>
+<th style="text-align:center;color: white !important;background-color: #327CCF !important;">
+grupo 1
+</th>
+<th style="text-align:center;color: white !important;background-color: #327CCF !important;">
+grupo 2
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+81.22%
+</td>
+<td style="text-align:center;">
+37.52%
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+18.78%
+</td>
+<td style="text-align:center;">
+62.48%
+</td>
+</tr>
+</tbody>
+</table>
+<div style="text-align: justify;">
+<p>La tabla de proporciones confirma de forma clara la información aportada por las medidas de resumen, donde el 81.22% de las empresas del grupo 1 no poseen ventas físicas, mientras que el 62.48% de las asociadas al grupo 2 si las poseen.</p>
+</div>
+</div>
+<div id="tiene-ventas-electrónicas" class="section level3">
+<h3>2.39. Tiene ventas electrónicas</h3>
+<div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, tiene_ventas_electronicas, <span class="at">continuo =</span> <span class="cn">FALSE</span>, <span class="at">moneda =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
 <table class=" lightable-paper lightable-hover table table-hover table-condensed" style="font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto; font-size: 16px; margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -5217,7 +5793,56 @@ Máximo
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb46"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, recaudos_pj, <span class="at">continuo =</span> <span class="cn">FALSE</span>, <span class="at">moneda =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<div style="text-align: justify;">
+<p>Los resultados de esta característica no son muy alentadores para ningún grupo, sin embargo se resalta que el segundo continúa mostrando valores mas altos, donde cerca del 7% de las empresas asociadas poseen ventas electrónicas.</p>
+</div>
+<div class="sourceCode" id="cb53"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="fu">proporciones_categoricas</span>(datos_segmentados, tiene_ventas_electronicas)</span></code></pre></div>
+<table class=" lightable-paper lightable-hover table table-hover table-condensed" style="font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto; font-size: 16px; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:center;color: white !important;background-color: #327CCF !important;">
+tiene_ventas_electronicas
+</th>
+<th style="text-align:center;color: white !important;background-color: #327CCF !important;">
+grupo 1
+</th>
+<th style="text-align:center;color: white !important;background-color: #327CCF !important;">
+grupo 2
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center;">
+0
+</td>
+<td style="text-align:center;">
+99.31%
+</td>
+<td style="text-align:center;">
+92.78%
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+0.69%
+</td>
+<td style="text-align:center;">
+7.22%
+</td>
+</tr>
+</tbody>
+</table>
+<div style="text-align: justify;">
+<p>El resultado de la tabla de proporciones solo confirma dicho previamente, el grupo 2 continúa manteniendo valores mas altos que los del grupo 1.</p>
+</div>
+</div>
+<div id="recaudos-provenientes-de-personas-jurídicas" class="section level3">
+<h3>2.40. Recaudos provenientes de personas jurídicas</h3>
+<div class="sourceCode" id="cb54"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, recaudos_pj, <span class="at">continuo =</span> <span class="cn">FALSE</span>, <span class="at">moneda =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
 <table class=" lightable-paper lightable-hover table table-hover table-condensed" style="font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto; font-size: 16px; margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -5293,7 +5918,13 @@ Máximo
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb47"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, recaudos_pn, <span class="at">continuo =</span> <span class="cn">FALSE</span>, <span class="at">moneda =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<div style="text-align: justify;">
+<p>Los valores de las medidas de resumen indican que los recaudos provenientes jurídicas no son muy usuales, sin embargo la tendencia evidenciada hasta el momento continúa estando presente, donde los clientes asociados al grupo 2 tienen los valores más altos.</p>
+</div>
+</div>
+<div id="recaudos-provenientes-de-personas-naturales" class="section level3">
+<h3>2.41. Recaudos provenientes de personas naturales</h3>
+<div class="sourceCode" id="cb55"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, recaudos_pn, <span class="at">continuo =</span> <span class="cn">FALSE</span>, <span class="at">moneda =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
 <table class=" lightable-paper lightable-hover table table-hover table-condensed" style="font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto; font-size: 16px; margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -5369,7 +6000,13 @@ Máximo
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb48"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, rotacion_inventarios, <span class="at">continuo =</span> <span class="cn">FALSE</span>, <span class="at">moneda =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<div style="text-align: justify;">
+<p>Similar al resultado anterior, los recaudos provenientes de personas naturales no parecen ser muy usuales, sin embargo, el grupo 2 continúa manteniendo los valores más altos, lo cual se evidencia principalmente en el valor de la media.</p>
+</div>
+</div>
+<div id="rotación-de-inventarios" class="section level3">
+<h3>2.42. Rotación de inventarios</h3>
+<div class="sourceCode" id="cb56"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, rotacion_inventarios, <span class="at">continuo =</span> <span class="cn">FALSE</span>, <span class="at">moneda =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
 <table class=" lightable-paper lightable-hover table table-hover table-condensed" style="font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto; font-size: 16px; margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -5445,7 +6082,100 @@ Máximo
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb49"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, rotacion_cxc, <span class="at">continuo =</span> <span class="cn">FALSE</span>, <span class="at">moneda =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<div style="text-align: justify;">
+<p>Los valores de las medidas de resumen evidencian que las empresas asociadas al grupo 2 tienden a tener una rotación de inventarios más larga, lo cual se aprecia principalmente a partir del cuartil 2 y en el valor de la media.</p>
+</div>
+<div class="sourceCode" id="cb57"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a><span class="fu">proporciones_categoricas</span>(datos_segmentados, rotacion_inventarios)</span></code></pre></div>
+<table class=" lightable-paper lightable-hover table table-hover table-condensed" style="font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto; font-size: 16px; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:center;color: white !important;background-color: #327CCF !important;">
+rotacion_inventarios
+</th>
+<th style="text-align:center;color: white !important;background-color: #327CCF !important;">
+grupo 1
+</th>
+<th style="text-align:center;color: white !important;background-color: #327CCF !important;">
+grupo 2
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+38.95%
+</td>
+<td style="text-align:center;">
+24.49%
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+16.44%
+</td>
+<td style="text-align:center;">
+19.64%
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+9.67%
+</td>
+<td style="text-align:center;">
+17.27%
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+7.04%
+</td>
+<td style="text-align:center;">
+10.93%
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+5
+</td>
+<td style="text-align:center;">
+3.59%
+</td>
+<td style="text-align:center;">
+8.03%
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+6
+</td>
+<td style="text-align:center;">
+24.31%
+</td>
+<td style="text-align:center;">
+19.64%
+</td>
+</tr>
+</tbody>
+</table>
+<div style="text-align: justify;">
+<p>La tabla de proporciones permite ver de una forma más clara el comportamiento observado en los resultados anteriores, donde las empresas del grupo 1 tienen rotaciones más extremas, con una alta concentración principalmente en los primeros niveles, mientras que las pertenecientes al grupo 2 muestran resultados más variados pero frecuentemente asociados a los niveles intermedios/altos.</p>
+</div>
+</div>
+<div id="rotación-de-cuentas-por-cobrar" class="section level3">
+<h3>2.43. Rotación de cuentas por cobrar</h3>
+<div class="sourceCode" id="cb58"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, rotacion_cxc, <span class="at">continuo =</span> <span class="cn">FALSE</span>, <span class="at">moneda =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
 <table class=" lightable-paper lightable-hover table table-hover table-condensed" style="font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto; font-size: 16px; margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -5521,7 +6251,78 @@ Máximo
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb50"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, rotacion_cxp, <span class="at">continuo =</span> <span class="cn">FALSE</span>, <span class="at">moneda =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<div style="text-align: justify;">
+<p>La rotación de cuentas por cobrar nos indica que las empresas del grupo 1 tienden a asociarse a los valores más altos, lo cual se aprecia en el cuartil 3 y en el valor de la media, sin embargo se destaca que en las medidas de resumen la diferencia entre ambos grupos no parece ser significativa.</p>
+</div>
+<div class="sourceCode" id="cb59"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="fu">proporciones_categoricas</span>(datos_segmentados, rotacion_cxc)</span></code></pre></div>
+<table class=" lightable-paper lightable-hover table table-hover table-condensed" style="font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto; font-size: 16px; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:center;color: white !important;background-color: #327CCF !important;">
+rotacion_cxc
+</th>
+<th style="text-align:center;color: white !important;background-color: #327CCF !important;">
+grupo 1
+</th>
+<th style="text-align:center;color: white !important;background-color: #327CCF !important;">
+grupo 2
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+30.8%
+</td>
+<td style="text-align:center;">
+27.94%
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+24.72%
+</td>
+<td style="text-align:center;">
+27.73%
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+15.19%
+</td>
+<td style="text-align:center;">
+21.12%
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+29.28%
+</td>
+<td style="text-align:center;">
+23.21%
+</td>
+</tr>
+</tbody>
+</table>
+<div style="text-align: justify;">
+<p>La tabla de proporciones nos aporta un poco de información, donde se observa que las empresas del grupo 1 se concentran en valores extremos (los niveles 1 y 4) principalmente, mientras que las asociadas al grupo 2 se distribuyen entre los todos los niveles, indicando que los clientes poseen rotaciones variadas.</p>
+</div>
+</div>
+<div id="rotación-de-cuentas-por-pagar" class="section level3">
+<h3>2.44. Rotación de cuentas por pagar</h3>
+<div class="sourceCode" id="cb60"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, rotacion_cxp, <span class="at">continuo =</span> <span class="cn">FALSE</span>, <span class="at">moneda =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
 <table class=" lightable-paper lightable-hover table table-hover table-condensed" style="font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto; font-size: 16px; margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -5597,7 +6398,78 @@ Máximo
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb51"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, ciclo_negocio, <span class="at">continuo =</span> <span class="cn">FALSE</span>, <span class="at">moneda =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<div style="text-align: justify;">
+<p>Los resultados de las medidas de resumen indican que no existe gran diferencia entre la rotación de cuentas por pagar de ambos grupos, donde la mas significativa se evidencia en la media donde el grupo 2 se destaca un poco más, sin embargo, ambos presentan valores sumamente cercanos.</p>
+</div>
+<div class="sourceCode" id="cb61"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a><span class="fu">proporciones_categoricas</span>(datos_segmentados, rotacion_cxp)</span></code></pre></div>
+<table class=" lightable-paper lightable-hover table table-hover table-condensed" style="font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto; font-size: 16px; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:center;color: white !important;background-color: #327CCF !important;">
+rotacion_cxp
+</th>
+<th style="text-align:center;color: white !important;background-color: #327CCF !important;">
+grupo 1
+</th>
+<th style="text-align:center;color: white !important;background-color: #327CCF !important;">
+grupo 2
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+38.67%
+</td>
+<td style="text-align:center;">
+36.37%
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+27.49%
+</td>
+<td style="text-align:center;">
+28.41%
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+13.26%
+</td>
+<td style="text-align:center;">
+15.05%
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+20.58%
+</td>
+<td style="text-align:center;">
+20.18%
+</td>
+</tr>
+</tbody>
+</table>
+<div style="text-align: justify;">
+<p>La tabla de proporciones nos permite confirmar lo mencionado en las medidas de resumen, permitiendo verificar que el grupo 1 se destaca en los niveles mas extremos (1 y 4), mientras que el grupo 2 se destaca en los intermedios, sin embargo, se concluye para esta característica que las diferencias entre ambos son muy bajas.</p>
+</div>
+</div>
+<div id="ciclo-de-negocios" class="section level3">
+<h3>2.45. Ciclo de negocios</h3>
+<div class="sourceCode" id="cb62"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, ciclo_negocio, <span class="at">continuo =</span> <span class="cn">FALSE</span>, <span class="at">moneda =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
 <table class=" lightable-paper lightable-hover table table-hover table-condensed" style="font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto; font-size: 16px; margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -5673,7 +6545,100 @@ Máximo
 </tr>
 </tbody>
 </table>
-<div class="sourceCode" id="cb52"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, ciclo_financiero, <span class="at">continuo =</span> <span class="cn">FALSE</span>, <span class="at">moneda =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
+<div style="text-align: justify;">
+<p>Similar a lo evidenciado con las medidas de rotación, no se aprecian diferencias muy significativas para ambos grupos en cuanto al ciclo de negocio, donde se destaca levemente el grupo 1 a partir del cuartil 3 y el grupo 2 en el valor de la media.</p>
+</div>
+<div class="sourceCode" id="cb63"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a><span class="fu">proporciones_categoricas</span>(datos_segmentados, ciclo_negocio)</span></code></pre></div>
+<table class=" lightable-paper lightable-hover table table-hover table-condensed" style="font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto; font-size: 16px; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:center;color: white !important;background-color: #327CCF !important;">
+ciclo_negocio
+</th>
+<th style="text-align:center;color: white !important;background-color: #327CCF !important;">
+grupo 1
+</th>
+<th style="text-align:center;color: white !important;background-color: #327CCF !important;">
+grupo 2
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+9.25%
+</td>
+<td style="text-align:center;">
+5.53%
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+14.09%
+</td>
+<td style="text-align:center;">
+11.13%
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+11.88%
+</td>
+<td style="text-align:center;">
+13.63%
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+18.23%
+</td>
+<td style="text-align:center;">
+25.37%
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+5
+</td>
+<td style="text-align:center;">
+16.3%
+</td>
+<td style="text-align:center;">
+21.79%
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+6
+</td>
+<td style="text-align:center;">
+30.25%
+</td>
+<td style="text-align:center;">
+22.54%
+</td>
+</tr>
+</tbody>
+</table>
+<div style="text-align: justify;">
+<p>Las tabla de proporciones nos muestra una escenario adicional a las medidas de resumen donde el grupo 2 presenta valores mas altos en los niveles intermedios/altos, indicando que las empresas asociadas a este tienden a tener una duración de ciclo media/larga, el grupo 1 por su parte muestra una rotación variada, con una concentración importante en el ciclo más largo.</p>
+</div>
+</div>
+<div id="ciclo-financiero" class="section level3">
+<h3>2.46. Ciclo financiero</h3>
+<div class="sourceCode" id="cb64"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="fu">resumir_datos</span>(datos_segmentados, ciclo_financiero, <span class="at">continuo =</span> <span class="cn">FALSE</span>, <span class="at">moneda =</span> <span class="cn">FALSE</span>)</span></code></pre></div>
 <table class=" lightable-paper lightable-hover table table-hover table-condensed" style="font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto; font-size: 16px; margin-left: auto; margin-right: auto;">
 <thead>
 <tr>
@@ -5749,6 +6714,97 @@ Máximo
 </tr>
 </tbody>
 </table>
+<div style="text-align: justify;">
+<p>Las medidas de resumen para el ciclo financiero nos muestran un escenario muy similar a lo evidenciado para el ciclo de negocio, donde no se aprecian diferencias muy significativas para ambos grupos, sin embargo, se resalta que grupo 1 presenta valores mas altos a partir del cuartil 3 y el grupo 2 tiene una media levemente mayor.</p>
+</div>
+<div class="sourceCode" id="cb65"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a><span class="fu">proporciones_categoricas</span>(datos_segmentados, ciclo_financiero)</span></code></pre></div>
+<table class=" lightable-paper lightable-hover table table-hover table-condensed" style="font-family: &quot;Arial Narrow&quot;, arial, helvetica, sans-serif; margin-left: auto; margin-right: auto; font-size: 16px; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:center;color: white !important;background-color: #327CCF !important;">
+ciclo_financiero
+</th>
+<th style="text-align:center;color: white !important;background-color: #327CCF !important;">
+grupo 1
+</th>
+<th style="text-align:center;color: white !important;background-color: #327CCF !important;">
+grupo 2
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:center;">
+1
+</td>
+<td style="text-align:center;">
+15.88%
+</td>
+<td style="text-align:center;">
+10.05%
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+2
+</td>
+<td style="text-align:center;">
+14.78%
+</td>
+<td style="text-align:center;">
+13.9%
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+3
+</td>
+<td style="text-align:center;">
+14.5%
+</td>
+<td style="text-align:center;">
+16.26%
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+4
+</td>
+<td style="text-align:center;">
+8.7%
+</td>
+<td style="text-align:center;">
+14.51%
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+5
+</td>
+<td style="text-align:center;">
+15.47%
+</td>
+<td style="text-align:center;">
+21.32%
+</td>
+</tr>
+<tr>
+<td style="text-align:center;">
+6
+</td>
+<td style="text-align:center;">
+30.66%
+</td>
+<td style="text-align:center;">
+23.95%
+</td>
+</tr>
+</tbody>
+</table>
+<div style="text-align: justify;">
+<p>La tabla de proporciones nos muestra un escenario un poco diferente al ciclo de negocios, donde el grupo 1 presenta una concentración importante en los tres primeros niveles, indicando la presencia de ciclos cortos-medios y con un porcentaje alto en el ciclo más largo. Por su parte el grupo 2 muestra porcentajes importantes de ciclos financieros medios-largos.</p>
+</div>
+</div>
 </div>
     </section>
   </div>

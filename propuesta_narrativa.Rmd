@@ -372,7 +372,7 @@ Con la intención de evitar sobrecargar el informe principal con todo el proceso
 </center>
 
 <div style='text-align: justify;'>
-Tras completar el proceso anterior se obtiene una base de datos segmentada donde las observaciones se asocian a un conjunto con características comunes, sin embargo, aún son desconocidas las propiedades de cada uno de estos, con ello en mente este análisis busca describir el comportamiento de los grupos a través de las 47 variables proporcionadas inicialmente.
+Tras completar el proceso anterior se obtiene una base de datos segmentada donde las observaciones se asocian a un conjunto con características comunes, sin embargo, aún son desconocidas las propiedades de cada uno de estos, con ello en mente este análisis busca describir el comportamiento de los grupos a través de las 46 variables proporcionadas inicialmente.
 </div>
 
 <br>
@@ -386,6 +386,7 @@ library(ggplot2)      #Para la creación de gráficos
 library(knitr)        #Para estilizar tablas
 library(kableExtra)   #Para complementar el estilo de las tablas
 library(scales)       #Para definir los formatos de moneda, numéricos, etc.
+library(maditr)       #Para redimensionar tablas
 options(scipen = 999) #Para la correcta visualización de cantidades grandes.
 ```
 
@@ -456,7 +457,7 @@ mostrar_proporcion
 Con el objetivo de evitar código redundante se definen las funciones necesarias para crear los elementos a ser utilizados en cada análisis. 
 </div>
 
-**Función encargada de la creación de tablas**
+**Función encargada de la creación de tablas de resumen**
 <details style = "margin-bottom: 10px; margin-left: 5px">
   <summary style = "padding: 2px 10px">
     <strong><span style = "color: #E83E8C">Click para ver el código</span></strong>
@@ -540,6 +541,73 @@ resumir_datos <- function(conjunto_datos, columna, continuo = TRUE, moneda = TRU
 ```
 </details>
 
+**Función encargada de la creación de tablas de proporciones**
+<details style = "margin-bottom: 10px; margin-left: 5px">
+  <summary style = "padding: 2px 10px">
+    <strong><span style = "color: #E83E8C">Click para ver el código</span></strong>
+  </summary>
+```{r}
+#Se crea la función que recibe como argumento un conjunto de datos y una variable
+proporciones_categoricas <- function(datos, variable){
+    
+    variable <- enquo(variable)
+    
+    #Se crea la formula para redimensionar los datos
+    formula_dcast <- paste(quo_name(variable),
+                     "grupo",
+                     sep="~")
+    
+    #Se convierte la formula de string al formato adecuado
+    formula_dcast <- as.formula(formula_dcast)
+    
+    #Se crea el resumen a partir de los datos proporcionados
+    resumen <- datos %>% 
+           #Se selecciona el grupo y la variable del conjunto de datos
+           select(grupo, !!variable) %>% 
+           #Se grupa primero por la variable y luego por el grupo
+           group_by(!!variable, grupo) %>%
+           #Se cuenta el número de clientes en cada grupo
+           count %>% 
+           #Se redimensiona el resumen dejando a los grupos en las columnas y
+           #las categorías en las filas
+           dcast(formula_dcast) %>% 
+           #Se transforma el resultado a dataframe
+           as.data.frame()
+    
+    #Se almacenan los nombre de las columnas que no son las categorias
+    nombres <- resumen %>% select(!matches(quo_name(variable))) %>% names()
+    
+    resumen[, nombres] <- resumen %>% 
+                          #Se seleccionan las columnas 
+                          select(all_of(nombres)) %>% 
+                          #Se crean las proporciones
+                          apply(., 
+                                2,
+                                function(x){
+                                    paste0(
+                                        round(x/sum(x)*100,2),
+                                        "%")
+                                }) %>% 
+                          #Se transofrma el resultado a dataframe
+                          as.data.frame()
+    
+    #Se refactorizan los nombres de los grupos
+    nombres_nuevos <- paste("grupo", nombres)
+    
+    #Se añaden los nombres al resumen
+    names(resumen) <- c(quo_name(variable),nombres_nuevos)
+    
+    #Se estiliza el resumen con la función kable
+    kable(resumen, align = "c",  "html") %>% 
+        #Se utiliza el tema kable_papper
+        kable_paper("hover", full_width = TRUE) %>%
+        kable_styling(bootstrap_options = c("hover", "condensed"), 
+                      font_size = 16) %>% 
+        row_spec(0, background = "#327CCF", color = "white")
+}
+```
+</details>
+
 <br>
 
 ## 2. Descripción de grupos a través de cada variable
@@ -548,13 +616,22 @@ resumir_datos <- function(conjunto_datos, columna, continuo = TRUE, moneda = TRU
 Para cada variable se creará una tabla donde se presentarán los resumenes numéricos correspondientes a los grupos, la cual será usada de base determinar las principales características que los diferencian.
 
 
-**Observación**: Los datos continuos cuentan con un resumen adicional denominado "ceros", este registra la proporción de datos en cero dentro de cada grupo, calculado de la siguiente manera: 
+**Observaciones** 
+
+1. Los datos continuos cuentan con un resumen adicional denominado "ceros", este registra la proporción de datos en cero dentro de cada grupo, calculado de la siguiente manera:
+
 </div>
 
 <br>
 
 <div style='text-align: center; font-size: 22px'>
 $ceros = \frac{totalCerosGrupo}{tamañoGrupo}$
+</div>
+
+<br>
+
+<div style='text-align: justify;'>
+2. Las datos categóricos cuentan con una tabla adicional que registra la proporción de empresas que se encuentran en cada nivel.
 </div>
 
 <br>
@@ -830,7 +907,7 @@ resumir_datos(datos_segmentados, sal_vm_canal2)
 ```
 
 <div style='text-align: justify;'>
-El canal 2 es el más activo entre los relacionados con las salidas, donde el grupo 1 muestra una proporción de entradas en cero del 48.76%, reflejando que aproximadamente la mitad de los clientes pertenecientes a este le han dado uso.
+El canal 2 es el más activo entre los relacionados con las salidas, donde el grupo 1 muestra una proporción de entradas en cero del 48.76%, reflejando que aproximadamente la mitad de los clientes pertenecientes a este lo han utilizado en alguna medida.
 
 El grupo 2 presenta una proporción de entradas en cero significativamente más baja, reflejando una mayor actividad y presentando valores más altos en cada una de las mediadas de resumen, lo cual indica que está constituido por clientes económicamente más fuertes.
 </div>
@@ -872,86 +949,300 @@ El canal "otros" muestra una alta inactividad por parte de ambos grupos, refleja
 Se resalta que el grupo 2 continúa manteniendo la tendencia que se ha presentado desde el principio, manejando una actividad mayor y valores monetarios más altos.
 </div>
 
-## SAL_TX
+### 2.27. Transacciones de salida por el canal 2
 
 ```{r}
 resumir_datos(datos_segmentados, sal_tx_canal2, moneda = FALSE)
 ```
 
+<div style='text-align: justify;'>
+Las transacciones de salida a través del canal 2 muestran una correspondencia con los resultados del valor del ticket promedio de salida, donde en general los clientes del grupo 2 muestran una actividad mucho mayor, con una proporción de ceros del 10.93%, adicionalmente se evidencia que continúa superando al grupo 1 en la cantidad de transacciones a través de todas las medidas de resumen.
+</div>
+
+### 2.28. Transacciones de salida por el canal 5
+
 ```{r}
 resumir_datos(datos_segmentados, sal_tx_canal5, moneda = FALSE)
 ```
+
+<div style='text-align: justify;'>
+Los resultados del canal 5 nos muestran lo mismo que se ha visto hasta el momento, donde el grupo 2 maneja una cantidad mayor de transacciones y presenta una actividad mayor a la evidenciada para el grupo 1.
+</div>
+
+### 2.29. Transacciones de salida por el canal 8
 
 ```{r}
 resumir_datos(datos_segmentados, sal_tx_canal8, moneda = FALSE)
 ```
 
+
+<div style='text-align: justify;'>
+El canal 8 nos muestra una inactividad casi total por parte de los clientes del grupo 1, los cuales además manejan valores menores a los del grupo 2.
+</div>
+
+### 2.30. Transacciones de salida por el canal otros
+
 ```{r}
 resumir_datos(datos_segmentados, sal_tx_otros, moneda = FALSE)
 ```
 
-## CATEGORICAS
+<div style='text-align: justify;'>
+Si bien ambos grupos presentan una inactividad importante a través de este canal, los resultados de la tabla nos permiten finalmente concluir que el grupo 2 se consolida como el más activo, con valores mas altos en cada uno de los canales tanto de entrada como de salida.
+</div>
+
+### 2.31. Proporción de **$\frac{importaciones}{compras}$**
 
 ```{r}
 resumir_datos(datos_segmentados, impo_cv, continuo = FALSE, moneda = FALSE)
 ```
 
+<div style='text-align: justify;'>
+La tabla nos indica que los clientes del grupo 2 tienden a realizar más importaciones que los del grupo 1, lo cual se evidencia principalmente en los valores de la mediana y la media.
+</div>
+
+```{r, warning=FALSE, message=FALSE}
+proporciones_categoricas(datos_segmentados, impo_cv)
+```
+
+<div style='text-align: justify;'>
+Por otro lado, la tabla de proporciones nos indica que los clientes asociados al grupo 1 están principalmente concentrados en los dos principales niveles, reflejando que se trata de empresas que realizan una baja o nula cantidad de importaciones respecto a sus compras totales. Por su parte los asociados al grupo 2 están concentrados del nivel 2 en adelante, indicando que se trata de empresas que realizan más importaciones que lo evidenciado para el primer grupo.
+</div>
+
+### 2.32. Proporción de **$\frac{exportaciones}{ventas}$**
+
 ```{r}
 resumir_datos(datos_segmentados, expo_vt, continuo = FALSE, moneda = FALSE)
 ```
+
+<div style='text-align: justify;'>
+La tabla de resumenes numéricos indica que los clientes asociados al grupo 2 tienden a exportar más productos que los del grupo 1, esto se puede apreciar principalmente en los valores de la mediana y la media.
+</div>
+
+```{r, warning=FALSE, message=FALSE}
+proporciones_categoricas(datos_segmentados, expo_vt)
+```
+
+<div style='text-align: justify;'>
+La tabla de proporciones nos permite confirmar lo afirmado anteriormente, donde aproximadamente la mitad de los clientes asociados al grupo 1 poseen una baja o nula proporción de importaciones, mientras que los pertenecientes al grupo 2 se concentran principalmente en el nivel 2, indicando que poseen en su mayoría una proporción de importaciones más alta.
+</div>
+
+### 2.33. Cuentas por pagar
 
 ```{r}
 resumir_datos(datos_segmentados, cxp, continuo = FALSE, moneda = FALSE)
 ```
 
+<div style='text-align: justify;'>
+La tabla de resumenes numéricos indica que que los clientes asociados al grupo 2 poseen una mayor cantidad de cuentas por pagar, lo cual se aprecia en la superioridad que presentan en cada una de las medidas. 
+</div>
+
+```{r, warning=FALSE, message=FALSE}
+proporciones_categoricas(datos_segmentados, cxp)
+```
+
+<div style='text-align: justify;'>
+La tabla de proporciones nos permite observar de una mejor manera lo mencionado anteriormente dado que para el los dos primeros niveles se observa una clara superioridad del grupo 1, indicando que se constituye en gran medida por clientes que tienen una baja o moderadamente baja cantidad de cuentas por pagar, comportamiento que se invierte a partir del nivel 3, donde el grupo 2 empieza a dominar, indicando que posee una proporción mayor de empresas con gran cantidad de cuentas por pagar.
+</div>
+
+### 2.34. Cuentas por cobrar
+
 ```{r}
 resumir_datos(datos_segmentados, cxc, continuo = FALSE, moneda = FALSE)
 ```
+
+<div style='text-align: justify;'>
+Las cuentas por cobrar evidencian un comportamiento similar a las cuentas por pagar, donde existe una clara dominación por parte del grupo 2 en cada una de las medidas, indicando que los clientes asociados a este poseen una cantidad superior de deudas a favor en comparación con el grupo 1.
+</div>
+
+```{r, warning=FALSE, message=FALSE}
+proporciones_categoricas(datos_segmentados, cxc)
+```
+
+<div style='text-align: justify;'>
+La tabla de proporciones muestra de una forma más clara el comportamiento previamente descrito, donde el grupo 1 domina principalmente en los dos primeros niveles, mientras que el segundo grupo domina principalmente a partir del tercer nivel, confirmando que este ultimo está constituido por clientes con más cuentas por cobrar.
+</div>
+
+### 2.35. Total de inventarios
 
 ```{r}
 resumir_datos(datos_segmentados, totalinventory, continuo = FALSE, moneda = FALSE)
 ```
 
+<div style='text-align: justify;'>
+En el total de inventarios se evidencia nuevamente lo visto para las cuentas por pagar y por cobrar, donde el grupo 1 presenta valores mas bajos en todas las medidas, indicando que los clientes del grupo 2 poseen un total de inventarios superior.
+</div>
+
+```{r, warning=FALSE, message=FALSE}
+proporciones_categoricas(datos_segmentados, totalinventory)
+```
+
+<div style='text-align: justify;'>
+La tabla de proporciones confirma lo mencionado anteriormente, donde el grupo 1 domina principalmente en los dos primeros niveles, evidenciando que los cientes asociados a este poseen un bajo o medio bajo total de inventarios, mientras que los pertenecientes al grupo 2 se distribuyen en valores más altos.
+</div>
+
+### 2.36. Pagos a personas jurídicas
+
 ```{r}
 resumir_datos(datos_segmentados, pagos_pj, continuo = FALSE, moneda = FALSE)
 ```
+
+<div style='text-align: justify;'>
+En esta característica se invierte la tendencia vista hasta el momento, donde las empresas pertenecientes al grupo 1 presentan valores más elevados en todas las medidas de resumen, indicando que poseen una mayor proporción de pagos hechos a personas jurídicas que las pertenecientes al grupo 2. 
+</div>
+
+### 2.37. Pagos a personas naturales
 
 ```{r}
 resumir_datos(datos_segmentados, pagos_pn, continuo = FALSE, moneda = FALSE)
 ```
 
+<div style='text-align: justify;'>
+Contrario al punto anterior, en las medidas de resumen se aprecia que los clientes del grupo 2 tiende a realizar una mayor proporción de pagos a personas jurídicas en comparación con los asociados al grupo 1.
+</div>
+
+### 2.38. Tiene ventas físicas
+
 ```{r}
 resumir_datos(datos_segmentados, tiene_ventas_fisicas, continuo = FALSE, moneda = FALSE)
 ```
+
+<div style='text-align: justify;'>
+Los resultados de las medidas de resumen nos permiten afirmar que el grupo 2 posee una mayor proporción de empresas que tienen ventas físicas, esto se aprecia principalmente en el valor de la media.
+</div>
+
+```{r, warning=FALSE, message=FALSE}
+proporciones_categoricas(datos_segmentados, tiene_ventas_fisicas)
+```
+
+<div style='text-align: justify;'>
+La tabla de proporciones confirma de forma clara la información aportada por las medidas de resumen, donde el 81.22% de las empresas del grupo 1 no poseen ventas físicas, mientras que el 62.48% de las asociadas al grupo 2 si las poseen. 
+</div>
+
+### 2.39. Tiene ventas electrónicas
 
 ```{r}
 resumir_datos(datos_segmentados, tiene_ventas_electronicas, continuo = FALSE, moneda = FALSE)
 ```
 
+<div style='text-align: justify;'>
+Los resultados de esta característica no son muy alentadores para ningún grupo, sin embargo se resalta que el segundo continúa mostrando valores mas altos, donde cerca del 7% de las empresas asociadas poseen ventas electrónicas.
+</div>
+
+```{r, warning=FALSE, message=FALSE}
+proporciones_categoricas(datos_segmentados, tiene_ventas_electronicas)
+```
+
+<div style='text-align: justify;'>
+El resultado de la tabla de proporciones solo confirma dicho previamente, el grupo 2 continúa manteniendo valores mas altos que los del grupo 1.
+</div>
+
+### 2.40. Recaudos provenientes de personas jurídicas
+
 ```{r}
 resumir_datos(datos_segmentados, recaudos_pj, continuo = FALSE, moneda = FALSE)
 ```
+
+<div style='text-align: justify;'>
+Los valores de las medidas de resumen indican que los recaudos provenientes jurídicas no son muy usuales, sin embargo la tendencia evidenciada hasta el momento continúa estando presente, donde los clientes asociados al grupo 2 tienen los valores más altos.
+</div>
+
+### 2.41. Recaudos provenientes de personas naturales
 
 ```{r}
 resumir_datos(datos_segmentados, recaudos_pn, continuo = FALSE, moneda = FALSE)
 ```
 
+<div style='text-align: justify;'>
+Similar al resultado anterior, los recaudos provenientes de personas naturales no parecen ser muy usuales, sin embargo, el grupo 2 continúa manteniendo los valores más altos, lo cual se evidencia principalmente en el valor de la media.
+</div>
+
+### 2.42. Rotación de inventarios
+
 ```{r}
 resumir_datos(datos_segmentados, rotacion_inventarios, continuo = FALSE, moneda = FALSE)
 ```
+
+<div style='text-align: justify;'>
+Los valores de las medidas de resumen evidencian que las empresas asociadas al grupo 2 tienden a tener una rotación de inventarios más larga, lo cual se aprecia principalmente a partir del cuartil 2 y en el valor de la media.
+</div>
+
+```{r, warning=FALSE, message=FALSE}
+proporciones_categoricas(datos_segmentados, rotacion_inventarios)
+```
+
+<div style='text-align: justify;'>
+La tabla de proporciones permite ver de una forma más clara el comportamiento observado en los resultados anteriores, donde las empresas del grupo 1 tienen rotaciones más extremas, con una alta concentración principalmente en los primeros niveles, mientras que las pertenecientes al grupo 2 muestran resultados más variados pero frecuentemente asociados a los niveles intermedios/altos.
+</div>
+
+### 2.43. Rotación de cuentas por cobrar
 
 ```{r}
 resumir_datos(datos_segmentados, rotacion_cxc, continuo = FALSE, moneda = FALSE)
 ```
 
+<div style='text-align: justify;'>
+La rotación de cuentas por cobrar nos indica que las empresas del grupo 1 tienden a asociarse a los valores más altos, lo cual se aprecia en el cuartil 3 y en el valor de la media, sin embargo se destaca que en las medidas de resumen la diferencia entre ambos grupos no parece ser significativa.
+</div>
+
+```{r, warning=FALSE, message=FALSE}
+proporciones_categoricas(datos_segmentados, rotacion_cxc)
+```
+
+<div style='text-align: justify;'>
+La tabla de proporciones nos aporta un poco de información, donde se observa que las empresas del grupo 1 se concentran en valores extremos (los niveles 1 y 4) principalmente, mientras que las asociadas al grupo 2 se distribuyen entre los todos los niveles, indicando que los clientes poseen rotaciones variadas. 
+</div>
+
+### 2.44. Rotación de cuentas por pagar
+
 ```{r}
 resumir_datos(datos_segmentados, rotacion_cxp, continuo = FALSE, moneda = FALSE)
 ```
+
+<div style='text-align: justify;'>
+Los resultados de las medidas de resumen indican que no existe gran diferencia entre la rotación de cuentas por pagar de ambos grupos, donde la mas significativa se evidencia en la media donde el grupo 2 se destaca un poco más, sin embargo, ambos presentan valores sumamente cercanos.
+</div>
+
+```{r, warning=FALSE, message=FALSE}
+proporciones_categoricas(datos_segmentados, rotacion_cxp)
+```
+
+<div style='text-align: justify;'>
+La tabla de proporciones nos permite confirmar lo mencionado en las medidas de resumen, permitiendo verificar que el grupo 1 se destaca en los niveles mas extremos (1 y 4), mientras que el grupo 2 se destaca en los intermedios, sin embargo, se concluye para esta característica que las diferencias entre ambos son muy bajas. 
+</div>
+
+### 2.45. Ciclo de negocios
 
 ```{r}
 resumir_datos(datos_segmentados, ciclo_negocio, continuo = FALSE, moneda = FALSE)
 ```
 
+<div style='text-align: justify;'>
+Similar a lo evidenciado con las medidas de rotación, no se aprecian diferencias muy significativas para ambos grupos en cuanto al ciclo de negocio, donde se destaca levemente el grupo 1 a partir del cuartil 3 y el grupo 2 en el valor de la media.
+</div>
+
+```{r, warning=FALSE, message=FALSE}
+proporciones_categoricas(datos_segmentados, ciclo_negocio)
+```
+
+<div style='text-align: justify;'>
+Las tabla de proporciones nos muestra una escenario adicional a las medidas de resumen donde el grupo 2 presenta valores mas altos en los niveles intermedios/altos, indicando que las empresas asociadas a este tienden a tener una duración de ciclo media/larga, el grupo 1 por su parte muestra una rotación variada, con una concentración importante en el ciclo más largo. 
+</div>
+
+### 2.46. Ciclo financiero
+
 ```{r}
 resumir_datos(datos_segmentados, ciclo_financiero, continuo = FALSE, moneda = FALSE)
 ```
+
+<div style='text-align: justify;'>
+Las medidas de resumen para el ciclo financiero nos muestran un escenario muy similar a lo evidenciado para el ciclo de negocio, donde no se aprecian diferencias muy significativas para ambos grupos, sin embargo, se resalta que grupo 1 presenta valores mas altos a partir del cuartil 3 y el grupo 2 tiene una media levemente mayor.
+</div>
+
+
+```{r, warning=FALSE, message=FALSE}
+proporciones_categoricas(datos_segmentados, ciclo_financiero)
+```
+
+<div style='text-align: justify;'>
+La tabla de proporciones nos muestra un escenario un poco diferente al ciclo de negocios, donde el grupo 1 presenta una concentración importante en los tres primeros niveles, indicando la presencia de ciclos cortos-medios y con un porcentaje alto en el ciclo más largo. Por su parte el grupo 2 muestra porcentajes importantes de ciclos financieros medios-largos.
+</div>
