@@ -616,7 +616,8 @@ proporciones_categoricas <- function(datos, variable){
 ```{r}
 #Se crea una funcion que recibe un conjunto de datos, una variable y una etiqueta
 #se pude si se desean conservar los valores extremos y los ceros
-crear_boxplot <- function(datos, variable, etiqueta, extremos = TRUE, ceros=TRUE){
+crear_boxplot <- function(datos, variable, etiqueta, extremos = TRUE, 
+                          ceros = TRUE, prop = 0.95){
     
     variable <- enquo(variable)
     
@@ -629,7 +630,7 @@ crear_boxplot <- function(datos, variable, etiqueta, extremos = TRUE, ceros=TRUE
     if (extremos == FALSE) {
         
         Q90 <- datos %>% 
-               select(!!variable) %>% summarise(percentil = quantile(!!variable ,0.95))
+               select(!!variable) %>% summarise(percentil = quantile(!!variable ,prop))
         
         datos <- datos %>% filter(!!variable < Q90[1,])
     }
@@ -682,6 +683,14 @@ $ceros = \frac{totalCerosGrupo}{tamañoGrupo}$
 <div style='text-align: justify;'>
 2. Las datos categóricos cuentan con una tabla adicional que registra la proporción de empresas que se encuentran en cada nivel.
 </div>
+
+<div style='text-align: justify;'>
+3. Todos los análisis cuentan con una pestaña al final que presenta un gráfico de caja auxiliar para comprender un poco más como se visualizan los datos, sin embargo, se aclara que para la creación de los gráficos de datos continuos (como las variables transaccionales y de ticket promedio) solo se utilizó la mayor parte de los datos distintos de cero.
+
+    * Las variables con casi la totalidad de datos en cero pueden presentar inconsistencias en la forma de las cajas por lo mencionado previamente, en estas se recomienda observar los bigotes y datos "atípicos" para hacerse a la idea del comportamiento, además de poner mucha atención a la nota situada al final de cada gráfico.
+    
+    * Las variables dicotómicas (que tienen como valores 0 y 1) no cuentan con gráfico de caja. 
+  </div>
 
 <br>
 
@@ -776,11 +785,11 @@ Se concluye que el grupo 2 continúa siendo más activo y presenta valores monet
   </summary>
 ```{r, fig.height = 6, fig.width = 9, message=FALSE}
 crear_boxplot(datos_segmentados, en_vm_canal3, extremos = FALSE, ceros = FALSE,
-              etiqueta = "ticket promedio de entrada por el canal 3")
+              prop = 0.85, etiqueta = "ticket promedio de entrada por el canal 3")
 ```
 
 <div style='text-align: justify;'>
-**Nota:** Este gráfico se realiza con el 95% inferior de los datos diferentes de cero con la intención de ilustrar como se comportan la mayor parte de los clientes a través de cada grupo.
+**Nota:** Este gráfico se realiza con el 85% inferior de los datos diferentes de cero con la intención de ilustrar como se comportan la mayor parte de los clientes a través de cada grupo.
 </div>
 
 </details>
@@ -960,12 +969,14 @@ Hasta este punto la conclusión no cambia, el grupo 2 continúa siendo más acti
     <strong><span style = "color: #2CB2E1">Click para ver el gráfico de caja</span></strong>
   </summary>
 ```{r, fig.height = 6, fig.width = 9, message=FALSE}
-crear_boxplot(datos_segmentados, en_vm_canal10, extremos = FALSE, ceros = FALSE,
+crear_boxplot(datos_segmentados, en_vm_canal10, extremos = F, ceros = F,
               etiqueta = "ticket promedio de entrada por el canal 10")
 ```
 
 <div style='text-align: justify;'>
 **Nota:** Este gráfico se realiza con el 95% inferior de los datos diferentes de cero con la intención de ilustrar como se comportan la mayor parte de los clientes a través de cada grupo.
+
+El gráfico muestra una información diferente al resumen numérico, esto debido a que en su creación no se utilizaron los datos en cero, los cuales constituyen casi la totalidad de clientes del grupo 1, lo anterior se hace con la intención de ilustrar la diferencia entre los grupos.
 </div>
 
 </details>
@@ -991,6 +1002,8 @@ crear_boxplot(datos_segmentados, en_vm_otros, extremos = FALSE, ceros = FALSE,
 
 <div style='text-align: justify;'>
 **Nota:** Este gráfico se realiza con el 95% inferior de los datos diferentes de cero con la intención de ilustrar como se comportan la mayor parte de los clientes a través de cada grupo.
+
+El gráfico muestra una información diferente al resumen numérico, esto debido a que en su creación no se utilizaron los datos en cero, los cuales constituyen casi la totalidad de clientes del grupo 1, lo anterior se hace con la intención de ilustrar la diferencia entre los grupos.
 </div>
 
 </details>
@@ -1067,11 +1080,11 @@ Se empieza a observar una clara tendencia en la cual el grupo 2 se destaca por p
   </summary>
 ```{r, fig.height = 6, fig.width = 9, message=FALSE}
 crear_boxplot(datos_segmentados, en_tx_canal3, extremos = FALSE, ceros = FALSE,
-              etiqueta = "transacciones de entrada por el canal 3")
+              prop = 0.85, etiqueta = "transacciones de entrada por el canal 3")
 ```
 
 <div style='text-align: justify;'>
-**Nota:** Este gráfico se realiza con el 95% inferior de los datos diferentes de cero con la intención de ilustrar como se comportan la mayor parte de los clientes a través de cada grupo.
+**Nota:** Este gráfico se realiza con el 85% inferior de los datos diferentes de cero con la intención de ilustrar como se comportan la mayor parte de los clientes a través de cada grupo.
 </div>
 
 </details>
@@ -1094,11 +1107,13 @@ resumir_datos(datos_segmentados, en_tx_canal4, moneda = FALSE)
   </summary>
 ```{r, fig.height = 6, fig.width = 9, message=FALSE}
 crear_boxplot(datos_segmentados, en_tx_canal4, extremos = FALSE, ceros = FALSE,
-              etiqueta = "transacciones de entrada por el canal 4")
+              prop = 0.95, etiqueta = "transacciones de entrada por el canal 4")
 ```
 
 <div style='text-align: justify;'>
 **Nota:** Este gráfico se realiza con el 95% inferior de los datos diferentes de cero con la intención de ilustrar como se comportan la mayor parte de los clientes a través de cada grupo.
+
+El gráfico muestra una información diferente al resumen numérico, esto debido a que en su creación no se utilizaron los datos en cero, los cuales constituyen casi la totalidad de clientes del grupo 1, lo anterior se hace con la intención de ilustrar la diferencia entre los grupos.
 </div>
 
 </details>
@@ -1168,12 +1183,14 @@ El canal 7 muestra una alta inactividad por parte de ambos grupos, sin embargo, 
     <strong><span style = "color: #2CB2E1">Click para ver el gráfico de caja</span></strong>
   </summary>
 ```{r, fig.height = 6, fig.width = 9, message=FALSE}
-crear_boxplot(datos_segmentados, en_tx_canal7, extremos = FALSE, ceros = FALSE,
+crear_boxplot(datos_segmentados, en_tx_canal7, extremos = TRUE, ceros = FALSE,
               etiqueta = "transacciones de entrada por el canal 7")
 ```
 
 <div style='text-align: justify;'>
 **Nota:** Este gráfico se realiza con el 95% inferior de los datos diferentes de cero con la intención de ilustrar como se comportan la mayor parte de los clientes a través de cada grupo.
+
+El gráfico muestra una información diferente al resumen numérico, esto debido a que en su creación no se utilizaron los datos en cero, los cuales constituyen casi la totalidad de clientes del grupo 1, lo anterior se hace con la intención de ilustrar la diferencia entre los grupos.
 </div>
 
 </details>
@@ -1276,6 +1293,8 @@ crear_boxplot(datos_segmentados, en_tx_otros, extremos = FALSE, ceros = FALSE,
 
 <div style='text-align: justify;'>
 **Nota:** Este gráfico se realiza con el 95% inferior de los datos diferentes de cero con la intención de ilustrar como se comportan la mayor parte de los clientes a través de cada grupo.
+
+El gráfico muestra una información diferente al resumen numérico, esto debido a que en su creación no se utilizaron los datos en cero, los cuales constituyen casi la totalidad de clientes del grupo 1, lo anterior se hace con la intención de ilustrar la diferencia entre los grupos.
 </div>
     
 </details>
@@ -1357,6 +1376,8 @@ crear_boxplot(datos_segmentados, sal_vm_canal8, extremos = FALSE, ceros = FALSE,
 
 <div style='text-align: justify;'>
 **Nota:** Este gráfico se realiza con el 95% inferior de los datos diferentes de cero con la intención de ilustrar como se comportan la mayor parte de los clientes a través de cada grupo.
+
+El gráfico muestra una información diferente al resumen numérico, esto debido a que en su creación no se utilizaron los datos en cero, los cuales constituyen casi la totalidad de clientes del grupo 1, lo anterior se hace con la intención de ilustrar la diferencia entre los grupos.
 </div>
 
 </details>
@@ -1384,6 +1405,8 @@ crear_boxplot(datos_segmentados, sal_vm_otros, extremos = FALSE, ceros = FALSE,
 
 <div style='text-align: justify;'>
 **Nota:** Este gráfico se realiza con el 95% inferior de los datos diferentes de cero con la intención de ilustrar como se comportan la mayor parte de los clientes a través de cada grupo.
+
+El gráfico muestra una información diferente al resumen numérico, esto debido a que en su creación no se utilizaron los datos en cero, los cuales constituyen casi la totalidad de clientes del grupo 1, lo anterior se hace con la intención de ilustrar la diferencia entre los grupos.
 </div>
 
 </details>
@@ -1478,12 +1501,14 @@ Si bien ambos grupos presentan una inactividad importante a través de este cana
     <strong><span style = "color: #2CB2E1">Click para ver el gráfico de caja</span></strong>
   </summary>
 ```{r, fig.height = 6, fig.width = 9, message=FALSE}
-crear_boxplot(datos_segmentados, sal_tx_otros, extremos = FALSE, ceros = FALSE,
+crear_boxplot(datos_segmentados, sal_tx_otros, extremos = T, ceros = FALSE,
               etiqueta = "transacciones de salida otros")
 ```
 
 <div style='text-align: justify;'>
 **Nota:** Este gráfico se realiza con el 95% inferior de los datos diferentes de cero con la intención de ilustrar como se comportan la mayor parte de los clientes a través de cada grupo.
+
+El gráfico muestra una información diferente al resumen numérico, esto debido a que en su creación no se utilizaron los datos en cero, los cuales constituyen casi la totalidad de clientes del grupo 1, lo anterior se hace con la intención de ilustrar la diferencia entre los grupos.
 </div>
 
 </details>
