@@ -138,13 +138,13 @@ Dentro de esta categoría se encuentran las caracteristicas propias de cada clie
     <td>`tiene_ventas_fisicas`</td>
     <td style='text-align: justify;'> Variable binaria que indica si la empresa tiene puntos de venta físicos.
     <br>1: Si
-    <br>2: No
+    <br>0: No
   </tr>
   <tr>
     <td>`tiene_ventas_electronicas`</td>
     <td style='text-align: justify;'> Variable binaria que indica si la empresa tiene venta electronicas.
     <br>1: Si
-    <br>2: No
+    <br>0: No
   </tr>
   <tr>
     <td>`recaudos_pj`</td>
@@ -235,11 +235,11 @@ A continuación se presentan las conclusiones generales de lo evidenciado en el 
 
 5. El canal 10 además de poseer la segunda proporción de entradas en cero (89.48%) más alta, es el que presenta los valores más bajos, por lo cual se intuye que se puede tratar de un medio restrictivo, de difícil acceso o limitante.
 
-6. De los puntos 1 y 3 se resalta que el canal 2 además de ser típicamente usado también presenta valores máximos muy altos, dando la impresión de ser flexible, de fácil acceso y poco restrictivo. Para el canal 2 se puede concluir de forma similar, pero en una magnitud monetaria menor.
+6. De los puntos 1 y 3 se resalta que el canal 2 además de ser típicamente usado también presenta valores máximos muy altos, dando la impresión de ser flexible, de fácil acceso y poco restrictivo. Para el canal 1 se puede concluir de forma similar, pero en una magnitud monetaria menor.
 
 7. Los canales 3, 8 y 9 tienen una apariencia bastante promedio, con una proporción de ceros no superior al 33% y con valores monetarios moderadamente bajos.
 
-8. Como se observo del punto 1, el canal 6 presenta un uso bastante alto, sin embargo, como se puede notar en la tabla, sus valores monetarios son relativamente bajos, indicando que es de fácil acceso y uso para transacciones de magnitudes económicas moderadamente bajas.
+8. Como se observó del punto 1, el canal 6 presenta un uso bastante alto, sin embargo, como se puede notar en la tabla, sus valores monetarios son relativamente bajos, indicando que es de fácil acceso y uso para transacciones de magnitudes económicas moderadamente bajas.
 
 9. A pesar de que "otros" presenta la tercera proporción de ceros más alta, las magnitudes económicas que maneja son moderadamente altas.
 </div>
@@ -294,7 +294,7 @@ A continuación se presentan las conclusiones generales de lo evidenciado en el 
 ![](./elementos/sal_vm.png)
 
 <div style='text-align: justify;'>
-Como se puede observar en la tabla, existe una clara tendencia en el uso y valor transaccional de cada canal,donde:
+Como se puede observar en la tabla, existe una clara tendencia en el uso y valor transaccional para cada canal, donde:
 
 * El canal 2 maneja los valores monetarios más altos y posee la menor proporción de ceros (24.27%), reflejando que es comunmente usado.
 * El canal 5 posee el doble de entradas en cero y valores menores que el anterior en cada medida del resumen numérico, reflejando que es de uso medio y más limitado.
@@ -308,7 +308,7 @@ Como se puede observar en la tabla, existe una clara tendencia en el uso y valor
 ![](./elementos/sal_tx.png)
 
 <div style='text-align: justify;'>
-Los resultados de este análisis presentan una tendencia similar a lo evidenciado para las variables de tipo `sal_vm_canalX` donde que el comportamiento en cuanto al uso es similar para ambos, dado que poseen la misma proporción de entradas en cero, sin embargo se destaca que:
+Los resultados de este análisis presentan una tendencia similar a lo evidenciado para las variables de tipo `sal_vm_canalX` con un comportamiento en cuanto al uso similar para ambos, dado que poseen la misma proporción de entradas en cero, sin embargo se destaca que:
 
 * El canal 2 es transaccionalmente más activo que los demás, presentando valores demasiado altos en todas las medidas de resumen.
 * Si bien en promedio el canal 5 presenta un mayor número de transacciones, el canal 8 muestra valores máximos significativamente más altos.
@@ -681,11 +681,11 @@ $ceros = \frac{totalCerosGrupo}{tamañoGrupo}$
 <br>
 
 <div style='text-align: justify;'>
-2. Las datos categóricos cuentan con una tabla adicional que registra la proporción de empresas que se encuentran en cada nivel.
+2. Los datos categóricos cuentan con una tabla adicional que registra la proporción de empresas que se encuentran en cada nivel.
 </div>
 
 <div style='text-align: justify;'>
-3. Todos los análisis cuentan con una pestaña al final que presenta un gráfico de caja auxiliar para comprender un poco más como se visualizan los datos, sin embargo, se aclara que para la creación de los gráficos de datos continuos (como las variables transaccionales y de ticket promedio) solo se utilizó la mayor parte de los datos distintos de cero.
+3. Todos los análisis cuentan con una pestaña al final que presenta un gráfico de caja auxiliar que servirá para comprender un poco más como se visualizan los datos, sin embargo, se aclara que para la creación de los gráficos de datos continuos (como las variables transaccionales y de ticket promedio) solo se utilizó la mayor parte de los datos distintos de cero.
 
     * Las variables con casi la totalidad de datos en cero pueden presentar inconsistencias en la forma de las cajas por lo mencionado previamente, en estas se recomienda observar los bigotes y datos "atípicos" para hacerse a la idea del comportamiento, además de poner mucha atención a la nota situada al final de cada gráfico.
     
@@ -741,7 +741,7 @@ El análisis exploratorio nos ayudó a evidenciar que este canal es el más acti
 
 2. El grupo 2 conserva la mayor parte de actividad donde tan solo el 0.88% de los clientes no usan el canal.
 
-3. Similar a los resultados del canal anterior, el grupo 2 presenta valores monetarios mas altos donde la media de este es significativamente mayor, lo cual se evidencia además en el resto de medidas.
+3. Similar a los resultados del canal anterior, el grupo 2 presenta valores monetarios mas altos con una media significativamente mayor, lo cual se evidencia además en el resto de medidas.
 
 Para este canal se concluye que el grupo 2 es más activo y presenta valores monetarios más altos.
 </div>
@@ -1150,7 +1150,7 @@ resumir_datos(datos_segmentados, en_tx_canal6, moneda = FALSE)
 ```
 
 <div style='text-align: justify;'>
-En este canal el grupo 1 se muestra altamente inactivo, donde más del 75% de los clientes no han realizado ninguna transacción, mostrando una clara inactividad en comparación con los integrantes del grupo 2, los cuales en su mayoría han realizado más de 3.40 transacciones.
+En este canal el grupo 1 nuevamente muestra una inactividad importante, donde más del 50% de los clientes no han realizado ninguna transacción, mostrando una clara diferencia con los integrantes del grupo 2, los cuales en su mayoría han realizado más de 3.40 transacciones.
 </div>
 
 <details style = "margin-bottom: 10px; margin-left: 5px">
@@ -1254,7 +1254,7 @@ resumir_datos(datos_segmentados, en_tx_canal10, moneda = FALSE)
 <div style='text-align: justify;'>
 En el canal 10 el grupo 1 se encuentra casi completamente inactivo, donde el 99.03% de clientes no registran ninguna transacción y el número máximo realizado es de 3.
 
-El grupo 2 muestra una disminución en la proporción de ceros, presentando una inactividad menor y un número de transacciones realizadas levemente más alto.
+El grupo 2 muestra una menor proporción de ceros respecto al primero, presentando una inactividad menor y un número de transacciones realizadas levemente más alto.
 </div>
 
 <details style = "margin-bottom: 10px; margin-left: 5px">
@@ -1333,7 +1333,7 @@ resumir_datos(datos_segmentados, sal_vm_canal5)
 ```
 
 <div style='text-align: justify;'>
-El canal 5 muestra un aumento en la inactividad de ambos grupos, donde cerca del 80% de los clientes asociados al grupo 1 no han realizado movimientos de salida a través de este medio. Por su parte el grupo 2 continúa registra una inactividad del 33.74%, que se podría calificar como relativamente baja en comparación con el primero.
+El canal 5 muestra un aumento en la inactividad de ambos grupos, donde cerca del 80% de los clientes asociados al grupo 1 no han realizado movimientos de salida a través de este medio. Por su parte el grupo 2 registra una inactividad del 33.74%, que se podría calificar como relativamente baja en comparación con el primero.
 
 En este canal se aprecia una mayor diferencia entre las medidas de resumen de ambos grupos, donde el numero dos continúa manejando magnitudes económicas más altas.
 </div>
@@ -1584,7 +1584,7 @@ proporciones_categoricas(datos_segmentados, cxp)
 ```
 
 <div style='text-align: justify;'>
-La tabla de proporciones nos permite observar de una mejor manera lo mencionado anteriormente dado que para el los dos primeros niveles se observa una clara superioridad del grupo 1, indicando que se constituye en gran medida por clientes que tienen una baja o moderadamente baja cantidad de cuentas por pagar, comportamiento que se invierte a partir del nivel 3, donde el grupo 2 empieza a dominar, indicando que posee una proporción mayor de empresas con gran cantidad de cuentas por pagar.
+La tabla de proporciones nos permite observar de una mejor manera lo mencionado anteriormente dado que para los dos primeros niveles se observa una clara superioridad del grupo 1, indicando que se constituye en gran medida por clientes que tienen una baja o moderadamente baja cantidad de cuentas por pagar, comportamiento que se invierte a partir del nivel 3, donde el grupo 2 empieza a dominar, indicando que posee una proporción mayor de empresas con gran cantidad de cuentas por pagar.
 </div>
 
 <details style = "margin-bottom: 10px; margin-left: 5px">
@@ -1726,7 +1726,7 @@ proporciones_categoricas(datos_segmentados, tiene_ventas_electronicas)
 ```
 
 <div style='text-align: justify;'>
-El resultado de la tabla de proporciones solo confirma dicho previamente, el grupo 2 continúa manteniendo valores mas altos que los del grupo 1.
+El resultado de la tabla de proporciones solo confirma lo dicho previamente, el grupo 2 continúa manteniendo valores mas altos que los del grupo 1.
 </div>
 
 ### 2.40. Recaudos provenientes de personas jurídicas
@@ -1909,6 +1909,4 @@ crear_boxplot(datos_segmentados, ciclo_financiero,
               etiqueta = "ciclo financiero")
 ```
 </details>
-
-
 
