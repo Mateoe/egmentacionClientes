@@ -42,7 +42,7 @@ Una compañía del sector financiero requiere una segmentación de clientes (qui
 
 **Variables de comportamiento de los clientes en canales y productos**
 <div style='text-align: justify;'>    
-Dentro de esta categoría se encuentran cuatro subgrupos de variables que determinan como interactúan los clientes con cada uno de los canales de la empresa. Dado que no se conoce el contexto o tipo de organización con la que estamos trabajando, suponemos que cada canal representa un medio por el cual se pueden realizar transacciones monetarias, como lo pueden ser pago en efectivo, giro bancario, transferencia bancaria, cheque, pagaré, etc.
+Dentro de esta categoría se encuentran cuatro subgrupos de variables que determinan cómo interactúan los clientes con cada uno de los canales de la empresa. Dado que no se conoce el contexto o tipo de organización con la que estamos trabajando, suponemos que cada canal representa un medio por el cual se pueden realizar transacciones monetarias, como lo pueden ser pago en efectivo, giro bancario, transferencia bancaria, cheque, pagaré, etc.
 </div>    
     
 1. El subgrupo de **variables en_vm_canalX** representa el valor del ticket promedio anual de entrada a través del canal **X**.
@@ -196,7 +196,7 @@ Dentro de esta categoría se encuentran las caracteristicas propias de cada clie
 </center>
 
 <div style='text-align: justify;'> 
-Con el objetivo de crear una idea clara del comportamiento de las variables y descubrir como los clientes interactuan con cada una de ellas, iniciamos realizando un análisis exploratorio haciendo uso de la descripción proporcionada anteriormente.
+Con el objetivo de crear una idea clara del comportamiento de las variables y descubrir como los clientes interactúan con cada una de ellas, iniciamos realizando un análisis exploratorio haciendo uso de la descripción proporcionada anteriormente.
 </div>
 
 <div style='text-align: justify;'> 
@@ -207,7 +207,7 @@ Dado que el conjunto de datos cuenta con 46 caracteristicas a describir, este do
 ## 1. Comportamiento de los clientes en canales y productos
 
 <div style='text-align: justify;'> 
-Este grupo de variables registran el valor y la cantidad de transacciones, tanto de entrada como de salida en un determinado periodo de tiempo, permitiéndonos entender como los clientes interactúan con cada uno de los canales de la organización y obtener conocimiento a partir de ello, aportándonos con esto una primera impresión de posibles patrones o tendencias de uso.
+Este grupo de variables registran el valor y la cantidad de transacciones, tanto de entrada como de salida en un determinado periodo de tiempo, permitiéndonos entender cómo los clientes interactúan con cada uno de los canales de la organización y obtener conocimiento a partir de ello, aportándonos con esto una primera impresión de posibles patrones o tendencias de uso.
 </div>
 
 ### 1.1. Variables de tipo `en_vm_canalX`
@@ -219,7 +219,7 @@ Como se mencionó previamente, este subgrupo de variables registran el valor del
 * **vm:** Valor medio anual
 * **X:** Número identificador del canal
 
-A continuación se presentan las conclusiones generales de lo evidenciado en el **[análisis exploratorio de variables en_vm_canalX](https://mateoe.github.io/segmentacionClientes/analisis/analisis_exploratorio_en_vm.html)**, haciendo uso de la tabla que reúne todos los resultados de los resumenes numéricos.
+A continuación se presentan las conclusiones generales de lo evidenciado en el **[análisis exploratorio de variables en_vm_canalX](https://mateoe.github.io/segmentacionClientes/analisis/analisis_exploratorio_en_vm.html)**, haciendo uso de la tabla que reúne todos los resultados de los resúmenes numéricos.
 </div>
 
 ![](./elementos/en_vm.png)
@@ -262,7 +262,7 @@ A continuación se presentan las conclusiones generales de lo evidenciado en el 
 <div style='text-align: justify;'>
 1. El canal 4 a pesar de poseer una proporción de ceros del 71.25%, maneja un máximo de transacciones significativamente más alto que el de los demás, superando los tres millones y medio, lo cual afecta en gran medida el valor de la media.
 
-2. Los canales 1 y 2 al poseer una baja proporción de ceros (no superior al 10%) y manejar un número moderadamente alto de transacciones, dan la apariencia de ser fácilmente accesibles, flexibles y comunmente más usados que los demás.
+2. Los canales 1 y 2 al poseer una baja proporción de ceros (no superior al 10%) y manejar un número moderadamente alto de transacciones, dan la apariencia de ser fácilmente accesibles, flexibles y comúnmente más usados que los demás.
 
 3. El canal 10 se destaca no solo por poseer la segunda proporción de entradas en cero más alta (89.48%) , además posee un valor máximo extremadamente bajo, reflejando que es poco usado, con lo cual se intuye que es restrictivo, de difícil acceso o limitante.
 
@@ -299,7 +299,7 @@ Como se puede observar en la tabla, existe una clara tendencia en el uso y valor
 * El canal 2 maneja los valores monetarios más altos y posee la menor proporción de ceros (24.27%), reflejando que es comunmente usado.
 * El canal 5 posee el doble de entradas en cero y valores menores que el anterior en cada medida del resumen numérico, reflejando que es de uso medio y más limitado.
 * El canal 8 por su parte maneja una alta cantidad de entradas en cero, con valores significativamente menores en cada una de las medidas, dando la impresión de ser más restrictivo y poco usado para transacciones de salida.
-* "Otros" posee mas del 96% de sus entradas en cero, dando la idea de ser un canal raramente usado para este tipo de operaciones, el cual maneja montos significativamente pequeños en comparación con los demás.
+* "Otros" posee más del 96% de sus entradas en cero, dando la idea de ser un canal raramente usado para este tipo de operaciones, el cual maneja montos significativamente pequeños en comparación con los demás.
 </div>
 
 
@@ -341,7 +341,7 @@ Antes de iniciar este proceso es importante recordar que nuestro conjunto de dat
 
 **Medida de distancia**
 <div style='text-align: justify;'>
-La _distancia de Gower_ es una medida de disimilitud que indica el grado de diferencia entre dos observaciones, estableciendo un valor entre $0$ y $1$, donde $(0)$ indica que ambas son iguales y $(1)$ indica que son completamente diferentes, ésta combina diferentes métricas para variables cuantitativas, nominales y ordinales, por lo que es popularmente usada para datos mixtos.
+La _distancia de Gower_ es una medida de disimilitud que indica el grado de diferencia entre dos observaciones, estableciendo un valor entre $0$ y $1$, donde $(0)$ indica que ambas son iguales y $(1)$ indica que son completamente diferentes, esta combina diferentes métricas para variables cuantitativas, nominales y ordinales, por lo que es popularmente usada para datos mixtos.
 
 En el siguiente articulo se define y describe detalladamente el funcionamiento de la medida de disimilitud mencionada previamente: _<a href = "https://medium.com/analytics-vidhya/gowers-distance-899f9c4bd553" target = "_blank">distancia de Gower</a>_. 
 </div>
@@ -355,7 +355,7 @@ El siguiente articulo define y describe detalladamente su funcionamiento: _<a hr
 
 ## Proceso de segmentación
 <div style='text-align: justify;'>
-Con la intención de evitar sobrecargar el informe principal con todo el proceso para la obtención de grupos dicho procedimiento se realizó en el documento denominado **[proceso de segmentación](https://mateoe.github.io/segmentacionClientes/proceso_segmentacion.html)**, en el cual se llevaron a cabo las siguientes actividades a detalle:
+Con la intención de evitar sobrecargar el informe principal con todo el proceso para la obtención de grupos, dicho procedimiento se realizó en el documento denominado **[proceso de segmentación](https://mateoe.github.io/segmentacionClientes/proceso_segmentacion.html)**, en el cual se llevaron a cabo las siguientes actividades a detalle:
 
 1. Pasos previos a la segmentación.
 2. Refactorización y creación de nuevas variables.
@@ -1175,7 +1175,7 @@ resumir_datos(datos_segmentados, en_tx_canal7, moneda = FALSE)
 ```
 
 <div style='text-align: justify;'>
-El canal 7 muestra una alta inactividad por parte de ambos grupos, sin embargo, el grupo 2 es claramente más activo al presentar una menor cantidad de datos en cero y un valor máximo mucho mas alto.
+El canal 7 muestra una alta inactividad por parte de ambos grupos, sin embargo, el grupo 2 es claramente más activo al presentar una menor cantidad de datos en cero y un valor máximo mucho más alto.
 </div>
 
 <details style = "margin-bottom: 10px; margin-left: 5px">
@@ -1202,7 +1202,7 @@ resumir_datos(datos_segmentados, en_tx_canal8, moneda = FALSE)
 ```
 
 <div style='text-align: justify;'>
-En el canal 8 se evidencia que el grupo 1 es claramente más inactivo con un número máximo de transacciones inferior a las 39 y una proporción de ceros superior al 75%. Por su parte el grupo 2 continúa mostrando más actividad y numero mayores en cada una de las medidas. 
+En el canal 8 se evidencia que el grupo 1 es claramente más inactivo con un número máximo de transacciones inferior a las 39 y una proporción de ceros superior al 75%. Por su parte el grupo 2 continúa mostrando más actividad y números mayores en cada una de las medidas. 
 </div>
 
 <details style = "margin-bottom: 10px; margin-left: 5px">
@@ -1308,7 +1308,7 @@ resumir_datos(datos_segmentados, sal_vm_canal2)
 <div style='text-align: justify;'>
 El canal 2 es el más activo entre los relacionados con las salidas, donde el grupo 1 muestra una proporción de entradas en cero del 48.76%, reflejando que aproximadamente la mitad de los clientes pertenecientes a este lo han utilizado en alguna medida.
 
-El grupo 2 presenta una proporción de entradas en cero significativamente más baja, reflejando una mayor actividad y presentando valores más altos en cada una de las mediadas de resumen, lo cual indica que está constituido por clientes económicamente más fuertes.
+El grupo 2 presenta una proporción de entradas en cero significativamente más baja, reflejando una mayor actividad y presentando valores más altos en cada una de las medidas de resumen, lo cual indica que está constituido por clientes económicamente más fuertes.
 </div>
 
 <details style = "margin-bottom: 10px; margin-left: 5px">
