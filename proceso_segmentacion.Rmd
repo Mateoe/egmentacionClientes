@@ -33,7 +33,7 @@ library(kableExtra)     #Para complementar los resultados de knitr
 library(ggplot2)        #Para la creación y visualización de gráficos
 library(cluster)        #Para la creación de grupos
 library(factoextra)     #Para el análisis de clusters
-options(scipen = 999)   #Visualización completa de cantidades númericas grandes
+options(scipen = 999)   #Visualización completa de cantidades numéricas grandes
 ```
 
 
@@ -99,18 +99,18 @@ datos_originales <- datos_originales %>%  select(!matches("nit"))
 <br>
 <br>
 
-# 2. Refacotrización y creación de nuevas variables
+# 2. Refactorización y creación de nuevas variables
 
 <br>
 
 <div style="text-align: justify">
-Con el objetivo de determinar cuales canales son usados por cada usuario, la magnitud monetaria y el número de transacciones que realiza cada cliente, se tomó la decisión de crear las siguientes variables a partir del conjunto de datos original:
+Con el objetivo de determinar cuáles canales son usados por cada usuario, la magnitud monetaria y el número de transacciones que realiza cada cliente, se tomó la decisión de crear las siguientes variables a partir del conjunto de datos original:
 
 1. Para cada canal de entrada se creará una nueva variable, estableciendo el valor de $(1)$ si el canal es usado por el cliente y $(0)$ en caso contrario.
 
-2. Se creará una nueva variable donde se almacenará el valor total del ticket promedio de entrada para cada cliente a partir de la suma de todos las variables de tipo `en_vm`.
+2. Se creará una nueva variable donde se almacenará el valor total del ticket promedio de entrada para cada cliente a partir de la suma de todas las variables de tipo `en_vm`.
 
-2. Se creará una nueva variable donde se almacenará el número total de transacciones de entrada para cada cliente a partir de la suma de todos las variables de tipo `en_tx`.
+2. Se creará una nueva variable donde se almacenará el número total de transacciones de entrada para cada cliente a partir de la suma de tados las variables de tipo `en_tx`.
 
 Lo anterior nos permitirá reducir la dimensionalidad, eliminar la correlación entre las variables de ticket promedio y de transacciones, establecer la tendencia de uso de cada canal y nos ayudará a comprender el volumen monetario y transaccional que representa cada cliente para la organización solicitante.
 
@@ -227,7 +227,7 @@ En principio es importante recordar del análisis exploratorio que hay dos facto
     * Aquellos superiores al $80\%$ y menores o iguales al $100\%$ se asignarán a la clase $(5)$
 </div>
 
-A continuación se crea y utiliza la función encargada de realizar el procedimiento previamente descrito:
+A continuación, se crea y utiliza la función encargada de realizar el procedimiento previamente descrito:
 ```{r}
 #Se crea una función que recibe como parametro de entrada una columna
 categorizar <- function(columna){
@@ -318,7 +318,7 @@ kable(head(datos_refactorizados), "html", align = "c") %>%
 
 <br>
 
-## 3.1. Calculo de la matriz de disimilitud
+## 3.1. Cálculo de la matriz de disimilitud
 <div style="text-align: justify">
 Con el objetivo de indicar las variables ordinales a la función encargada de calcular la distancia de Gower se almacena el nombre de estas.
 </div>
@@ -357,9 +357,9 @@ kable(mas_cercanos, "html", align = "c") %>%
     kable_styling(bootstrap_options = c("hover", "condensed"))
 ```
 
-## 3.2. Determinación del número optimo de grupos
+## 3.2. Determinación del número óptimo de grupos
 <div style="text-align: justify">
-Para determinar el número optimo de grupos $(k)$ se utilizará el método de silhouette, este calcula un coeficiente para cada observación donde se determina el grado de similitud con su propio grupo, finalmente se calcula el promedio de los resultados para determinar la puntuación de silhouette.
+Para determinar el número óptimo de grupos $(k)$ se utilizará el método de silhouette, este calcula un coeficiente para cada observación donde se determina el grado de similitud con su propio grupo, finalmente se calcula el promedio de los resultados para determinar la puntuación de silhouette.
 
 Una descripción completa de este método puede ser encontrada en: _<a href = "https://towardsdatascience.com/silhouette-method-better-than-elbow-method-to-find-optimal-clusters-378d62ff6891" target = "_blank">método de silhouette</a>_
 </div>
@@ -392,7 +392,7 @@ data.frame(puntuacion = puntuacion_silhouette) %>%
     theme(plot.title = element_text(hjust = 0.5))
 ```
 <div style="text-align: justify">
-**Resultado:** Se prefiere el número de grupos con mayor puntuación de silhouette, en este caso se obtiene el optimo con $K=2$.
+**Resultado:** Se prefiere el número de grupos con mayor puntuación de silhouette, en este caso se obtiene el óptimo con $K=2$.
 </div>
 
 ## 3.3. Creación de grupos

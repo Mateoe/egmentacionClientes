@@ -172,7 +172,7 @@ resumen(datos_originales$sal_vm_canal2)
 <div style="text-align: justify"> 
 Del histograma se resalta que la distribución del valor del ticket promedio de salida por el canal 2 se encuentra altamente sesgada a la derecha, lo cual se evidencia también en el resumen numérico donde la <span style="color:#327CCF">mediana (`r dollar(median(datos_originales$sal_vm_canal2))`)</span> se encuentra en la escala de cientos de millones, mientras que la <span style="color:#327CCF"> media (`r dollar(mean(datos_originales$sal_vm_canal2))`)</span> se encuentra en la escala de miles de millones, superando no solo el valor de la medida anterior, sino también el del <span style="color:#327CCF"> cuartil 3 (`r dollar(quantile(datos_originales$sal_vm_canal2, 0.75))`)</span>, indicando la presencia de valores máximos con una escala muy superior a la mayoría de los datos.
 
-Se destaca además que la  <span style="color:#327CCF"> proporción de entradas en cero (`r round(100*sum(datos_originales$sal_vm_canal2 == 0)/length(datos_originales$sal_vm_canal2),2)`%)</span> es relativamente baja, indicando que es un canal típicamente usado para las salidas y en el cual se manejan grandes valores montários. 
+Se destaca además que la  <span style="color:#327CCF"> proporción de entradas en cero (`r round(100*sum(datos_originales$sal_vm_canal2 == 0)/length(datos_originales$sal_vm_canal2),2)`%)</span> es relativamente baja, indicando que es un canal típicamente usado para las salidas y en el cual se manejan grandes valores monetarios. 
 </div>
 
 ## 2.2. `sal_vm_canal5`
@@ -183,9 +183,9 @@ resumen(datos_originales$sal_vm_canal5)
 ```
 
 <div style="text-align: justify"> 
-Del histograma se resalta que la distribución del valor del ticket promedio de salida por el canal 5 se encuentra altamente sesgada a la derecha, lo cual se evidencia también en el resumen numérico donde la <span style="color:#327CCF">mediana (`r dollar(median(datos_originales$sal_vm_canal5))`)</span> se encuentra en una escala demasiado baja en comparació con la <span style="color:#327CCF"> media (`r dollar(mean(datos_originales$sal_vm_canal5))`)</span> la cual se sitúa en la escala de miles de millones, superando no solo el valor de la medida anterior, sino también al <span style="color:#327CCF"> cuartil 3 (`r dollar(quantile(datos_originales$sal_vm_canal5, 0.75))`)</span>, indicando la presencia de muchos datos en cero y de valores máximos con una escala muy superior a la mayoría de los datos.
+Del histograma se resalta que la distribución del valor del ticket promedio de salida por el canal 5 se encuentra altamente sesgada a la derecha, lo cual se evidencia también en el resumen numérico donde la <span style="color:#327CCF">mediana (`r dollar(median(datos_originales$sal_vm_canal5))`)</span> se encuentra en una escala demasiado baja en comparación con la <span style="color:#327CCF"> media (`r dollar(mean(datos_originales$sal_vm_canal5))`)</span> la cual se sitúa en la escala de miles de millones, superando no solo el valor de la medida anterior, sino también al <span style="color:#327CCF"> cuartil 3 (`r dollar(quantile(datos_originales$sal_vm_canal5, 0.75))`)</span>, indicando la presencia de muchos datos en cero y de valores máximos con una escala muy superior a la mayoría de los datos.
 
-Se destaca además que la  <span style="color:#327CCF"> proporción de entradas en cero (`r round(100*sum(datos_originales$sal_vm_canal5 == 0)/length(datos_originales$sal_vm_canal5),2)`%)</span> es de practicamente el 50%, indicando que es un canal de uso medio, en el cual se manejan grandes valores montários, pero menores en comparación con el canal anterior. 
+Se destaca además que la  <span style="color:#327CCF"> proporción de entradas en cero (`r round(100*sum(datos_originales$sal_vm_canal5 == 0)/length(datos_originales$sal_vm_canal5),2)`%)</span> es de prácticamente el 50%, indicando que es un canal de uso medio, en el cual se manejan grandes valores monetarios, pero menores en comparación con el canal anterior.
 </div>
 
 ## 2.3. `sal_vm_canal8`
@@ -210,13 +210,13 @@ resumen(datos_originales$sal_vm_otros)
 ```
 
 <div style="text-align: justify"> 
-Del histograma se resalta que la distribución del valor del ticket promedio de salida por el canal otros se encuentra extremadamente sesgada a la derecha, lo cual se evidencia también en el resumen numérico donde la <span style="color:#327CCF">mediana (`r dollar(median(datos_originales$sal_vm_otros))`)</span> y el <span style="color:#327CCF"> cuartil 3 (`r dollar(quantile(datos_originales$sal_vm_otros, 0.75))`)</span> presentan un valor de cero, con una <span style="color:#327CCF"> proporción de entradas en cero (`r round(100*sum(datos_originales$sal_vm_otros == 0)/length(datos_originales$sal_vm_otros),2)`%) </span> supremamente alta, influyendo fuertemente sobre el valor de la <span style="color:#327CCF"> media (`r dollar(mean(datos_originales$sal_vm_otros))`)</span>.
+Del histograma se resalta que la distribución del valor del ticket promedio de salida por el canal "otros" se encuentra extremadamente sesgada a la derecha, lo cual se evidencia también en el resumen numérico donde la <span style="color:#327CCF">mediana (`r dollar(median(datos_originales$sal_vm_otros))`)</span> y el <span style="color:#327CCF"> cuartil 3 (`r dollar(quantile(datos_originales$sal_vm_otros, 0.75))`)</span> presentan un valor de cero, con una <span style="color:#327CCF"> proporción de entradas en cero (`r round(100*sum(datos_originales$sal_vm_otros == 0)/length(datos_originales$sal_vm_otros),2)`%) </span> supremamente alta, influyendo fuertemente sobre el valor de la <span style="color:#327CCF"> media (`r dollar(mean(datos_originales$sal_vm_otros))`)</span>.
 
-Lo aterior nos muestra el escenario de un canal de un uso muy limitado, en el que se manejan valores monetarios bajos, indicando que podría ser muy restrictivo, poco popular o exclusivo.
+Lo anterior nos muestra el escenario de un canal de un uso muy limitado, en el que se manejan valores monetarios bajos, indicando que podría ser muy restrictivo, poco popular o exclusivo.
 </div>
 
 
-## 2.5. Tabla general de resumenes numéricos
+## 2.5. Tabla general de resúmenes numéricos
 <details style = "margin-bottom: 10px; margin-left: 5px">
   <summary style = "padding: 2px 10px">
     <strong><span style = "color: #E83E8C">Click para ver el código</span></strong>
@@ -304,9 +304,9 @@ resumen(datos_originales$sal_tx_canal5, moneda = FALSE)
 ```
 
 <div style="text-align: justify"> 
-Del histograma se resalta que la distribución del número de transacciones promedio de salida por el canal 5 se encuentra altamente sesgada a la derecha, lo cual se evidencia también en el resumen numérico donde la <span style="color:#327CCF">mediana (`r numero(median(datos_originales$sal_tx_canal5))`)</span> es mas baja que la <span style="color:#327CCF"> media (`r numero(mean(datos_originales$sal_tx_canal5))`)</span>, siendo esta ultima levemente mayor al <span style="color:#327CCF"> cuartil 3 (`r numero(quantile(datos_originales$sal_tx_canal5, 0.75))`)</span>.
+Del histograma se resalta que la distribución del número de transacciones promedio de salida por el canal 5 se encuentra altamente sesgada a la derecha, lo cual se evidencia también en el resumen numérico donde la <span style="color:#327CCF">mediana (`r numero(median(datos_originales$sal_tx_canal5))`)</span> es más baja que la <span style="color:#327CCF"> media (`r numero(mean(datos_originales$sal_tx_canal5))`)</span>, siendo esta última levemente mayor al <span style="color:#327CCF"> cuartil 3 (`r numero(quantile(datos_originales$sal_tx_canal5, 0.75))`)</span>.
 
-Se destaca además que la  <span style="color:#327CCF"> proporción de entradas en cero (`r round(100*sum(datos_originales$sal_tx_canal5 == 0)/length(datos_originales$sal_tx_canal5),2)`%)</span> es de practicamente el 50%, indicando que es un canal de uso medio, en el cual se manejan un número moderado de transacciones, no superando las `r numero(max(datos_originales$sal_tx_canal5))` por cliente. 
+Se destaca además que la  <span style="color:#327CCF"> proporción de entradas en cero (`r round(100*sum(datos_originales$sal_tx_canal5 == 0)/length(datos_originales$sal_tx_canal5),2)`%)</span> es de prácticamente el 50%, indicando que es un canal de uso medio, en el cual se manejan un número moderado de transacciones, no superando las `r numero(max(datos_originales$sal_tx_canal5))` por cliente. 
 </div>
 
 ## 3.3. `sal_tx_canal8`
@@ -331,11 +331,11 @@ resumen(datos_originales$sal_tx_otros, moneda = FALSE)
 ```
 
 <div style="text-align: justify"> 
-Del histograma se resalta que la distribución del número de transacciones promedio de salida por el canal otros se encuentra extremadamente sesgada a la derecha, con un comportamiento muy similar al canal anterior pero con valores menores, donde la <span style="color:#327CCF">mediana (`r numero(median(datos_originales$sal_tx_otros))`)</span> y el <span style="color:#327CCF"> cuartil 3 (`r numero(quantile(datos_originales$sal_tx_otros, 0.75))`)</span> son ambos cero, con una <span style="color:#327CCF"> proporción de entradas en cero (`r round(100*sum(datos_originales$sal_tx_otros == 0)/length(datos_originales$sal_tx_otros),2)`%)</span> muy elevada, causando un fuerte impacto sobre la <span style="color:#327CCF"> media (`r numero(mean(datos_originales$sal_tx_otros))`)</span>, la cual es menor a una transacción.
+Del histograma se resalta que la distribución del número de transacciones promedio de salida por el canal "otros" se encuentra extremadamente sesgada a la derecha, con un comportamiento muy similar al canal anterior, pero con valores menores, donde la <span style="color:#327CCF">mediana (`r numero(median(datos_originales$sal_tx_otros))`)</span> y el <span style="color:#327CCF"> cuartil 3 (`r numero(quantile(datos_originales$sal_tx_otros, 0.75))`)</span> son ambos cero, con una <span style="color:#327CCF"> proporción de entradas en cero (`r round(100*sum(datos_originales$sal_tx_otros == 0)/length(datos_originales$sal_tx_otros),2)`%)</span> muy elevada, causando un fuerte impacto sobre la <span style="color:#327CCF"> media (`r numero(mean(datos_originales$sal_tx_otros))`)</span>, la cual es menor a una transacción.
 
-Lo aterior nos muestra el escenario de un canal de un uso muy limitado, en el que se maneja un numero muy bajo de transacciones, indicando que podría ser muy restrictivo, poco popular o exclusivo.
+Lo anterior nos muestra el escenario de un canal de un uso muy limitado, en el que se maneja un número muy bajo de transacciones, indicando que podría ser muy restrictivo, poco popular o exclusivo.
 
-## 3.5. Tabla general de resumenes numéricos
+## 3.5. Tabla general de resúmenes numéricos
 <details style = "margin-bottom: 10px; margin-left: 5px">
   <summary style = "padding: 2px 10px">
     <strong><span style = "color: #E83E8C">Click para ver el código</span></strong>

@@ -157,7 +157,7 @@ resumen(datos_originales$en_tx_canal1)
 ```
 
 <div style="text-align: justify"> 
-Del histograma se resalta que la distribución del número de transacciones promedio de entrada por el canal 1 se encuentra altamente sesgada a la derecha, lo cual se refleja en el resumen numérico donde la <span style="color:#327CCF"> media (`r numero(mean(datos_originales$en_tx_canal1))`)</span> es aproximadamente `r round(mean(datos_originales$en_tx_canal1)/median(datos_originales$en_tx_canal1))` veces mayor a la <span style="color:#327CCF">mediana (`r numero(median(datos_originales$en_tx_canal1))`)</span> y al rededor de `r round(mean(datos_originales$en_tx_canal1)/quantile(datos_originales$en_tx_canal1,0.75),2)` veces mayor al <span style="color:#327CCF"> cuartil 3 (`r numero(quantile(datos_originales$en_tx_canal1, 0.75))`)</span>, indicando la presencia de máximos muy altos.
+Del histograma se resalta que la distribución del número de transacciones promedio de entrada por el canal 1 se encuentra altamente sesgada a la derecha, lo cual se refleja en el resumen numérico donde la <span style="color:#327CCF"> media (`r numero(mean(datos_originales$en_tx_canal1))`)</span> es aproximadamente `r round(mean(datos_originales$en_tx_canal1)/median(datos_originales$en_tx_canal1))` veces mayor a la <span style="color:#327CCF">mediana (`r numero(median(datos_originales$en_tx_canal1))`)</span> y alrededor de `r round(mean(datos_originales$en_tx_canal1)/quantile(datos_originales$en_tx_canal1,0.75),2)` veces mayor al <span style="color:#327CCF"> cuartil 3 (`r numero(quantile(datos_originales$en_tx_canal1, 0.75))`)</span>, indicando la presencia de máximos muy altos.
 
 Se destaca además que la  <span style="color:#327CCF"> proporción de entradas en cero (`r round(100*sum(datos_originales$en_tx_canal1 == 0)/length(datos_originales$en_tx_canal1),2)`%)</span> del canal es baja, lo cual indica que es concurrido y da la sensación de tener pocas restricciones, ser de fácil acceso y presentar una cantidad alta en el número transacciones realizadas.
 </div>
@@ -172,7 +172,7 @@ resumen(datos_originales$en_tx_canal2)
 <div style="text-align: justify"> 
 Del histograma se resalta que la distribución del número de transacciones promedio de entrada por el canal 2 se encuentra sesgada a la derecha, lo cual se refleja en el resumen numérico donde la <span style="color:#327CCF"> media (`r numero(mean(datos_originales$en_tx_canal2))`)</span> es aproximadamente `r round(mean(datos_originales$en_tx_canal2)/median(datos_originales$en_tx_canal2),2)` veces mayor a la <span style="color:#327CCF">mediana (`r numero(median(datos_originales$en_tx_canal2))`)</span> y muy similar al <span style="color:#327CCF"> cuartil 3 (`r numero(quantile(datos_originales$en_tx_canal2, 0.75))`)</span>, indicando la presencia de máximos altos.
 
-Se destaca además que la  <span style="color:#327CCF"> proporción de entradas en cero (`r round(100*sum(datos_originales$en_tx_canal2 == 0)/length(datos_originales$en_tx_canal2),2)`%)</span> es levemente mas baja que lo observado en el canal 1, lo cual indica analogamente que es un canal concurrido, da la sensación de tener pocas restricciones y ser de fácil acceso, presentando una cantidad moderadamente alta en el número transacciones realizadas.
+Se destaca además que la  <span style="color:#327CCF"> proporción de entradas en cero (`r round(100*sum(datos_originales$en_tx_canal2 == 0)/length(datos_originales$en_tx_canal2),2)`%)</span> es levemente más baja que lo observado en el canal 1, lo cual indica análogamente que es un canal concurrido, da la sensación de tener pocas restricciones y ser de fácil acceso, presentando una cantidad moderadamente alta en el número transacciones realizadas.
 </div>
 
 ## 2.3. `en_tx_canal3`
@@ -183,7 +183,7 @@ resumen(datos_originales$en_tx_canal3)
 ```
 
 <div style="text-align: justify"> 
-Del histograma se resalta que la distribución del número de transacciones promedio de entrada por el canal 3 se encuentra altamente sesgada a la derecha, lo cual se refleja en el resumen numérico donde la <span style="color:#327CCF"> media (`r numero(mean(datos_originales$en_tx_canal3))`)</span> es aproximadamente `r round(mean(datos_originales$en_tx_canal3)/median(datos_originales$en_tx_canal3))` veces mayor a la <span style="color:#327CCF">mediana (`r numero(median(datos_originales$en_tx_canal3))`)</span> y al rededor de `r round(mean(datos_originales$en_tx_canal3)/quantile(datos_originales$en_tx_canal3,0.75),2)` veces mayor al <span style="color:#327CCF"> cuartil 3 (`r numero(quantile(datos_originales$en_tx_canal3, 0.75))`)</span>. 
+Del histograma se resalta que la distribución del número de transacciones promedio de entrada por el canal 3 se encuentra altamente sesgada a la derecha, lo cual se refleja en el resumen numérico donde la <span style="color:#327CCF"> media (`r numero(mean(datos_originales$en_tx_canal3))`)</span> es aproximadamente `r round(mean(datos_originales$en_tx_canal3)/median(datos_originales$en_tx_canal3))` veces mayor a la <span style="color:#327CCF">mediana (`r numero(median(datos_originales$en_tx_canal3))`)</span> y alrededor de `r round(mean(datos_originales$en_tx_canal3)/quantile(datos_originales$en_tx_canal3,0.75),2)` veces mayor al <span style="color:#327CCF"> cuartil 3 (`r numero(quantile(datos_originales$en_tx_canal3, 0.75))`)</span>. 
 
 Al tener en cuenta lo anterior y observando que la  <span style="color:#327CCF"> proporción de entradas en cero (`r round(100*sum(datos_originales$en_tx_canal3 == 0)/length(datos_originales$en_tx_canal3),2)`%)</span> es moderadamente alta, se intuye que es un canal con una concurrencia medianamente alta y con grandes valores en el número transacciones realizadas.
 </div>
@@ -196,9 +196,9 @@ resumen(datos_originales$en_tx_canal4)
 ```
 
 <div style="text-align: justify">
-Del histograma se resalta que la distribución del número de transacciones promedio de entrada por el canal 4 se encuentra altamente sesgada a la derecha, lo cual se refleja en el resumen numérico donde la <span style="color:#327CCF">mediana (`r numero(median(datos_originales$en_tx_canal4))`)</span> es cero y el <span style="color:#327CCF"> cuartil 3 (`r numero(quantile(datos_originales$en_tx_canal4, 0.75))`)</span> presenta un valor muy bajo, adicionalmete la <span style="color:#327CCF"> proporción de entradas en cero (`r round(100*sum(datos_originales$en_tx_canal4 == 0)/length(datos_originales$en_tx_canal4),2)`%)</span> es sumamente alta. Sin embargo, el valor <span style="color:#327CCF">máximo (`r numero(max(datos_originales$en_tx_canal4))`)</span> es el más alto de las variables de este tipo, influenciando en gran medida a la <span style="color:#327CCF"> media (`r numero(mean(datos_originales$en_tx_canal4))`)</span>.
+Del histograma se resalta que la distribución del número de transacciones promedio de entrada por el canal 4 se encuentra altamente sesgada a la derecha, lo cual se refleja en el resumen numérico donde la <span style="color:#327CCF">mediana (`r numero(median(datos_originales$en_tx_canal4))`)</span> es cero y el <span style="color:#327CCF"> cuartil 3 (`r numero(quantile(datos_originales$en_tx_canal4, 0.75))`)</span> presenta un valor muy bajo, adicionalmente la <span style="color:#327CCF"> proporción de entradas en cero (`r round(100*sum(datos_originales$en_tx_canal4 == 0)/length(datos_originales$en_tx_canal4),2)`%)</span> es sumamente alta. Sin embargo, el valor <span style="color:#327CCF">máximo (`r numero(max(datos_originales$en_tx_canal4))`)</span> es el más alto de las variables de este tipo, influenciando en gran medida a la <span style="color:#327CCF"> media (`r numero(mean(datos_originales$en_tx_canal4))`)</span>.
 
-Lo anterior nos presenta el panorama de una canal con un uso moderadamente bajo y con enormes valores en el número de transacciones realizadas, por lo cual se intuye que podría ser un canal popular para un tipo especifico de transacción o exclusivo para determinados empresas.
+Lo anterior nos presenta el panorama de una canal con un uso moderadamente bajo y con enormes valores en el número de transacciones realizadas, por lo cual se intuye que podría ser un canal popular para un tipo específico de transacción o exclusivo para determinadas empresas.
 </div>
 
 
@@ -225,7 +225,7 @@ resumen(datos_originales$en_tx_canal6)
 <div style="text-align: justify"> 
 Del histograma se resalta que la distribución del número de transacciones promedio de entrada por el canal 6 se encuentra sesgada a la derecha, lo cual se refleja en el resumen numérico donde la <span style="color:#327CCF"> media (`r numero(mean(datos_originales$en_tx_canal6))`)</span> es mayor a la <span style="color:#327CCF">mediana (`r numero(median(datos_originales$en_tx_canal6))`)</span> y levemente mayor al <span style="color:#327CCF"> cuartil 3 (`r numero(quantile(datos_originales$en_tx_canal6, 0.75))`)</span>, indicando la presencia de máximos moderadamente bajos.
 
-Se destaca además que la  <span style="color:#327CCF"> proporción de entradas en cero (`r round(100*sum(datos_originales$en_tx_canal6 == 0)/length(datos_originales$en_tx_canal6),2)`%)</span> es moderadamente baja, indicando que se puede tratar de un canal de un uso alto, dando la sensación de no ser muy restrictivo y popular para realizar un numero bajo de transacciones.
+Se destaca además que la  <span style="color:#327CCF"> proporción de entradas en cero (`r round(100*sum(datos_originales$en_tx_canal6 == 0)/length(datos_originales$en_tx_canal6),2)`%)</span> es moderadamente baja, indicando que se puede tratar de un canal de un uso alto, dando la sensación de no ser muy restrictivo y popular para realizar un número bajo de transacciones.
 </div>
 
 ## 2.7. `en_tx_canal7`
@@ -236,9 +236,9 @@ resumen(datos_originales$en_tx_canal7)
 ```
 
 <div style="text-align: justify">
-Del histograma se resalta que la distribución del número de transacciones promedio de entrada por el canal 7 se encuentra altamente sesgada a la derecha, lo cual se refleja en el resumen numérico donde la <span style="color:#327CCF">mediana (`r numero(median(datos_originales$en_tx_canal7))`)</span> es cero, al igual que el <span style="color:#327CCF"> cuartil 3 (`r numero(quantile(datos_originales$en_tx_canal7, 0.75))`)</span>, adicionalmete la <span style="color:#327CCF"> proporción de entradas en cero (`r round(100*sum(datos_originales$en_tx_canal7 == 0)/length(datos_originales$en_tx_canal7),2)`%)</span> es demasiado alta, lo cual se refleja en el valor de la <span style="color:#327CCF"> media (`r numero(mean(datos_originales$en_tx_canal7))`)</span>.
+Del histograma se resalta que la distribución del número de transacciones promedio de entrada por el canal 7 se encuentra altamente sesgada a la derecha, lo cual se refleja en el resumen numérico donde la <span style="color:#327CCF">mediana (`r numero(median(datos_originales$en_tx_canal7))`)</span> es cero, al igual que el <span style="color:#327CCF"> cuartil 3 (`r numero(quantile(datos_originales$en_tx_canal7, 0.75))`)</span>, adicionalmente la <span style="color:#327CCF"> proporción de entradas en cero (`r round(100*sum(datos_originales$en_tx_canal7 == 0)/length(datos_originales$en_tx_canal7),2)`%)</span> es demasiado alta, lo cual se refleja en el valor de la <span style="color:#327CCF"> media (`r numero(mean(datos_originales$en_tx_canal7))`)</span>.
 
-Lo anterior nos presenta el panorama de un canal de poco uso, con valores moderadamente bajos en el número de transacciones realizadas, por lo cual se intuye que podría estar dedicado para un tipo muy especifico de transacción o ser exclusivo para determinados clientes.
+Lo anterior nos presenta el panorama de un canal de poco uso, con valores moderadamente bajos en el número de transacciones realizadas, por lo cual se intuye que podría estar dedicado para un tipo muy específico de transacción o ser exclusivo para determinados clientes.
 </div>
 
 ## 2.8. `en_tx_canal8`
@@ -264,7 +264,7 @@ resumen(datos_originales$en_tx_canal9)
 <div style="text-align: justify"> 
 Del histograma se resalta que la distribución del número de transacciones promedio de entrada por el canal 9 se encuentra altamente sesgada a la derecha, donde la <span style="color:#327CCF"> media (`r numero(mean(datos_originales$en_tx_canal9))`)</span> es mayor a la <span style="color:#327CCF">mediana (`r numero(median(datos_originales$en_tx_canal9))`)</span> y al <span style="color:#327CCF"> cuartil 3 (`r numero(quantile(datos_originales$en_tx_canal9, 0.75))`)</span>. 
 
-Al tener en cuenta lo anterior y observando que la  <span style="color:#327CCF"> proporción de entradas en cero (`r round(100*sum(datos_originales$en_tx_canal9 == 0)/length(datos_originales$en_tx_canal9),2)`%)</span> es muy similar al resultado del canal 8, se intuye que es un canal con una concurrencia medianamente alta y valores moderadamente bajos en el número transacciones realizadas, siendo en promedio mas bajos que los evidenciados en el canal anterior.
+Al tener en cuenta lo anterior y observando que la  <span style="color:#327CCF"> proporción de entradas en cero (`r round(100*sum(datos_originales$en_tx_canal9 == 0)/length(datos_originales$en_tx_canal9),2)`%)</span> es muy similar al resultado del canal 8, se intuye que es un canal con una concurrencia medianamente alta y valores moderadamente bajos en el número transacciones realizadas, siendo en promedio más bajos que los evidenciados en el canal anterior.
 </div>
 
 
@@ -276,9 +276,9 @@ resumen(datos_originales$en_tx_canal10)
 ```
 
 <div style="text-align: justify">
-Del histograma se resalta que la distribución del número de transacciones promedio de entrada por el canal 10 se encuentra altamente sesgada a la derecha, lo cual se refleja en el resumen numérico donde la <span style="color:#327CCF">mediana (`r numero(median(datos_originales$en_tx_canal10))`)</span> es cero, al igual que el <span style="color:#327CCF"> cuartil 3 (`r numero(quantile(datos_originales$en_tx_canal10, 0.75))`)</span>, por su parte la <span style="color:#327CCF"> proporción de entradas en cero (`r round(100*sum(datos_originales$en_tx_canal10 == 0)/length(datos_originales$en_tx_canal10),2)`%)</span> es demasiado alta, lo cual se refleja en el valor de la <span style="color:#327CCF"> media (`r numero(mean(datos_originales$en_tx_canal10))`)</span>, siendo esta ultima medida menor a 1.
+Del histograma se resalta que la distribución del número de transacciones promedio de entrada por el canal 10 se encuentra altamente sesgada a la derecha, lo cual se refleja en el resumen numérico donde la <span style="color:#327CCF">mediana (`r numero(median(datos_originales$en_tx_canal10))`)</span> es cero, al igual que el <span style="color:#327CCF"> cuartil 3 (`r numero(quantile(datos_originales$en_tx_canal10, 0.75))`)</span>, por su parte la <span style="color:#327CCF"> proporción de entradas en cero (`r round(100*sum(datos_originales$en_tx_canal10 == 0)/length(datos_originales$en_tx_canal10),2)`%)</span> es demasiado alta, lo cual se refleja en el valor de la <span style="color:#327CCF"> media (`r numero(mean(datos_originales$en_tx_canal10))`)</span>, siendo esta última medida menor a 1.
 
-Lo anterior nos presenta el panorama de un canal de poco uso y con valores supremamente bajos en el número de transacciones realizadas, por lo cual se intuye que podría estar dedicado para un tipo muy especifico de transacción, ser de difícil acceso, restrictivo o exclusivo para empresas con un muy bajo numero de transacciones.
+Lo anterior nos presenta el panorama de un canal de poco uso y con valores supremamente bajos en el número de transacciones realizadas, por lo cual se intuye que podría estar dedicado para un tipo muy específico de transacción, ser de difícil acceso, restrictivo o exclusivo para empresas con un muy bajo número de transacciones.
 </div>
 
 ## 2.11. `en_tx_otros`
@@ -289,15 +289,15 @@ resumen(datos_originales$en_tx_otros)
 ```
 
 <div style="text-align: justify">
-Del histograma se resalta que la distribución del número de transacciones promedio de entrada por el canal otros se encuentra altamente sesgada a la derecha, lo cual se refleja en el resumen numérico donde la <span style="color:#327CCF">mediana (`r numero(median(datos_originales$en_tx_otros))`)</span> es cero, al igual que el <span style="color:#327CCF"> cuartil 3 (`r numero(quantile(datos_originales$en_tx_otros, 0.75))`)</span>, por su parte <span style="color:#327CCF"> proporción de entradas en cero (`r round(100*sum(datos_originales$en_tx_otros == 0)/length(datos_originales$en_tx_otros),2)`%)</span> es muy grande, sin embargo la <span style="color:#327CCF"> media (`r numero(mean(datos_originales$en_tx_otros))`)</span> conserva un valor moderadamente alto, destacando la influencia de los valores máximos.
+Del histograma se resalta que la distribución del número de transacciones promedio de entrada por el canal "otros" se encuentra altamente sesgada a la derecha, lo cual se refleja en el resumen numérico donde la <span style="color:#327CCF">mediana (`r numero(median(datos_originales$en_tx_otros))`)</span> es cero, al igual que el <span style="color:#327CCF"> cuartil 3 (`r numero(quantile(datos_originales$en_tx_otros, 0.75))`)</span>, por su parte <span style="color:#327CCF"> proporción de entradas en cero (`r round(100*sum(datos_originales$en_tx_otros == 0)/length(datos_originales$en_tx_otros),2)`%)</span> es muy grande, sin embargo la <span style="color:#327CCF"> media (`r numero(mean(datos_originales$en_tx_otros))`)</span> conserva un valor moderadamente alto, destacando la influencia de los valores máximos.
 
-Lo anterior nos presenta el panorama de una canal con un uso bajo y con valores moderadamente altos en el número de transacciones realizadas, por lo cual se intuye que podría estar dedicado para un tipo muy especifico de transacción o ser exclusivo para determinadas empresas.
+Lo anterior nos presenta el panorama de una canal con un uso bajo y con valores moderadamente altos en el número de transacciones realizadas, por lo cual se intuye que podría estar dedicado para un tipo muy específico de transacción o ser exclusivo para determinadas empresas.
 </div>
 
 <br>
 <br>
 
-# 3. Tabla general de resumenes numéricos
+# 3. Tabla general de resúmenes numéricos
 <details style = "margin-bottom: 10px; margin-left: 5px">
   <summary style = "padding: 2px 10px">
     <strong><span style = "color: #E83E8C">Click para ver el código</span></strong>
