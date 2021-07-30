@@ -1910,3 +1910,28 @@ crear_boxplot(datos_segmentados, ciclo_financiero,
 ```
 </details>
 
+---
+
+<br>
+<br>
+
+<center>
+<h1>Referencias</h1>
+</center>
+
+<br>
+
+<div style='text-align: justify;'>
+1. Anand, D. (2021). Gower’s Distance. Retrieved 5 July 2021, from <a href = "https://medium.com/analytics-vidhya/gowers-distance-899f9c4bd553" target = "_blank">https://medium.com/analytics-vidhya/gowers-distance-899f9c4bd553</a>
+
+2. Maechler, M. (2021). pam function - RDocumentation. Retrieved 29 July 2021, from <a href = "https://www.rdocumentation.org/packages/cluster/versions/2.1.2/topics/pam" target = "_blank">https://www.rdocumentation.org/packages/cluster/versions/2.1.2/topics/pam</a>
+
+3. Kassambara, A. (2021). K-Medoids in R: Algorithm and Practical Examples - Datanovia. Retrieved 5 July 2021, from <a href = "https://www.datanovia.com/en/lessons/k-medoids-in-r-algorithm-and-practical-examples/" target = "_blank">https://www.datanovia.com/en/lessons/k-medoids-in-r-algorithm-and-practical-examples/</a>
+
+4. Kumar, S. (2021). Silhouette Method — Better than Elbow Method to find Optimal Clusters. Retrieved 5 July 2021, from <a href = "https://towardsdatascience.com/silhouette-method-better-than-elbow-method-to-find-optimal-clusters-378d62ff6891" target = "_blank">https://towardsdatascience.com/silhouette-method-better-than-elbow-method-to-find-optimal-clusters-378d62ff6891</a>
+</div>
+
+<br>
+<br>
+<br>
+<br>
